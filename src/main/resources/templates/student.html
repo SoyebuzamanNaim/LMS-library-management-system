@@ -9,6 +9,12 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body class="bg-slate-100 font-sans text-slate-800">
     <div class="flex h-screen overflow-hidden">
@@ -101,8 +107,10 @@
                 placeholder="Search students..."
               />
             </div>
+            <!-- Open the modal using ID.showModal() method -->
             <button
-              class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30"
+              class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30"
+              onclick="student_add_modal.showModal()"
             >
               <i class="fa-solid fa-plus mr-2"></i> Add New Student
             </button>
@@ -150,12 +158,14 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
+                        onclick="student_view_modal.showModal()"
                       >
                         <i class="fa-solid fa-eye"></i>
                       </button>
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
+                        onclick="student_edit_modal.showModal()"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
                       </button>
@@ -189,12 +199,14 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
+                        onclick="student_view_modal.showModal()"
                       >
                         <i class="fa-solid fa-eye"></i>
                       </button>
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
+                        onclick="student_edit_modal.showModal()"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
                       </button>
@@ -213,5 +225,44 @@
         </main>
       </div>
     </div>
+
+    <!-- Add Student Modal -->
+    <dialog id="student_add_modal" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Add New Student</h3>
+        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn bg-red-500 text-white p-3">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Edit Student Modal -->
+    <dialog id="student_edit_modal" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Edit Student</h3>
+        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn bg-red-500 text-white p-3">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- View Student Modal -->
+    <dialog id="student_view_modal" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">View Student Details</h3>
+        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn bg-red-500 text-white p-3">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   </body>
 </html>
