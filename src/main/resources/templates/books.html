@@ -92,10 +92,26 @@
         </header>
 
         <main class="flex-1 overflow-y-auto p-8">
+          <!-- Success/Error Messages -->
+          <div
+            th:if="${success}"
+            class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700"
+            th:text="${success}"
+          ></div>
+          <div
+            th:if="${error}"
+            class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700"
+            th:text="${error}"
+          ></div>
+
           <div
             class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4"
           >
-            <div class="relative w-full md:w-96">
+            <form
+              th:action="@{/books}"
+              method="get"
+              class="relative w-full md:w-96"
+            >
               <div
                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
               >
@@ -103,10 +119,12 @@
               </div>
               <input
                 type="text"
+                name="search"
+                th:value="${search}"
                 class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 placeholder="Search books..."
               />
-            </div>
+            </form>
             <!-- Open the modal using ID.showModal() method -->
             <button
               class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30"
@@ -134,18 +152,34 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">#B-1024</td>
-                    <td class="px-6 py-4 font-medium text-slate-800">
-                      The Design of Everyday Things
+                  <tr
+                    th:each="book : ${books}"
+                    class="hover:bg-slate-50 transition-colors"
+                  >
+                    <td class="px-6 py-4" th:text="'#' + ${book.id}">#B-001</td>
+                    <td
+                      class="px-6 py-4 font-medium text-slate-800"
+                      th:text="${book.title}"
+                    >
+                      Book Title
                     </td>
-                    <td class="px-6 py-4">Don Norman</td>
-                    <td class="px-6 py-4">Design</td>
+                    <td class="px-6 py-4" th:text="${book.author}">Author</td>
+                    <td class="px-6 py-4" th:text="${book.category}">
+                      Category
+                    </td>
                     <td class="px-6 py-4">
                       <span
+                        th:if="${book.status == 'Available'}"
                         class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700"
+                        th:text="${book.status}"
                         >Available</span
                       >
+                      <span
+                        th:if="${book.status != 'Available'}"
+                        class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700"
+                        th:text="${book.status}"
+                        >Unavailable</span
+                      >
                     </td>
                     <td
                       class="px-6 py-4 text-center flex justify-center space-x-3"
@@ -153,61 +187,42 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        onclick="book_view_modal.showModal()"
+                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-category=${book.category}, data-status=${book.status}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-description=${book.description != null ? book.description : 'N/A'}"
+                        onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
                       </button>
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        onclick="book_edit_modal.showModal()"
+                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-publication=${book.publicationId != null ? book.publicationId : ''}, data-vendor=${book.vendorId != null ? book.vendorId : ''}, data-category=${book.category}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-status=${book.status}, data-description=${book.description != null ? book.description : ''}"
+                        onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
                       </button>
-                      <button
-                        class="text-red-500 hover:text-red-700"
-                        title="Remove"
+                      <form
+                        th:action="@{/books/delete}"
+                        method="post"
+                        style="display: inline"
+                        onsubmit="return confirm('Are you sure you want to delete this book?');"
                       >
-                        <i class="fa-solid fa-trash"></i>
-                      </button>
+                        <input type="hidden" name="id" th:value="${book.id}" />
+                        <button
+                          type="submit"
+                          class="text-red-500 hover:text-red-700"
+                          title="Remove"
+                        >
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </form>
                     </td>
                   </tr>
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">#B-1025</td>
-                    <td class="px-6 py-4 font-medium text-slate-800">
-                      Introduction to Algorithms
-                    </td>
-                    <td class="px-6 py-4">Thomas H. Cormen</td>
-                    <td class="px-6 py-4">Technology</td>
-                    <td class="px-6 py-4">
-                      <span
-                        class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700"
-                        >Allotted</span
-                      >
-                    </td>
+                  <tr th:if="${books == null || books.isEmpty()}">
                     <td
-                      class="px-6 py-4 text-center flex justify-center space-x-3"
+                      colspan="6"
+                      class="px-6 py-4 text-center text-slate-500"
                     >
-                      <button
-                        class="text-indigo-600 hover:text-indigo-800"
-                        title="View"
-                        onclick="book_view_modal.showModal()"
-                      >
-                        <i class="fa-solid fa-eye"></i>
-                      </button>
-                      <button
-                        class="text-amber-500 hover:text-amber-700"
-                        title="Edit"
-                        onclick="book_edit_modal.showModal()"
-                      >
-                        <i class="fa-solid fa-pen-to-square"></i>
-                      </button>
-                      <button
-                        class="text-red-500 hover:text-red-700"
-                        title="Remove"
-                      >
-                        <i class="fa-solid fa-trash"></i>
-                      </button>
+                      No books found
                     </td>
                   </tr>
                 </tbody>
@@ -220,27 +235,314 @@
 
     <!-- Add Book Modal -->
     <dialog id="book_add_modal" class="modal modal-bottom sm:modal-middle">
-      <div class="modal-box">
+      <div class="modal-box max-w-2xl">
         <h3 class="text-lg font-bold">Add New Book</h3>
-        <p class="py-4">Press ESC key or click the button below to close</p>
-        <div class="modal-action">
-          <form method="dialog">
-            <button class="btn bg-red-500 text-white p-3">Close</button>
-          </form>
-        </div>
+        <form
+          th:action="@{/books/save}"
+          th:object="${bookdto}"
+          method="post"
+          class="space-y-4"
+        >
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Title *</label
+              >
+              <input
+                type="text"
+                th:field="*{title}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Enter book title"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Author *</label
+              >
+              <input
+                type="text"
+                th:field="*{author}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Enter author name"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Category *</label
+            >
+            <input
+              type="text"
+              th:field="*{category}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter category"
+              required
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Publication</label
+              >
+              <select
+                th:field="*{publicationId}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              >
+                <option value="">Select Publication</option>
+                <option
+                  th:each="pub : ${publications}"
+                  th:value="${pub.id}"
+                  th:text="${pub.name}"
+                ></option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Vendor</label
+              >
+              <select
+                th:field="*{vendorId}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              >
+                <option value="">Select Vendor</option>
+                <option
+                  th:each="vendor : ${vendors}"
+                  th:value="${vendor.id}"
+                  th:text="${vendor.name}"
+                ></option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Total Copies *</label
+              >
+              <input
+                type="number"
+                id="add_total_copies"
+                th:field="*{totalCopies}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="0"
+                min="0"
+                required
+                oninput="document.getElementById('add_available_copies').setAttribute('max', this.value || 0);"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Available Copies</label
+              >
+              <input
+                type="number"
+                id="add_available_copies"
+                th:field="*{availableCopies}"
+                th:attr="max=${bookdto.totalCopies != null ? bookdto.totalCopies : 0}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="0"
+                min="0"
+                oninput="this.setAttribute('max', document.getElementById('add_total_copies').value || 0); this.setCustomValidity(this.value > this.max ? 'Available copies cannot exceed total copies' : '');"
+              />
+              <p
+                class="text-red-500 text-xs mt-1"
+                th:if="${error != null and error.contains('Available copies')}"
+                th:text="${error}"
+              ></p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Price Per Copy</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                th:field="*{pricePerCopy}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="0.00"
+                min="0"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Description</label
+            >
+            <textarea
+              th:field="*{description}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              rows="3"
+              placeholder="Enter book description"
+            ></textarea>
+          </div>
+          <div class="modal-action">
+            <button
+              type="button"
+              class="p-3 btn bg-slate-500 text-white"
+              onclick="book_add_modal.close()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="p-3 btn bg-indigo-600 text-white">
+              Save Book
+            </button>
+          </div>
+        </form>
       </div>
     </dialog>
 
     <!-- Edit Book Modal -->
     <dialog id="book_edit_modal" class="modal modal-bottom sm:modal-middle">
-      <div class="modal-box">
+      <div class="modal-box max-w-2xl">
         <h3 class="text-lg font-bold">Edit Book</h3>
-        <p class="py-4">Press ESC key or click the button below to close</p>
-        <div class="modal-action">
-          <form method="dialog">
-            <button class="btn bg-red-500 text-white p-3">Close</button>
-          </form>
-        </div>
+        <form th:action="@{/books/update}" method="post" class="space-y-4">
+          <input type="hidden" id="edit_book_id" name="id" />
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Title *</label
+              >
+              <input
+                type="text"
+                id="edit_book_title"
+                name="title"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Author *</label
+              >
+              <input
+                type="text"
+                id="edit_book_author"
+                name="author"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Category *</label
+            >
+            <input
+              type="text"
+              id="edit_book_category"
+              name="category"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Publication</label
+              >
+              <select
+                id="edit_book_publication"
+                name="publicationId"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              >
+                <option value="">Select Publication</option>
+                <option
+                  th:each="pub : ${publications}"
+                  th:value="${pub.id}"
+                  th:text="${pub.name}"
+                ></option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Vendor</label
+              >
+              <select
+                id="edit_book_vendor"
+                name="vendorId"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              >
+                <option value="">Select Vendor</option>
+                <option
+                  th:each="vendor : ${vendors}"
+                  th:value="${vendor.id}"
+                  th:text="${vendor.name}"
+                ></option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Total Copies *</label
+              >
+              <input
+                type="number"
+                id="edit_book_total"
+                name="totalCopies"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                min="0"
+                required
+                oninput="document.getElementById('edit_book_available').setAttribute('max', this.value || 0);"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Available Copies</label
+              >
+              <input
+                type="number"
+                id="edit_book_available"
+                name="availableCopies"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                min="0"
+                oninput="this.setAttribute('max', document.getElementById('edit_book_total').value || 0); this.setCustomValidity(this.value > this.max ? 'Available copies cannot exceed total copies' : '');"
+              />
+              <p
+                class="text-red-500 text-xs mt-1"
+                th:if="${error != null and error.contains('Available copies')}"
+                th:text="${error}"
+              ></p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Price Per Copy</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="edit_book_price"
+                name="pricePerCopy"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                min="0"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Description</label
+            >
+            <textarea
+              id="edit_book_description"
+              name="description"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="modal-action">
+            <button
+              type="button"
+              class="p-3 btn bg-slate-500 text-white"
+              onclick="book_edit_modal.close()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="p-3 btn bg-indigo-600 text-white">
+              Update Book
+            </button>
+          </div>
+        </form>
       </div>
     </dialog>
 
@@ -248,7 +550,60 @@
     <dialog id="book_view_modal" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box">
         <h3 class="text-lg font-bold">View Book Details</h3>
-        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div class="space-y-3 py-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700">ID</label>
+            <p class="text-slate-800" id="view_book_id"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Title</label
+            >
+            <p class="text-slate-800" id="view_book_title"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Author</label
+            >
+            <p class="text-slate-800" id="view_book_author"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Category</label
+            >
+            <p class="text-slate-800" id="view_book_category"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Status</label
+            >
+            <p class="text-slate-800" id="view_book_status"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Total Copies</label
+            >
+            <p class="text-slate-800" id="view_book_total"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Available Copies</label
+            >
+            <p class="text-slate-800" id="view_book_available"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Price Per Copy</label
+            >
+            <p class="text-slate-800" id="view_book_price"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Description</label
+            >
+            <p class="text-slate-800" id="view_book_description"></p>
+          </div>
+        </div>
         <div class="modal-action">
           <form method="dialog">
             <button class="btn bg-red-500 text-white p-3">Close</button>
@@ -256,5 +611,59 @@
         </div>
       </div>
     </dialog>
+
+    <script>
+      function showViewModal(button) {
+        document.getElementById("view_book_id").textContent =
+          "#" + button.getAttribute("data-id");
+        document.getElementById("view_book_title").textContent =
+          button.getAttribute("data-title");
+        document.getElementById("view_book_author").textContent =
+          button.getAttribute("data-author");
+        document.getElementById("view_book_category").textContent =
+          button.getAttribute("data-category");
+        document.getElementById("view_book_status").textContent =
+          button.getAttribute("data-status");
+        document.getElementById("view_book_total").textContent =
+          button.getAttribute("data-total");
+        document.getElementById("view_book_available").textContent =
+          button.getAttribute("data-available");
+        const price = button.getAttribute("data-price");
+        document.getElementById("view_book_price").textContent = price
+          ? "$" + parseFloat(price).toFixed(2)
+          : "N/A";
+        document.getElementById("view_book_description").textContent =
+          button.getAttribute("data-description");
+        book_view_modal.showModal();
+      }
+
+      function showEditModal(button) {
+        document.getElementById("edit_book_id").value =
+          button.getAttribute("data-id");
+        document.getElementById("edit_book_title").value =
+          button.getAttribute("data-title");
+        document.getElementById("edit_book_author").value =
+          button.getAttribute("data-author");
+        document.getElementById("edit_book_category").value =
+          button.getAttribute("data-category");
+        document.getElementById("edit_book_publication").value =
+          button.getAttribute("data-publication") || "";
+        document.getElementById("edit_book_vendor").value =
+          button.getAttribute("data-vendor") || "";
+        const totalCopies = button.getAttribute("data-total");
+        document.getElementById("edit_book_total").value = totalCopies;
+        document.getElementById("edit_book_available").value =
+          button.getAttribute("data-available");
+        // Set max attribute using Thymeleaf-like approach via JavaScript
+        document
+          .getElementById("edit_book_available")
+          .setAttribute("max", totalCopies || 0);
+        document.getElementById("edit_book_price").value =
+          button.getAttribute("data-price");
+        document.getElementById("edit_book_description").value =
+          button.getAttribute("data-description") || "";
+        book_edit_modal.showModal();
+      }
+    </script>
   </body>
 </html>

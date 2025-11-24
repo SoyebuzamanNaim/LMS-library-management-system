@@ -12,7 +12,7 @@ public class SignupService {
 
     public void saveUser(User user) {
         if (users.stream().anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
-            // IO.println("User already exists");
+            // IO.println("User email already exists");
             throw new IllegalArgumentException("User already exists");
         }
         users.add(user);

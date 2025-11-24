@@ -18,8 +18,7 @@ public class Book {
     private String category;
     private Integer totalCopies;
     private Integer availableCopies;
-    private Double price;
+    private Double pricePerCopy;
     private String status; // Available, Unavailable
     private String description;
-    private String image;
 }

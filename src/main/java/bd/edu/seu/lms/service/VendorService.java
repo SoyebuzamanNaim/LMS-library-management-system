@@ -62,4 +62,58 @@ public class VendorService {
                     || phone.contains(lowerKeyword) || address.contains(lowerKeyword);
         }).collect(Collectors.toCollection(ArrayList::new));
     }
+
+
+    // Initialize with dummy data
+    public VendorService() {
+        initializeDummyData();
+    }
+
+    private void initializeDummyData() {
+        Vendor v1 = new Vendor();
+        v1.setId(Long.toString(ind++));
+        v1.setName("Shikkha Prokashoni");
+        v1.setContactPerson("Mr. A.K.M. Abdul Mannan");
+        v1.setEmail("akmabdulmannan@gmail.com");
+        v1.setPhone("015XXXXXXXX");
+        v1.setAddress("Dhaka, Bangladesh");
+        vendors.add(v1);
+
+        Vendor v2 = new Vendor();
+        v2.setId(Long.toString(ind++));
+        v2.setName("EduTech Resources");
+        v2.setContactPerson("Ms. Sareen Islam");
+        v2.setEmail("sareenislam@gmail.com");
+        v2.setPhone("015XXXXXXXX");
+        v2.setAddress("Dhaka, Bangladesh");
+        vendors.add(v2);
+
+        Vendor v3 = new Vendor();
+        v3.setId(Long.toString(ind++));
+        v3.setName("Academic Book House");
+        v3.setContactPerson("Dr. Md. Atahar Hossain");
+        v3.setEmail("ataharhossain@gmail.com");
+        v3.setPhone("015XXXXXXXX");
+        v3.setAddress("Dhaka, Bangladesh");
+        vendors.add(v3);
+
+        Vendor v4 = new Vendor();
+        v4.setId(Long.toString(ind++));
+        v4.setName("Bangladesh Book House");
+        v4.setContactPerson("Mr. Md. Ashikur Rahman");
+        v4.setEmail("bangladeshbookhouse@gmail.com");
+        v4.setPhone("015XXXXXXXX");
+        v4.setAddress("Dhaka, Bangladesh");
+        vendors.add(v4);
+
+        Vendor v5 = new Vendor();
+        v5.setId(Long.toString(ind++));
+        v5.setName("BookWorld International");
+        v5.setContactPerson("Mr. Md. Ashikur Rahman");
+        v5.setEmail("ashikurrahman@gmail.com");
+        v5.setPhone("015XXXXXXXX");
+        v5.setAddress("Dhaka, Bangladesh");
+        vendors.add(v5);
+    }
+
 }
