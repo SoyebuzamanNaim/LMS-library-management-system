@@ -9,7 +9,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body class="bg-slate-100 font-sans text-slate-800">
@@ -104,7 +108,10 @@
               />
             </div>
             <!-- Open the modal using ID.showModal() method -->
-            <button class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30" onclick="allotment_add_modal.showModal()">
+            <button
+              class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30"
+              onclick="allotment_add_modal.showModal()"
+            >
               <i class="fa-solid fa-plus mr-2"></i> Create Allotment
             </button>
           </div>
@@ -148,14 +155,16 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
+                        onclick="allotment_view_modal.showModal()"
                       >
                         <i class="fa-solid fa-eye"></i>
                       </button>
                       <button
-                        class="text-emerald-500 hover:text-emerald-700"
-                        title="Return"
+                        class="text-amber-500 hover:text-amber-700"
+                        title="Edit"
+                        onclick="allotment_edit_modal.showModal()"
                       >
-                        <i class="fa-solid fa-rotate-left"></i>
+                        <i class="fa-solid fa-pen-to-square"></i>
                       </button>
                       <button
                         class="text-red-500 hover:text-red-700"
@@ -226,7 +235,10 @@
     </dialog>
 
     <!-- Edit Allotment Modal -->
-    <dialog id="allotment_edit_modal" class="modal modal-bottom sm:modal-middle">
+    <dialog
+      id="allotment_edit_modal"
+      class="modal modal-bottom sm:modal-middle"
+    >
       <div class="modal-box">
         <h3 class="text-lg font-bold">Edit Allotment</h3>
         <p class="py-4">Press ESC key or click the button below to close</p>
@@ -239,7 +251,10 @@
     </dialog>
 
     <!-- View Allotment Modal -->
-    <dialog id="allotment_view_modal" class="modal modal-bottom sm:modal-middle">
+    <dialog
+      id="allotment_view_modal"
+      class="modal modal-bottom sm:modal-middle"
+    >
       <div class="modal-box">
         <h3 class="text-lg font-bold">View Allotment Details</h3>
         <p class="py-4">Press ESC key or click the button below to close</p>
