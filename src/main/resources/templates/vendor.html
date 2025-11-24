@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Management - Libro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 font-sans text-slate-800">
+
+<div class="flex h-screen overflow-hidden">
+    <aside
+            class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl flex-shrink-0"
+    >
+        <div class="h-16 flex items-center px-6 border-b border-slate-800">
+            <i class="fa-solid fa-book-open text-indigo-500 text-2xl mr-3"></i>
+            <span class="text-lg font-bold">LibroSystem</span>
+        </div>
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            <a
+                    href="/dashboard"
+                    class="flex items-center px-3 py-2.5 bg-indigo-600 text-white rounded-lg"
+            >
+                <i class="fa-solid fa-chart-pie w-8"></i> Dashboard
+            </a>
+            <a
+                    href="/books"
+                    class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+            >
+                <i class="fa-solid fa-book w-8"></i> Books
+            </a>
+            <a
+                    href="/students"
+                    class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+            >
+                <i class="fa-solid fa-users w-8"></i> Students
+            </a>
+            <a
+                    href="/allotment"
+                    class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+            >
+                <i class="fa-solid fa-hand-holding-hand w-8"></i> Allotment
+            </a>
+            <a
+                    href="/vendors"
+                    class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+            >
+                <i class="fa-solid fa-shop w-8"></i> Vendors
+            </a>
+            <a
+                    href="/publications"
+                    class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+            >
+                <i class="fa-solid fa-newspaper w-8"></i> Publications
+            </a>
+            <a
+                    href="/subscriptions"
+                    class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+            >
+                <i class="fa-solid fa-ticket w-8"></i> Subscriptions
+            </a>
+            <a
+                    href="/profile"
+                    class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+            >
+                <i class="fa-solid fa-user-gear w-8"></i> Profile
+            </a>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-8 z-10">
+            <h1 class="text-xl font-bold text-slate-700">Vendor Management</h1>
+            <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">AU</div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-8">
+
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div class="relative w-full md:w-96">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                    </div>
+                    <input type="text" class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Search vendors...">
+                </div>
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-plus mr-2"></i> Add New Vendor
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                        <tr class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold border-b border-slate-200">
+                            <th class="px-6 py-4">ID</th>
+                            <th class="px-6 py-4">Vendor Name</th>
+                            <th class="px-6 py-4">Contact Person</th>
+                            <th class="px-6 py-4">Email / Phone</th>
+                            <th class="px-6 py-4">City</th>
+                            <th class="px-6 py-4 text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4">#V001</td>
+                            <td class="px-6 py-4 font-medium text-slate-800">Global Book Supply</td>
+                            <td class="px-6 py-4">Mr. Alex Johnson</td>
+                            <td class="px-6 py-4">
+                                <div class="text-xs">alex@globalbooks.com</div>
+                                <div class="text-slate-400 text-xs">+1 555-0123</div>
+                            </td>
+                            <td class="px-6 py-4">New York</td>
+                            <td class="px-6 py-4 text-center flex justify-center space-x-3">
+                                <button class="text-indigo-600 hover:text-indigo-800" title="View"><i class="fa-solid fa-eye"></i></button>
+                                <button class="text-amber-500 hover:text-amber-700" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="text-red-500 hover:text-red-700" title="Remove"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4">#V002</td>
+                            <td class="px-6 py-4 font-medium text-slate-800">EduTech Resources</td>
+                            <td class="px-6 py-4">Ms. Sarah Lee</td>
+                            <td class="px-6 py-4">
+                                <div class="text-xs">sales@edutech.com</div>
+                                <div class="text-slate-400 text-xs">+1 555-0987</div>
+                            </td>
+                            <td class="px-6 py-4">Boston</td>
+                            <td class="px-6 py-4 text-center flex justify-center space-x-3">
+                                <button class="text-indigo-600 hover:text-indigo-800" title="View"><i class="fa-solid fa-eye"></i></button>
+                                <button class="text-amber-500 hover:text-amber-700" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="text-red-500 hover:text-red-700" title="Remove"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+</body>
+</html>
