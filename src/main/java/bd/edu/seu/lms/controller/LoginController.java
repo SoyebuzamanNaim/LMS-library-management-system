@@ -36,6 +36,7 @@ public class LoginController {
         if (loginService.validateUser(loginDto.email(), loginDto.password())) {
 
             redirectAttributes.addFlashAttribute("success", session.getAttribute("user") + " logged in successfully");
+            redirectAttributes.addFlashAttribute("email", session.getAttribute("email"));
             return "redirect:/dashboard";
         }
         redirectAttributes.addFlashAttribute("loginError", "Invalid email or password");
