@@ -17,17 +17,22 @@
       >
         <div class="px-8 py-8 text-center">
           <h2 class="text-2xl font-bold text-slate-800">Create Account</h2>
-            <div
-            th:if="${signupError}" class="text-red-500">
-
-            </div>
+          <div th:if="${signupError}" class="text-red-500 text-sm font-bold" >
+            <p th:text="${signupError}"></p>
+          </div>
           <p class="text-slate-500 mt-2 text-sm">
             Join the library management system today.
           </p>
         </div>
 
         <div class="px-8 pb-8">
-          <form action="/signup" th:action="@{signup}" th:object="${signupdto}" method="post" class="space-y-5">
+          <form
+            action="/signup"
+            th:action="@{signup}"
+            th:object="${signupdto}"
+            method="post"
+            class="space-y-5"
+          >
             <div>
               <label class="block text-sm font-medium text-slate-700 mb-1"
                 >Full Name</label
@@ -93,8 +98,6 @@
                 />
               </div>
             </div>
-
-
 
             <button
               type="submit"
