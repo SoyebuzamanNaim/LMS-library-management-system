@@ -6,14 +6,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class BookController {
+public class AllotmentController {
 
-    @GetMapping("/books")
-    public String books(HttpSession session, Model model) {
+    @GetMapping("/allotment")
+    public String allotment(HttpSession session, Model model) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
         model.addAttribute("user", session.getAttribute("user"));
-        return "book";
+        return "allotment";
     }
 }
