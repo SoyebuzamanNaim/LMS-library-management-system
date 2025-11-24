@@ -14,6 +14,6 @@ public class StudentController {
             return "redirect:/login";
         }
         model.addAttribute("user", session.getAttribute("user"));
-        return "student";
+        return "students";
     }
 }

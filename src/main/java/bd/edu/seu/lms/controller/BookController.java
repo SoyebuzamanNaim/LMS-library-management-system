@@ -14,6 +14,6 @@ public class BookController {
             return "redirect:/login";
         }
         model.addAttribute("user", session.getAttribute("user"));
-        return "book";
+        return "books";
     }
 }

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendor Management - Libro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-slate-100 font-sans text-slate-800">
+    <div class="flex h-screen overflow-hidden">
+      <aside
+        class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl flex-shrink-0"
+      >
+        <div class="h-16 flex items-center px-6 border-b border-slate-800">
+          <i class="fa-solid fa-book-open text-indigo-500 text-2xl mr-3"></i>
+          <span class="text-lg font-bold">LibroSystem</span>
+        </div>
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <a
+            th:href="@{/dashboard}"
+            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+          >
+            <i class="fa-solid fa-chart-pie w-8"></i> Dashboard
+          </a>
+          <a
+            th:href="@{/books}"
+            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+          >
+            <i class="fa-solid fa-book w-8"></i> Books
+          </a>
+          <a
+            th:href="@{/students}"
+            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+          >
+            <i class="fa-solid fa-users w-8"></i> Students
+          </a>
+          <a
+            th:href="@{/allotment}"
+            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+          >
+            <i class="fa-solid fa-hand-holding-hand w-8"></i> Allotment
+          </a>
+          <a
+            th:href="@{/vendors}"
+            class="flex items-center px-3 py-2.5 bg-indigo-600 text-white rounded-lg"
+          >
+            <i class="fa-solid fa-shop w-8"></i> Vendors
+          </a>
+          <a
+            th:href="@{/publications}"
+            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+          >
+            <i class="fa-solid fa-newspaper w-8"></i> Publications
+          </a>
+          <a
+            th:href="@{/subscriptions}"
+            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+          >
+            <i class="fa-solid fa-ticket w-8"></i> Subscriptions
+          </a>
+          <a
+            th:href="@{/profile}"
+            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+          >
+            <i class="fa-solid fa-user-gear w-8"></i> Profile
+          </a>
+        </nav>
+      </aside>
+
+      <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <header
+          class="h-16 bg-white shadow-sm flex items-center justify-between px-8 z-10"
+        >
+          <h1 class="text-xl font-bold text-slate-700">Vendor Management</h1>
+          <div
+            class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
+          >
+            <span
+              th:text="${user != null ? (#strings.substring(user, 0, 1).toUpperCase()) : 'U'}"
+            ></span>
+          </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-8">
+          <!-- Success/Error Messages -->
+          <div
+            th:if="${success}"
+            class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700"
+            th:text="${success}"
+          ></div>
+          <div
+            th:if="${error}"
+            class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700"
+            th:text="${error}"
+          ></div>
+
+          <div
+            class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4"
+          >
+            <form
+              th:action="@{/vendors}"
+              method="get"
+              class="relative w-full md:w-96"
+            >
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+              </div>
+              <input
+                type="text"
+                name="search"
+                th:value="${search}"
+                class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Search vendors..."
+              />
+            </form>
+
+            <!-- Open the modal using ID.showModal() method -->
+            <button
+              class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30"
+              onclick="my_modal_5.showModal()"
+            >
+              <i class="fa-solid fa-plus mr-2"></i> Add New Vendor
+            </button>
+            <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+              <div class="modal-box">
+                <h3 class="text-lg font-bold">Add New Vendor</h3>
+                <form
+                  th:action="@{/vendors/save}"
+                  th:object="${vendordto}"
+                  method="post"
+                  class="space-y-4"
+                >
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1"
+                      >Vendor Name *</label
+                    >
+                    <input
+                      type="text"
+                      th:field="*{name}"
+                      class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="Enter vendor name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1"
+                      >Contact Person *</label
+                    >
+                    <input
+                      type="text"
+                      th:field="*{contactPerson}"
+                      class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="Enter contact person name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1"
+                      >Email *</label
+                    >
+                    <input
+                      type="email"
+                      th:field="*{email}"
+                      class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="Enter email address"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1"
+                      >Phone *</label
+                    >
+                    <input
+                      type="tel"
+                      th:field="*{phone}"
+                      class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="Enter phone number"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1"
+                      >Address</label
+                    >
+                    <input
+                      type="text"
+                      th:field="*{address}"
+                      class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="Enter address (optional)"
+                    />
+                  </div>
+                  <div class="modal-action">
+                    <button
+                      type="button"
+                      class="btn bg-slate-500 text-white p-3"
+                      onclick="my_modal_5.close()"
+                    >
+                      Cancel
+                    </button>
+                    <button type="submit" class="btn p-3 bg-indigo-600 text-white">
+                      Save Vendor
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </dialog>
+          </div>
+
+          <div
+            class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
+          >
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr
+                    class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold border-b border-slate-200"
+                  >
+                    <th class="px-6 py-4">ID</th>
+                    <th class="px-6 py-4">Vendor Name</th>
+                    <th class="px-6 py-4">Contact Person</th>
+                    <th class="px-6 py-4">Email / Phone</th>
+                    <th class="px-6 py-4">City</th>
+                    <th class="px-6 py-4 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                  <tr
+                    th:each="vendor : ${vendors}"
+                    class="hover:bg-slate-50 transition-colors"
+                  >
+                    <td class="px-6 py-4" th:text="'#' + ${vendor.id}">
+                      #V001
+                    </td>
+                    <td
+                      class="px-6 py-4 font-medium text-slate-800"
+                      th:text="${vendor.name}"
+                    >
+                      Vendor Name
+                    </td>
+                    <td class="px-6 py-4" th:text="${vendor.contactPerson}">
+                      Contact Person
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="text-xs" th:text="${vendor.email}">
+                        email@gmail.com
+                      </div>
+                      <div
+                        class="text-slate-400 text-xs"
+                        th:text="${vendor.phone}"
+                      >
+                        015XXXXXXXX
+                      </div>
+                    </td>
+                    <td class="px-6 py-4" th:text="${vendor.address}">
+                      Address
+                    </td>
+                    <td
+                      class="px-6 py-4 text-center flex justify-center space-x-3"
+                    >
+                      <!--th:attr is simply injecting the vendor values into custom HTML attributes, and
+                      showEditModal(this) reads them to populate the modal.-->
+                      <button
+                        class="text-indigo-600 hover:text-indigo-800"
+                        title="View"
+                        th:attr="data-id=${vendor.id}, data-name=${vendor.name}, data-contact=${vendor.contactPerson}, data-email=${vendor.email}, data-phone=${vendor.phone}, data-address=${vendor.address}"
+                        onclick="showViewModal(this)"
+                      >
+                        <i class="fa-solid fa-eye"></i>
+                      </button>
+                      <button
+                        class="text-amber-500 hover:text-amber-700"
+                        title="Edit"  
+                        th:attr="data-id=${vendor.id}, data-name=${vendor.name}, data-contact=${vendor.contactPerson}, data-email=${vendor.email}, data-phone=${vendor.phone}, data-address=${vendor.address}"
+                        onclick="showEditModal(this)"
+                      >
+                        <i class="fa-solid fa-pen-to-square"></i>
+                      </button>
+                      <form
+                        th:action="@{/vendors/delete}"
+                        method="post"
+                        style="display: inline"
+                        onsubmit="return confirm('Are you sure you want to delete this vendor?');"
+                      >
+                        <input
+                          type="hidden"
+                          name="id"
+                          th:value="${vendor.id}"
+                        />
+                        <button
+                          type="submit"
+                          class="text-red-500 hover:text-red-700"
+                          title="Remove"
+                        >
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <tr th:if="${vendors == null || vendors.isEmpty()}">
+                    <td
+                      colspan="6"
+                      class="px-6 py-4 text-center text-slate-500"
+                    >
+                      No vendors found
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Edit Vendor Modal -->
+    <dialog id="vendor_edit_modal" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Edit Vendor</h3>
+        <form th:action="@{/vendors/update}" method="post" class="space-y-4">
+          <input type="hidden" id="edit_vendor_id" name="id" />
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Vendor Name *</label
+            >
+            <input
+              type="text"
+              id="edit_vendor_name"
+              name="name"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Contact Person *</label
+            >
+            <input
+              type="text"
+              id="edit_vendor_contactPerson"
+              name="contactPerson"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Email *</label
+            >
+            <input
+              type="email"
+              id="edit_vendor_email"
+              name="email"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Phone *</label
+            >
+            <input
+              type="tel"
+              id="edit_vendor_phone"
+              name="phone"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Address</label
+            >
+            <input
+              type="text"
+              id="edit_vendor_address"
+              name="address"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            />
+          </div>
+          <div class="modal-action">
+            <button
+              type="button"
+              class="btn bg-slate-500 p-3 text-white "
+              onclick="vendor_edit_modal.close()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn p-3 bg-indigo-600 text-white">
+              Update Vendor
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- View Vendor Modal -->
+    <dialog id="vendor_view_modal" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">View Vendor Details</h3>
+        <div class="space-y-3 py-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700">ID</label>
+            <p class="text-slate-800" id="view_vendor_id"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Vendor Name</label
+            >
+            <p class="text-slate-800" id="view_vendor_name"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Contact Person</label
+            >
+            <p class="text-slate-800" id="view_vendor_contactPerson"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Email</label
+            >
+            <p class="text-slate-800" id="view_vendor_email"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Phone</label
+            >
+            <p class="text-slate-800" id="view_vendor_phone"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700"
+              >Address</label
+            >
+            <p class="text-slate-800" id="view_vendor_address"></p>
+          </div>
+        </div>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn bg-red-500 text-white p-3">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <script>
+      function showViewModal(button) {
+        document.getElementById("view_vendor_id").textContent =
+          "#" + button.getAttribute("data-id");
+        document.getElementById("view_vendor_name").textContent =
+          button.getAttribute("data-name");
+        document.getElementById("view_vendor_contactPerson").textContent =
+          button.getAttribute("data-contact");
+        document.getElementById("view_vendor_email").textContent =
+          button.getAttribute("data-email");
+        document.getElementById("view_vendor_phone").textContent =
+          button.getAttribute("data-phone");
+        document.getElementById("view_vendor_address").textContent =
+          button.getAttribute("data-address");
+        vendor_view_modal.showModal();
+      }
+
+      function showEditModal(button) {
+        document.getElementById("edit_vendor_id").value =
+          button.getAttribute("data-id");
+        document.getElementById("edit_vendor_name").value =
+          button.getAttribute("data-name");
+        document.getElementById("edit_vendor_contactPerson").value =
+          button.getAttribute("data-contact");
+        document.getElementById("edit_vendor_email").value =
+          button.getAttribute("data-email");
+        document.getElementById("edit_vendor_phone").value =
+          button.getAttribute("data-phone");
+        document.getElementById("edit_vendor_address").value =
+          button.getAttribute("data-address") || "";
+        vendor_edit_modal.showModal();
+      }
+    </script>
+  </body>
+</html>

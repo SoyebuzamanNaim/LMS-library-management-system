@@ -14,6 +14,6 @@ public class PublicationController {
             return "redirect:/login";
         }
         model.addAttribute("user", session.getAttribute("user"));
-        return "publication";
+        return "publications";
     }
 }

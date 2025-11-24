@@ -14,6 +14,6 @@ public class AllotmentController {
             return "redirect:/login";
         }
         model.addAttribute("user", session.getAttribute("user"));
-        return "allotment";
+        return "allotments";
     }
 }
