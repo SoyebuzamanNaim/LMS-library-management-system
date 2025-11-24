@@ -58,15 +58,24 @@ public class BookController {
             if (bookDto.totalCopies() == null || bookDto.totalCopies() < 0) {
                 throw new IllegalArgumentException("Total copies must be a positive number");
             }
+            if (bookDto.availableCopies() == null || bookDto.availableCopies() < 0) {
+                throw new IllegalArgumentException("Available copies must be a positive number");
+            }
+            if (bookDto.pricePerCopy() == null || bookDto.pricePerCopy() < 0) {
+                throw new IllegalArgumentException("Price per copy must be a positive number");
+            }
+            if (bookDto.publicationId() == null || bookDto.publicationId().trim().equals("")) {
+                throw new IllegalArgumentException("Publication is required");
+            }
+            if (bookDto.vendorId() == null || bookDto.vendorId().trim().equals("")) {
+                throw new IllegalArgumentException("Vendor is required");
+            }
 
             Book book = new Book();
             book.setTitle(bookDto.title());
             book.setAuthor(bookDto.author());
-            book.setPublicationId(bookDto.publicationId() != null && !bookDto.publicationId().trim().equals("")
-                    ? bookDto.publicationId()
-                    : null);
-            book.setVendorId(
-                    bookDto.vendorId() != null && !bookDto.vendorId().trim().equals("") ? bookDto.vendorId() : null);
+            book.setPublicationId(bookDto.publicationId());
+            book.setVendorId(bookDto.vendorId());
             book.setCategory(bookDto.category());
             book.setTotalCopies(bookDto.totalCopies() != null ? bookDto.totalCopies() : 0);
             book.setAvailableCopies(
@@ -105,15 +114,27 @@ public class BookController {
             if (bookDto.category() == null || bookDto.category().trim().equals("")) {
                 throw new IllegalArgumentException("Category is required");
             }
+            if (bookDto.totalCopies() == null || bookDto.totalCopies() < 0) {
+                throw new IllegalArgumentException("Total copies must be a positive number");
+            }
+            if (bookDto.availableCopies() == null || bookDto.availableCopies() < 0) {
+                throw new IllegalArgumentException("Available copies must be a positive number");
+            }
+            if (bookDto.pricePerCopy() == null || bookDto.pricePerCopy() < 0) {
+                throw new IllegalArgumentException("Price per copy must be a positive number");
+            }
+            if (bookDto.publicationId() == null || bookDto.publicationId().trim().equals("")) {
+                throw new IllegalArgumentException("Publication is required");
+            }
+            if (bookDto.vendorId() == null || bookDto.vendorId().trim().equals("")) {
+                throw new IllegalArgumentException("Vendor is required");
+            }
 
             Book book = new Book();
             book.setTitle(bookDto.title());
             book.setAuthor(bookDto.author());
-            book.setPublicationId(bookDto.publicationId() != null && !bookDto.publicationId().trim().equals("")
-                    ? bookDto.publicationId()
-                    : null);
-            book.setVendorId(
-                    bookDto.vendorId() != null && !bookDto.vendorId().trim().equals("") ? bookDto.vendorId() : null);
+            book.setPublicationId(bookDto.publicationId());
+            book.setVendorId(bookDto.vendorId());
             book.setCategory(bookDto.category());
             book.setTotalCopies(bookDto.totalCopies() != null ? bookDto.totalCopies() : 0);
             book.setAvailableCopies(bookDto.availableCopies() != null ? bookDto.availableCopies() : 0);

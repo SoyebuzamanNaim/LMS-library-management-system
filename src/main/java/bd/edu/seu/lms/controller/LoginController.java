@@ -20,9 +20,7 @@ public class LoginController {
 
     @GetMapping({ "/", "/login" })
     public String login(Model model, HttpSession session) {
-        if (session.getAttribute("user") != null) {
-            return "redirect:/dashboard";
-        }
+
         if (!model.containsAttribute("logindto")) {
             model.addAttribute("logindto", new LoginDto("", ""));
         }

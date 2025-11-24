@@ -12,10 +12,11 @@ public class PublicationService {
     private long ind = 1;
 
     public void savePublication(Publication publication) {
-        if (publications.stream().anyMatch(p -> p.getId().equals(publication.getId()))) {
+        if (publication.getId() != null && publications.stream().anyMatch(p -> p.getId().equals(publication.getId()))) {
             throw new IllegalArgumentException("Publication already exists");
         }
-        if (publications.stream().anyMatch(p -> p.getName().equals(publication.getName()))) {
+        if (publication.getName() != null && publications.stream()
+                .anyMatch(p -> p.getName() != null && p.getName().equalsIgnoreCase(publication.getName()))) {
             throw new IllegalArgumentException("Publication with this name already exists");
         }
         publication.setId(Long.toString(ind++));
@@ -26,10 +27,15 @@ public class PublicationService {
         if (!publications.stream().anyMatch(p -> p.getId().equals(id))) {
             throw new IllegalArgumentException("Publication not found");
         }
-        publications.stream().filter(p -> p.getId().equals(id)).findFirst()
-                .ifPresent(p -> p.setName(publication.getName()));
-        publications.stream().filter(p -> p.getId().equals(id)).findFirst()
-                .ifPresent(p -> p.setAddress(publication.getAddress()));
+        // Check for duplicate name (excluding the current publication being updated)
+        if (publication.getName() != null && publications.stream().anyMatch(p -> !p.getId().equals(id)
+                && p.getName() != null && p.getName().equalsIgnoreCase(publication.getName()))) {
+            throw new IllegalArgumentException("Publication with this name already exists");
+        }
+        publications.stream().filter(p -> p.getId().equals(id)).findFirst().ifPresent(p -> {
+            p.setName(publication.getName());
+            p.setAddress(publication.getAddress());
+        });
     }
 
     public void deletePublication(String id) {
