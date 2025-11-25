@@ -7,6 +7,7 @@ import bd.edu.seu.lms.model.Student;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -67,6 +68,7 @@ public class AllotmentService {
         if (allotment.getStatus() == null || allotment.getStatus().trim().equals("")) {
             allotment.setStatus("Active");
         }
+        allotment.setFineAmount(calculateFine(allotment.getIssueDate(), allotment.getReturnDate()));
         allotments.add(allotment);
 
         int copies = book.getAvailableCopies();
@@ -87,7 +89,7 @@ public class AllotmentService {
         existing.setIssueDate(allotment.getIssueDate());
         existing.setReturnDate(allotment.getReturnDate());
         existing.setStatus(allotment.getStatus());
-        existing.setFineAmount(allotment.getFineAmount());
+        existing.setFineAmount(calculateFine(allotment.getIssueDate(), allotment.getReturnDate()));
     }
 
     public void deleteAllotment(String id) {
@@ -167,9 +169,22 @@ public class AllotmentService {
             allotment.setIssueDate(LocalDate.now().minusDays(i * 2L));
             allotment.setReturnDate(allotment.getIssueDate().plusDays(14));
             allotment.setStatus("Active");
-            allotment.setFineAmount(0.0);
+            allotment.setFineAmount(calculateFine(allotment.getIssueDate(), allotment.getReturnDate()));
             allotments.add(allotment);
         }
+    }
+
+    public double calculateFine(LocalDate today, LocalDate returnDate) {
+        if (today == null) {
+            return 0.0;
+        }
+        LocalDate todayDate = LocalDate.now();
+       if (todayDate.isBefore(today)) {
+            return 0.0;
+        }
+        long daysHeld = ChronoUnit.DAYS.between(todayDate, returnDate);
+        long overdueDays = Math.max(0, daysHeld - 7);
+        return overdueDays * 20.0;
     }
 
 }

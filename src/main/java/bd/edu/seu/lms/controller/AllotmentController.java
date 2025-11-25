@@ -73,7 +73,8 @@ public class AllotmentController {
             allotment.setIssueDate(allotmentDto.issueDate());
             allotment.setReturnDate(allotmentDto.returnDate());
             allotment.setStatus(allotmentDto.status());
-            allotment.setFineAmount(allotmentDto.fineAmount());
+            allotment
+                    .setFineAmount(allotmentService.calculateFine(allotment.getIssueDate(), allotment.getReturnDate()));
             allotmentService.saveAllotment(allotment);
             redirectAttributes.addFlashAttribute("success", "Allotment created successfully");
         } catch (IllegalArgumentException e) {
@@ -94,7 +95,8 @@ public class AllotmentController {
             allotment.setIssueDate(allotmentDto.issueDate());
             allotment.setReturnDate(allotmentDto.returnDate());
             allotment.setStatus(allotmentDto.status());
-            allotment.setFineAmount(allotmentDto.fineAmount());
+            allotment
+                    .setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate(), allotmentDto.returnDate()));
             allotmentService.updateAllotment(id, allotment);
             redirectAttributes.addFlashAttribute("success", "Allotment updated successfully");
         } catch (IllegalArgumentException e) {
