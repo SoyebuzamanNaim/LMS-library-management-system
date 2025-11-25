@@ -16,7 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
+import java.util.ArrayList;
+
 
 @Controller
 public class DashboardController {
@@ -45,11 +46,11 @@ public class DashboardController {
             return "redirect:/login";
         }
 
-        List<Book> books = bookService.getAllBooks();
-        List<Student> students = studentService.getAllStudents();
-        List<Allotment> allotments = allotmentService.getAllAllotments();
-        List<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
-        List<Vendor> vendors = vendorService.getAllVendors();
+        ArrayList<Book> books = bookService.getAllBooks();
+        ArrayList<Student> students = studentService.getAllStudents();
+        ArrayList<Allotment> allotments = allotmentService.getAllAllotments();
+        ArrayList<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
+        ArrayList<Vendor> vendors = vendorService.getAllVendors();
 
         long issuedBooks = allotments.stream()
                 .filter(a -> a.getStatus() != null && a.getStatus().equalsIgnoreCase("Active"))
@@ -60,6 +61,7 @@ public class DashboardController {
 
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("totalBooks", books.size());
+//        model.addAttribute(("totalAvailableBook"),);
         model.addAttribute("totalStudents", students.size());
         model.addAttribute("issuedBooks", issuedBooks);
         model.addAttribute("activeSubscriptions", activeSubscriptions);

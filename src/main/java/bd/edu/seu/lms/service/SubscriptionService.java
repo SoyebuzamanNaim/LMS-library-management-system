@@ -57,10 +57,7 @@ public class SubscriptionService {
 
     public void updateSubscription(String id, Subscription subscription) {
         // Check if the student already has an subscription
-        if (subscriptions.stream()
-                .anyMatch(s -> s.getStudentId().equals(subscription.getStudentId()))) {
-            throw new IllegalArgumentException("This student already has an  subscription");
-        }
+
 
         if (id == null || id.trim().equals("")) {
             throw new IllegalArgumentException("Subscription ID is required");
