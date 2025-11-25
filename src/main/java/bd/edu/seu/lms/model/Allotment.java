@@ -19,5 +19,5 @@ public class Allotment {
     private LocalDate returnDate;
     private String status; // Active, Returned
     private Double fineAmount;
-    
+
 }

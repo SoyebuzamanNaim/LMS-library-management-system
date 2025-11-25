@@ -22,8 +22,8 @@ public class SignupController {
 
     @GetMapping("/signup")
     public String signup(Model model, HttpSession session) {
-        if(session.getAttribute("user") != null){
-            return  "redirect:/dashboard";
+        if (session.getAttribute("user") != null) {
+            return "redirect:/dashboard";
         }
         model.addAttribute("signupdto", new SignupDto("", "", ""));
         return "signup";
@@ -31,7 +31,7 @@ public class SignupController {
 
     @PostMapping("/signup")
     public String signup(@ModelAttribute("signupdto") SignupDto signupdto,
-            RedirectAttributes redirectAttributes , HttpSession session) {
+            RedirectAttributes redirectAttributes, HttpSession session) {
         try {
             signupService.saveUser(new User(signupdto.username(), signupdto.email(), signupdto.password()));
             session.setAttribute("user", signupdto.username());

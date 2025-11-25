@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 
-
 @Controller
 public class DashboardController {
 
@@ -61,7 +60,7 @@ public class DashboardController {
 
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("totalBooks", books.size());
-//        model.addAttribute(("totalAvailableBook"),);
+        // model.addAttribute(("totalAvailableBook"),);
         model.addAttribute("totalStudents", students.size());
         model.addAttribute("issuedBooks", issuedBooks);
         model.addAttribute("activeSubscriptions", activeSubscriptions);
