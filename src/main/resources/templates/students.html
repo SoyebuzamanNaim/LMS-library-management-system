@@ -93,9 +93,24 @@
 
         <main class="flex-1 overflow-y-auto p-8">
           <div
+            th:if="${success}"
+            class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700"
+            th:text="${success}"
+          ></div>
+          <div
+            th:if="${error}"
+            class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700"
+            th:text="${error}"
+          ></div>
+
+          <div
             class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4"
           >
-            <div class="relative w-full md:w-96">
+            <form
+              th:action="@{/students}"
+              method="get"
+              class="relative w-full md:w-96"
+            >
               <div
                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
               >
@@ -103,10 +118,12 @@
               </div>
               <input
                 type="text"
+                name="search"
+                th:value="${search}"
                 class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 placeholder="Search students..."
               />
-            </div>
+            </form>
             <!-- Open the modal using ID.showModal() method -->
             <button
               class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30"
@@ -134,61 +151,40 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">#S-2023001</td>
+                  <tr
+                    th:each="student : ${students}"
+                    class="hover:bg-slate-50 transition-colors"
+                  >
+                    <td class="px-6 py-4" th:text="'#S-' + ${student.roll}">
+                      #S-2023001
+                    </td>
                     <td class="px-6 py-4">
-                      <div class="font-medium text-slate-800">
+                      <div class="font-medium text-slate-800" th:text="${student.name}">
                         Johnathan Doe
                       </div>
                     </td>
-                    <td class="px-6 py-4">Computer Science</td>
+                    <td class="px-6 py-4" th:text="${student.department}">
+                      Computer Science
+                    </td>
                     <td class="px-6 py-4">
-                      <div class="text-xs">john.doe@uni.edu</div>
-                      <div class="text-slate-400 text-xs">+1 555-0199</div>
+                      <div class="text-xs" th:text="${student.email}">
+                        john.doe@uni.edu
+                      </div>
+                      <div
+                        class="text-slate-400 text-xs"
+                        th:text="${student.phone != null and !student.phone.isEmpty() ? student.phone : 'N/A'}"
+                      >
+                        +1 555-0199
+                      </div>
                     </td>
                     <td class="px-6 py-4">
                       <span
+                        th:if="${student.status == 'Active'}"
                         class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700"
                         >Active</span
                       >
-                    </td>
-                    <td
-                      class="px-6 py-4 text-center flex justify-center space-x-3"
-                    >
-                      <button
-                        class="text-indigo-600 hover:text-indigo-800"
-                        title="View"
-                        onclick="student_view_modal.showModal()"
-                      >
-                        <i class="fa-solid fa-eye"></i>
-                      </button>
-                      <button
-                        class="text-amber-500 hover:text-amber-700"
-                        title="Edit"
-                        onclick="student_edit_modal.showModal()"
-                      >
-                        <i class="fa-solid fa-pen-to-square"></i>
-                      </button>
-                      <button
-                        class="text-red-500 hover:text-red-700"
-                        title="Remove"
-                      >
-                        <i class="fa-solid fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">#S-2023002</td>
-                    <td class="px-6 py-4">
-                      <div class="font-medium text-slate-800">Emily Blunt</div>
-                    </td>
-                    <td class="px-6 py-4">History Dept</td>
-                    <td class="px-6 py-4">
-                      <div class="text-xs">emily.b@uni.edu</div>
-                      <div class="text-slate-400 text-xs">+1 555-2244</div>
-                    </td>
-                    <td class="px-6 py-4">
                       <span
+                        th:if="${student.status == 'Suspended'}"
                         class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700"
                         >Suspended</span
                       >
@@ -199,23 +195,46 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        onclick="student_view_modal.showModal()"
+                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phone=${student.phone != null ? student.phone : 'N/A'}, data-status=${student.status}"
+                        onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
                       </button>
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        onclick="student_edit_modal.showModal()"
+                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phone=${student.phone != null ? student.phone : ''}, data-status=${student.status}"
+                        onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
                       </button>
-                      <button
-                        class="text-red-500 hover:text-red-700"
-                        title="Remove"
+                      <form
+                        th:action="@{/students/delete}"
+                        method="post"
+                        style="display: inline"
+                        onsubmit="return confirm('Are you sure you want to delete this student?');"
                       >
-                        <i class="fa-solid fa-trash"></i>
-                      </button>
+                        <input
+                          type="hidden"
+                          name="id"
+                          th:value="${student.id}"
+                        />
+                        <button
+                          type="submit"
+                          class="text-red-500 hover:text-red-700"
+                          title="Remove"
+                        >
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <tr th:if="${students == null || students.isEmpty()}">
+                    <td
+                      colspan="6"
+                      class="px-6 py-4 text-center text-slate-500"
+                    >
+                      No students found
                     </td>
                   </tr>
                 </tbody>
@@ -230,12 +249,97 @@
     <dialog id="student_add_modal" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box">
         <h3 class="text-lg font-bold">Add New Student</h3>
-        <p class="py-4">Press ESC key or click the button below to close</p>
-        <div class="modal-action">
-          <form method="dialog">
-            <button class="btn bg-red-500 text-white p-3">Close</button>
-          </form>
-        </div>
+        <form
+          th:action="@{/students/save}"
+          th:object="${studentdto}"
+          method="post"
+          class="space-y-4"
+        >
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Full Name *</label
+            >
+            <input
+              type="text"
+              th:field="*{name}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter full name"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Roll Number *</label
+            >
+            <input
+              type="text"
+              th:field="*{roll}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter roll number"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Department *</label
+            >
+            <input
+              type="text"
+              th:field="*{department}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter department"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Email *</label
+            >
+            <input
+              type="email"
+              th:field="*{email}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter email"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Phone</label
+            >
+            <input
+              type="text"
+              th:field="*{phone}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter phone number"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Status *</label
+            >
+            <select
+              th:field="*{status}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              required
+            >
+              <option value="Active">Active</option>
+              <option value="Suspended">Suspended</option>
+            </select>
+          </div>
+          <div class="modal-action">
+            <button
+              type="button"
+              class="p-3 btn bg-slate-500 text-white"
+              onclick="student_add_modal.close()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="p-3 btn bg-indigo-600 text-white">
+              Save Student
+            </button>
+          </div>
+        </form>
       </div>
     </dialog>
 
@@ -243,12 +347,103 @@
     <dialog id="student_edit_modal" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box">
         <h3 class="text-lg font-bold">Edit Student</h3>
-        <p class="py-4">Press ESC key or click the button below to close</p>
-        <div class="modal-action">
-          <form method="dialog">
-            <button class="btn bg-red-500 text-white p-3">Close</button>
-          </form>
-        </div>
+        <form
+          th:action="@{/students/update}"
+          method="post"
+          class="space-y-4"
+        >
+          <input type="hidden" id="edit_student_id" name="id" />
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Full Name *</label
+            >
+            <input
+              type="text"
+              id="edit_student_name"
+              name="name"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter full name"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Roll Number *</label
+            >
+            <input
+              type="text"
+              id="edit_student_roll"
+              name="roll"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter roll number"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Department *</label
+            >
+            <input
+              type="text"
+              id="edit_student_department"
+              name="department"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter department"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Email *</label
+            >
+            <input
+              type="email"
+              id="edit_student_email"
+              name="email"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter email"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Phone</label
+            >
+            <input
+              type="text"
+              id="edit_student_phone"
+              name="phone"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              placeholder="Enter phone number"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Status *</label
+            >
+            <select
+              id="edit_student_status"
+              name="status"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              required
+            >
+              <option value="Active">Active</option>
+              <option value="Suspended">Suspended</option>
+            </select>
+          </div>
+          <div class="modal-action">
+            <button
+              type="button"
+              class="p-3 btn bg-slate-500 text-white"
+              onclick="student_edit_modal.close()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="p-3 btn bg-indigo-600 text-white">
+              Update Student
+            </button>
+          </div>
+        </form>
       </div>
     </dialog>
 
@@ -256,13 +451,88 @@
     <dialog id="student_view_modal" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box">
         <h3 class="text-lg font-bold">View Student Details</h3>
-        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div class="space-y-4 mt-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1"
+              >Full Name</label
+            >
+            <p class="text-slate-800 font-medium" id="view_student_name">
+              -
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1"
+              >Roll Number</label
+            >
+            <p class="text-slate-800" id="view_student_roll">-</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1"
+              >Department</label
+            >
+            <p class="text-slate-800" id="view_student_department">-</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1"
+              >Email</label
+            >
+            <p class="text-slate-800" id="view_student_email">-</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1"
+              >Phone</label
+            >
+            <p class="text-slate-800" id="view_student_phone">-</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1"
+              >Status</label
+            >
+            <p class="text-slate-800" id="view_student_status">-</p>
+          </div>
+        </div>
         <div class="modal-action">
           <form method="dialog">
-            <button class="btn bg-red-500 text-white p-3">Close</button>
+            <button class="p-3 btn bg-slate-500 text-white">Close</button>
           </form>
         </div>
       </div>
     </dialog>
+
+    <script>
+      function showViewModal(button) {
+        document.getElementById("view_student_name").textContent =
+          button.getAttribute("data-name") || "-";
+        document.getElementById("view_student_roll").textContent =
+          button.getAttribute("data-roll") || "-";
+        document.getElementById("view_student_department").textContent =
+          button.getAttribute("data-department") || "-";
+        document.getElementById("view_student_email").textContent =
+          button.getAttribute("data-email") || "-";
+        document.getElementById("view_student_phone").textContent =
+          button.getAttribute("data-phone") || "-";
+        document.getElementById("view_student_status").textContent =
+          button.getAttribute("data-status") || "-";
+        student_view_modal.showModal();
+      }
+
+      function showEditModal(button) {
+        document.getElementById("edit_student_id").value =
+          button.getAttribute("data-id");
+        document.getElementById("edit_student_name").value =
+          button.getAttribute("data-name");
+        document.getElementById("edit_student_roll").value =
+          button.getAttribute("data-roll");
+        document.getElementById("edit_student_department").value =
+          button.getAttribute("data-department");
+        document.getElementById("edit_student_email").value =
+          button.getAttribute("data-email");
+        document.getElementById("edit_student_phone").value =
+          button.getAttribute("data-phone") || "";
+        document.getElementById("edit_student_status").value =
+          button.getAttribute("data-status");
+        student_edit_modal.showModal();
+      }
+    </script>
   </body>
 </html>
