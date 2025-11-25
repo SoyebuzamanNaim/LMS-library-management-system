@@ -94,6 +94,9 @@ public class StudentService {
     public Student getStudentById(String id) {
         return students.stream().filter(s -> s.getId().equals(id)).findFirst().orElse(null);
     }
+    public Student getStudentByRoll(String roll) {
+        return students.stream().filter(s -> s.getRoll().equals(roll)).findFirst().orElse(null);
+    }
 
     public ArrayList<Student> searchStudents(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
