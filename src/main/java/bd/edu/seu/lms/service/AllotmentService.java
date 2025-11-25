@@ -174,17 +174,26 @@ public class AllotmentService {
         }
     }
 
-    public double calculateFine(LocalDate today, LocalDate returnDate) {
-        if (today == null) {
+    public double calculateFine(LocalDate issueDate, LocalDate plannedReturnDate) {
+        if (issueDate == null) {
             return 0.0;
         }
-        LocalDate todayDate = LocalDate.now();
-       if (todayDate.isBefore(today)) {
+
+        LocalDate today = LocalDate.now();
+        if (today.isBefore(issueDate)) {
             return 0.0;
         }
-        long daysHeld = ChronoUnit.DAYS.between(todayDate, returnDate);
-        long overdueDays = Math.max(0, daysHeld - 7);
-        return overdueDays * 20.0;
+
+        LocalDate dueDate = plannedReturnDate != null ? plannedReturnDate : issueDate.plusDays(14);
+        if (!today.isAfter(dueDate)) {
+            return 0.0;
+        }
+
+        long overdueDays = ChronoUnit.DAYS.between(dueDate, today);
+        if (overdueDays <= 7) {
+            return 0.0;
+        }
+        return (overdueDays - 7) * 20.0;
     }
 
 }
