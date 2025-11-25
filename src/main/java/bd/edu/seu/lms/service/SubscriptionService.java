@@ -47,9 +47,9 @@ public class SubscriptionService {
         }
 
         subscription.setId(Long.toString(ind++));
-        // Auto-calculate end date as start date + 14 days
+        // Auto-calculate end date as start date + 30 days
         if (subscription.getEndDate() == null) {
-            subscription.setEndDate(subscription.getStartDate().plusDays(14));
+            subscription.setEndDate(subscription.getStartDate().plusDays(30));
         }
         subscription.setStatus(calculateStatus(subscription.getEndDate()));
         subscriptions.add(subscription);
@@ -92,8 +92,8 @@ public class SubscriptionService {
             s.setStudentId(subscription.getStudentId());
             s.setType(subscription.getType());
             s.setStartDate(subscription.getStartDate());
-            // Auto-calculate end date as start date + 14 days
-            s.setEndDate(subscription.getStartDate().plusDays(14));
+            // Auto-calculate end date as start date + 30 days
+            s.setEndDate(subscription.getStartDate().plusDays(30));
             s.setStatus(calculateStatus(s.getEndDate()));
         });
     }
@@ -152,7 +152,6 @@ public class SubscriptionService {
             return;
         }
 
-        // Create subscriptions for first few students
 
         for (int i = 0; i < 4; i++) {
             Subscription subscription = new Subscription();
@@ -160,7 +159,7 @@ public class SubscriptionService {
             subscription.setStudentId(students.get(i).getId());
             subscription.setType(i == 0 ? "Premium" : (i == 1 ? "Standard" : "Basic"));
             subscription.setStartDate(LocalDate.now().minusDays(i * 5)); // Different start dates
-            subscription.setEndDate(subscription.getStartDate().plusDays(14));
+            subscription.setEndDate(subscription.getStartDate().plusDays(30));
             subscription.setStatus(calculateStatus(subscription.getEndDate()));
             subscriptions.add(subscription);
         }

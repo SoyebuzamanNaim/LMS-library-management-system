@@ -40,7 +40,7 @@ public class SubscriptionController {
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("students", studentService.getAllStudents());
         model.addAttribute("subscriptiondto",
-                new SubscriptionDto("", "Standard", LocalDate.now(), LocalDate.now().plusDays(14), "Active"));
+                new SubscriptionDto("", "Standard", LocalDate.now(), LocalDate.now().plusDays(30), "Active"));
         return "subscription";
     }
 

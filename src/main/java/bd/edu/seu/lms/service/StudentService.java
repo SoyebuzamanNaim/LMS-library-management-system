@@ -94,6 +94,7 @@ public class StudentService {
     public Student getStudentById(String id) {
         return students.stream().filter(s -> s.getId().equals(id)).findFirst().orElse(null);
     }
+
     public Student getStudentByRoll(String roll) {
         return students.stream().filter(s -> s.getRoll().equals(roll)).findFirst().orElse(null);
     }
@@ -168,5 +169,35 @@ public class StudentService {
         s5.setPhone("015XXXXXXXX");
         s5.setStatus("Inactive");
         students.add(s5);
+
+        Student s6 = new Student();
+        s6.setId(Long.toString(ind++));
+        s6.setName("Hamza Ismail");
+        s6.setRoll("2023200001006");
+        s6.setDepartment("Mechanical Engineering");
+        s6.setEmail("hamzaismail@gmail.com");
+        s6.setPhone("01510000006");
+        s6.setStatus("Inactive");
+        students.add(s6);
+
+        Student s7 = new Student();
+        s7.setId(Long.toString(ind++));
+        s7.setName("Fahim Uddin");
+        s7.setRoll("2023200001007");
+        s7.setDepartment("Computer Science");
+        s7.setEmail("fahimuddin@gmail.com");
+        s7.setPhone("01510000007");
+        s7.setStatus("Active");
+        students.add(s7);
+
+        Student s8 = new Student();
+        s8.setId(Long.toString(ind++));
+        s8.setName("Abdullah Islam");
+        s8.setRoll("2023200001008");
+        s8.setDepartment("Computer Science");
+        s8.setEmail("abdullahislam@gmail.com");
+        s8.setPhone("01510000008");
+        s8.setStatus("Inactive");
+        students.add(s8);
     }
 }
