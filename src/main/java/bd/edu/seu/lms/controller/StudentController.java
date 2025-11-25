@@ -36,28 +36,17 @@ public class StudentController {
     }
 
     @PostMapping("/students/save")
-    public String saveStudent(@ModelAttribute("studentdto") StudentDto studentDto, RedirectAttributes redirectAttributes) {
+    public String saveStudent(@ModelAttribute("studentdto") StudentDto studentDto,
+            RedirectAttributes redirectAttributes) {
         try {
-            if (studentDto.name() == null || studentDto.name().trim().equals("")) {
-                throw new IllegalArgumentException("Name is required");
-            }
-            if (studentDto.roll() == null || studentDto.roll().trim().equals("")) {
-                throw new IllegalArgumentException("Roll number is required");
-            }
-            if (studentDto.department() == null || studentDto.department().trim().equals("")) {
-                throw new IllegalArgumentException("Department is required");
-            }
-            if (studentDto.email() == null || studentDto.email().trim().equals("")) {
-                throw new IllegalArgumentException("Email is required");
-            }
 
             Student student = new Student();
             student.setName(studentDto.name());
             student.setRoll(studentDto.roll());
             student.setDepartment(studentDto.department());
             student.setEmail(studentDto.email());
-            student.setPhone(studentDto.phone() != null ? studentDto.phone() : "");
-            student.setStatus(studentDto.status() != null && !studentDto.status().trim().equals("") ? studentDto.status() : "Active");
+            student.setPhone(studentDto.phone());
+            student.setStatus(studentDto.status());
             studentService.saveStudent(student);
             redirectAttributes.addFlashAttribute("success", "Student added successfully");
             return "redirect:/students";
@@ -68,22 +57,11 @@ public class StudentController {
     }
 
     @PostMapping("/students/update")
-    public String updateStudent(@ModelAttribute StudentDto studentDto, String id, RedirectAttributes redirectAttributes) {
+    public String updateStudent(@ModelAttribute StudentDto studentDto, String id,
+            RedirectAttributes redirectAttributes) {
         try {
             if (id == null || id.trim().equals("")) {
                 throw new IllegalArgumentException("Student ID is required");
-            }
-            if (studentDto.name() == null || studentDto.name().trim().equals("")) {
-                throw new IllegalArgumentException("Name is required");
-            }
-            if (studentDto.roll() == null || studentDto.roll().trim().equals("")) {
-                throw new IllegalArgumentException("Roll number is required");
-            }
-            if (studentDto.department() == null || studentDto.department().trim().equals("")) {
-                throw new IllegalArgumentException("Department is required");
-            }
-            if (studentDto.email() == null || studentDto.email().trim().equals("")) {
-                throw new IllegalArgumentException("Email is required");
             }
 
             Student student = new Student();
@@ -92,7 +70,9 @@ public class StudentController {
             student.setDepartment(studentDto.department());
             student.setEmail(studentDto.email());
             student.setPhone(studentDto.phone() != null ? studentDto.phone() : "");
-            student.setStatus(studentDto.status() != null && !studentDto.status().trim().equals("") ? studentDto.status() : "Active");
+            student.setStatus(
+                    studentDto.status() != null && !studentDto.status().trim().equals("") ? studentDto.status()
+                            : "Active");
             studentService.updateStudent(id, student);
             redirectAttributes.addFlashAttribute("success", "Student updated successfully");
             return "redirect:/students";

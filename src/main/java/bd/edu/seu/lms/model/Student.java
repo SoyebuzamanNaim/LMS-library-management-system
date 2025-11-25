@@ -16,5 +16,5 @@ public class Student {
     private String department;
     private String email;
     private String phone;
-    private String status; // Active, Suspended
+    private String status; // Active, Inactive
 }
