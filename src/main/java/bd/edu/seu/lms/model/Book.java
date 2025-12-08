@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Book {
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private String title;
