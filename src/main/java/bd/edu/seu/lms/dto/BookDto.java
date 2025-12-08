@@ -3,11 +3,11 @@ package bd.edu.seu.lms.dto;
 public record BookDto(
                 String title,
                 String author,
-                String publicationId,
-                String vendorId,
+                Integer publicationId,
+                Integer vendorId,
                 String category,
-                Integer totalCopies,
-                Integer availableCopies,
+                int totalCopies,
+                int availableCopies,
                 Double pricePerCopy,
                 String status,
                 String description) {

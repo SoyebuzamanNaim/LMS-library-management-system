@@ -39,7 +39,14 @@ public class StudentController {
     public String saveStudent(@ModelAttribute("studentdto") StudentDto studentDto,
             RedirectAttributes redirectAttributes) {
         try {
-
+            if (studentDto.name() == null || studentDto.name().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Name is required");
+                return "redirect:/students";
+            }
+            if (studentDto.roll() == null || studentDto.roll().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Roll is required");
+                return "redirect:/students";
+            }
             Student student = new Student();
             student.setName(studentDto.name());
             student.setRoll(studentDto.roll());
@@ -49,21 +56,24 @@ public class StudentController {
             student.setStatus(studentDto.status());
             studentService.saveStudent(student);
             redirectAttributes.addFlashAttribute("success", "Student added successfully");
-            return "redirect:/students";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/students";
         }
+        return "redirect:/students";
     }
 
     @PostMapping("/students/update")
-    public String updateStudent(@ModelAttribute StudentDto studentDto, String id,
+    public String updateStudent(@ModelAttribute StudentDto studentDto, int id,
             RedirectAttributes redirectAttributes) {
         try {
-            if (id == null || id.trim().equals("")) {
-                throw new IllegalArgumentException("Student ID is required");
+            if (studentDto.name() == null || studentDto.name().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Name is required");
+                return "redirect:/students";
             }
-
+            if (studentDto.roll() == null || studentDto.roll().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Roll is required");
+                return "redirect:/students";
+            }
             Student student = new Student();
             student.setName(studentDto.name());
             student.setRoll(studentDto.roll());
@@ -73,24 +83,25 @@ public class StudentController {
             student.setStatus(
                     studentDto.status() != null && !studentDto.status().trim().equals("") ? studentDto.status()
                             : "Active");
-            studentService.updateStudent(id, student);
+            if (studentService.updateStudent(id, student) == null) {
+                redirectAttributes.addFlashAttribute("error", "Student not found");
+                return "redirect:/students";
+            }
             redirectAttributes.addFlashAttribute("success", "Student updated successfully");
-            return "redirect:/students";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/students";
         }
+        return "redirect:/students";
     }
 
     @PostMapping("/students/delete")
-    public String deleteStudent(String id, RedirectAttributes redirectAttributes) {
+    public String deleteStudent(int id, RedirectAttributes redirectAttributes) {
         try {
             studentService.deleteStudent(id);
             redirectAttributes.addFlashAttribute("success", "Student deleted successfully");
-            return "redirect:/students";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/students";
         }
+        return "redirect:/students";
     }
 }

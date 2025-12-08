@@ -38,20 +38,23 @@ public class VendorController {
     @PostMapping("/vendors/save")
     public String vendors(@ModelAttribute("vendordto") VendorDto vendorDto, RedirectAttributes redirectAttributes) {
         try {
+            if (vendorDto.name() == null || vendorDto.name().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Name is required");
+                return "redirect:/vendors";
+            }
+            if (vendorDto.contactPerson() == null || vendorDto.contactPerson().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Contact Person is required");
+                return "redirect:/vendors";
+            }
+            if (vendorDto.email() == null || vendorDto.email().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Email is required");
+                return "redirect:/vendors";
+            }
+            if (vendorDto.phone() == null || vendorDto.phone().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Phone is required");
+                return "redirect:/vendors";
+            }
             Vendor vendor = new Vendor();
-            if (vendorDto.name() == null || vendorDto.name().trim().equals("")) {
-                throw new IllegalArgumentException("Name is required");
-            }
-            if (vendorDto.contactPerson() == null || vendorDto.contactPerson().trim().equals("")) {
-                throw new IllegalArgumentException("Contact Person is required");
-            }
-            if (vendorDto.email() == null || vendorDto.email().trim().equals("")) {
-                throw new IllegalArgumentException("Email is required");
-            }
-            if (vendorDto.phone() == null || vendorDto.phone().trim().equals("")) {
-                throw new IllegalArgumentException("Phone is required");
-            }
-
             vendor.setName(vendorDto.name());
             vendor.setContactPerson(vendorDto.contactPerson());
             vendor.setEmail(vendorDto.email());
@@ -59,56 +62,56 @@ public class VendorController {
             vendor.setAddress(vendorDto.address() != null ? vendorDto.address() : "N/A");
             vendorService.saveVendor(vendor);
             redirectAttributes.addFlashAttribute("success", "Vendor added successfully");
-            return "redirect:/vendors";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/vendors";
         }
+        return "redirect:/vendors";
     }
 
     @PostMapping("/vendors/update")
-    public String updateVendor(@ModelAttribute VendorDto vendorDto, String id, RedirectAttributes redirectAttributes) {
+    public String updateVendor(@ModelAttribute VendorDto vendorDto, int id, RedirectAttributes redirectAttributes) {
         try {
-            if (id == null || id.trim().equals("")) {
-                throw new IllegalArgumentException("Vendor ID is required");
+            if (vendorDto.name() == null || vendorDto.name().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Name is required");
+                return "redirect:/vendors";
             }
-            if (vendorDto.name() == null || vendorDto.name().trim().equals("")) {
-                throw new IllegalArgumentException("Name is required");
+            if (vendorDto.contactPerson() == null || vendorDto.contactPerson().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Contact Person is required");
+                return "redirect:/vendors";
             }
-            if (vendorDto.contactPerson() == null || vendorDto.contactPerson().trim().equals("")) {
-                throw new IllegalArgumentException("Contact Person is required");
+            if (vendorDto.email() == null || vendorDto.email().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Email is required");
+                return "redirect:/vendors";
             }
-            if (vendorDto.email() == null || vendorDto.email().trim().equals("")) {
-                throw new IllegalArgumentException("Email is required");
+            if (vendorDto.phone() == null || vendorDto.phone().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Phone is required");
+                return "redirect:/vendors";
             }
-            if (vendorDto.phone() == null || vendorDto.phone().trim().equals("")) {
-                throw new IllegalArgumentException("Phone is required");
-            }
-
             Vendor vendor = new Vendor();
             vendor.setName(vendorDto.name());
             vendor.setContactPerson(vendorDto.contactPerson());
             vendor.setEmail(vendorDto.email());
             vendor.setPhone(vendorDto.phone());
             vendor.setAddress(vendorDto.address() != null ? vendorDto.address() : "N/A");
-            vendorService.updateVendor(id, vendor);
+            if (vendorService.updateVendor(id, vendor) == null) {
+                redirectAttributes.addFlashAttribute("error", "Vendor not found");
+                return "redirect:/vendors";
+            }
             redirectAttributes.addFlashAttribute("success", "Vendor updated successfully");
-            return "redirect:/vendors";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/vendors";
         }
+        return "redirect:/vendors";
     }
 
     @PostMapping("/vendors/delete")
-    public String deleteVendor(String id, RedirectAttributes redirectAttributes) {
+    public String deleteVendor(int id, RedirectAttributes redirectAttributes) {
         try {
             vendorService.deleteVendor(id);
             redirectAttributes.addFlashAttribute("success", "Vendor deleted successfully");
-            return "redirect:/vendors";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/vendors";
         }
+        return "redirect:/vendors";
     }
 }

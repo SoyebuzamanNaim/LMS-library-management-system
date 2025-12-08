@@ -173,13 +173,13 @@
                     </td>
                     <td
                       class="px-6 py-4"
-                      th:text="${#temporals.format(allotment.issueDate, 'MMM dd, yyyy')}"
+                      th:text="${allotment.issueDate != null ? allotment.issueDate : 'N/A'}"
                     >
                       2024-01-15
                     </td>
                     <td
                       class="px-6 py-4"
-                      th:text="${#temporals.format(allotment.returnDate, 'MMM dd, yyyy')}"
+                      th:text="${allotment.returnDate != null ? allotment.returnDate : 'N/A'}"
                     >
                       2024-02-15
                     </td>
@@ -208,7 +208,7 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${allotment.id}, data-student-name=${allotmentStudentNames[iterStat.index]}, data-book-title=${allotmentBookTitles[iterStat.index]}, data-issue-date=${#temporals.format(allotment.issueDate, 'yyyy-MM-dd')}, data-return-date=${#temporals.format(allotment.returnDate, 'yyyy-MM-dd')}, data-status=${allotment.status}, data-fine=${allotment.fineAmount}"
+                        th:attr="data-id=${allotment.id}, data-student-name=${allotmentStudentNames[iterStat.index]}, data-book-title=${allotmentBookTitles[iterStat.index]}, data-issue-date=${allotment.issueDate != null ? allotment.issueDate.toString() : ''}, data-return-date=${allotment.returnDate != null ? allotment.returnDate.toString() : ''}, data-status=${allotment.status}, data-fine=${allotment.fineAmount}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -225,7 +225,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${allotment.id}, data-student-id=${allotment.studentId}, data-book-id=${allotment.bookId}, data-issue-date=${#temporals.format(allotment.issueDate, 'yyyy-MM-dd')}, data-return-date=${#temporals.format(allotment.returnDate, 'yyyy-MM-dd')}, data-status=${allotment.status}, data-fine=${allotment.fineAmount}"
+                        th:attr="data-id=${allotment.id}, data-student-id=${allotment.student != null ? allotment.student.id : ''}, data-book-id=${allotment.book != null ? allotment.book.id : ''}, data-issue-date=${allotment.issueDate != null ? allotment.issueDate.toString() : ''}, data-return-date=${allotment.returnDate != null ? allotment.returnDate.toString() : ''}, data-status=${allotment.status}, data-fine=${allotment.fineAmount}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>

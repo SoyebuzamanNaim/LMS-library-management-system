@@ -195,7 +195,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-publication=${book.publicationId != null ? book.publicationId : ''}, data-vendor=${book.vendorId != null ? book.vendorId : ''}, data-category=${book.category}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-status=${book.status}, data-description=${book.description != null ? book.description : ''}"
+                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-publication=${book.publication != null ? book.publication.id : ''}, data-vendor=${book.vendor != null ? book.vendor.id : ''}, data-category=${book.category}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-status=${book.status}, data-description=${book.description != null ? book.description : ''}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>

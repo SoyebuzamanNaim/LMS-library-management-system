@@ -3,7 +3,7 @@ package bd.edu.seu.lms.dto;
 import java.time.LocalDate;
 
 public record SubscriptionDto(
-                String studentId,
+                Integer studentId,
                 String type,
                 LocalDate startDate,
                 LocalDate endDate,

@@ -1,6 +1,7 @@
 package bd.edu.seu.lms.service;
 
 import bd.edu.seu.lms.model.Book;
+import bd.edu.seu.lms.repository.BookRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,63 +9,69 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookService {
-    private final ArrayList<Book> books = new ArrayList<>();
-    private long ind = 1;
+    private final BookRepo bookRepo;
 
-    public void saveBook(Book book) {
-        if (books.stream().anyMatch(b -> b.getId().equals(book.getId()))) {
-            throw new IllegalArgumentException("BookRepo already exists");
-        }
-        if (books.stream().anyMatch(b -> b.getTitle().equals(book.getTitle()))) {
-            throw new IllegalArgumentException("BookRepo with this title already exists");
-        }
-        book.setId(Long.toString(ind++));
-        books.add(book);
+    public BookService(BookRepo bookRepo) {
+        this.bookRepo = bookRepo;
     }
 
-    public void updateBook(String id, Book book) {
-        if (!books.stream().anyMatch(b -> b.getId().equals(id))) {
-            throw new IllegalArgumentException("BookRepo not found");
+    public Book saveBook(Book book) {
+        // Validate foreign key relationships
+        if (book.getPublication() == null) {
+            throw new IllegalArgumentException("Publication is required");
         }
-        if (books.stream().anyMatch(b -> b.getTitle().equals(book.getTitle()))) {
-            throw new IllegalArgumentException("BookRepo with this title already exists");
+        if (book.getVendor() == null) {
+            throw new IllegalArgumentException("Vendor is required");
         }
-        books.stream().filter(b -> b.getId().equals(id)).findFirst().ifPresent(b -> {
-            b.setTitle(book.getTitle());
-            b.setAuthor(book.getAuthor());
-            b.setPublicationId(book.getPublicationId());
-            b.setVendorId(book.getVendorId());
-            b.setCategory(book.getCategory());
-            b.setTotalCopies(book.getTotalCopies());
-            b.setAvailableCopies(book.getAvailableCopies());
-            b.setPricePerCopy(book.getPricePerCopy());
-            // Set status based on available copies
-            b.setStatus(b.getAvailableCopies() != null && b.getAvailableCopies() > 0 ? "Available" : "Unavailable");
-            b.setDescription(book.getDescription());
-        });
+        // Derive status based on availability before saving
+        if (book.getAvailableCopies() != null && book.getAvailableCopies() > 0) {
+            book.setStatus("Available");
+        } else {
+            book.setStatus("Unavailable");
+        }
+        return bookRepo.save(book);
     }
 
-    public void deleteBook(String id) {
-        if (!books.stream().anyMatch(b -> b.getId().equals(id))) {
-            throw new IllegalArgumentException("BookRepo not found");
+    public Book updateBook(int id, Book book) {
+        return bookRepo.findById(id).map(existing -> {
+            existing.setTitle(book.getTitle());
+            existing.setAuthor(book.getAuthor());
+            existing.setPublication(book.getPublication());
+            existing.setVendor(book.getVendor());
+            existing.setCategory(book.getCategory());
+            existing.setTotalCopies(book.getTotalCopies());
+            existing.setAvailableCopies(book.getAvailableCopies());
+            existing.setPricePerCopy(book.getPricePerCopy());
+            if (existing.getAvailableCopies() != null && existing.getAvailableCopies() > 0) {
+                existing.setStatus("Available");
+            } else {
+                existing.setStatus("Unavailable");
+            }
+            existing.setDescription(book.getDescription());
+            return bookRepo.save(existing);
+        }).orElse(null);
+    }
+
+    public void deleteBook(int id) {
+        if (bookRepo.existsById(id)) {
+            bookRepo.deleteById(id);
         }
-        books.removeIf(b -> b.getId().equals(id));
     }
 
     public ArrayList<Book> getAllBooks() {
-        return new ArrayList<>(books);
+        return new ArrayList<>(bookRepo.findAll());
     }
 
-    public Book getBookById(String id) {
-        return books.stream().filter(b -> b.getId().equals(id)).findFirst().orElse(null);
+    public Book getBookById(int id) {
+        return bookRepo.findById(id).orElse(null);
     }
 
     public ArrayList<Book> searchBooks(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
-            return new ArrayList<>(books);
+            return new ArrayList<>(bookRepo.findAll());
         }
         String lowerKeyword = keyword.toLowerCase();
-        return books.stream().filter(b -> {
+        return bookRepo.findAll().stream().filter(b -> {
             String title = b.getTitle() != null ? b.getTitle().toLowerCase() : "";
             String author = b.getAuthor() != null ? b.getAuthor().toLowerCase() : "";
             String category = b.getCategory() != null ? b.getCategory().toLowerCase() : "";
@@ -72,57 +79,4 @@ public class BookService {
         }).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    // Initialize with dummy data
-    public BookService() {
-        initializeDummyData();
-    }
-
-    private void initializeDummyData() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Book b1 = new Book();
-        b1.setId(Long.toString(ind++));
-        b1.setTitle("Rich Dad Poor Dad");
-        b1.setAuthor("Robert Kiyosaki");
-        b1.setCategory("Personal Development");
-        b1.setTotalCopies(10);
-        b1.setAvailableCopies(8);
-        b1.setPricePerCopy(25.99);
-        b1.setStatus(b1.getAvailableCopies() > 0 ? "Available" : "Unavailable");
-        b1.setDescription("A classic book on personal development");
-        b1.setPublicationId("1");
-        b1.setVendorId("1");
-        books.add(b1);
-
-        Book b2 = new Book();
-        b2.setId(Long.toString(ind++));
-        b2.setTitle("Atomic Habits");
-        b2.setAuthor("James Clear");
-        b2.setCategory("Personal Development");
-        b2.setTotalCopies(5);
-        b2.setAvailableCopies(0);
-        b2.setPricePerCopy(89.99);
-        b2.setStatus(b2.getAvailableCopies() > 0 ? "Available" : "Unavailable");
-        b2.setDescription("A comprehensive guide to building good habits and breaking bad ones");
-        b2.setPublicationId("2");
-        b2.setVendorId("2");
-        books.add(b2);
-
-        Book b3 = new Book();
-        b3.setId(Long.toString(ind++));
-        b3.setTitle("SOLID Principles");
-        b3.setAuthor("Uncle Bob");
-        b3.setCategory("Programming");
-        b3.setTotalCopies(15);
-        b3.setAvailableCopies(12);
-        b3.setPricePerCopy(45.00);
-        b3.setStatus(b3.getAvailableCopies() > 0 ? "Available" : "Unavailable");
-        b3.setDescription("A comprehensive guide to the SOLID principles of object-oriented design");
-        b3.setPublicationId("1");
-        b3.setVendorId("1");
-        books.add(b3);
-    }
 }

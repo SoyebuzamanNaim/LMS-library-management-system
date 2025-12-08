@@ -50,15 +50,15 @@ public class AllotmentController {
 
         List<Student> students = studentService.getAllStudents();
         List<Book> books = bookService.getAllBooks();
-        ArrayList<String> studentNames = buildStudentNames(allotments, students);
-        ArrayList<String> bookTitles = buildBookTitles(allotments, books);
+        ArrayList<String> studentNames = buildStudentNames(allotments);
+        ArrayList<String> bookTitles = buildBookTitles(allotments);
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("students", students);
         model.addAttribute("books", books);
         model.addAttribute("allotmentStudentNames", studentNames);
         model.addAttribute("allotmentBookTitles", bookTitles);
         model.addAttribute("allotmentdto",
-                new AllotmentDto("", "", LocalDate.now(), LocalDate.now().plusDays(14), "Active", 0.0));
+                new AllotmentDto(null, null, LocalDate.now(), LocalDate.now().plusDays(14), "Active", 0.0));
 
         return "allotments";
     }
@@ -66,110 +66,123 @@ public class AllotmentController {
     @PostMapping("/allotment/save")
     public String saveAllotment(@ModelAttribute("allotmentdto") AllotmentDto allotmentDto,
             RedirectAttributes redirectAttributes) {
+        if (allotmentDto.studentId() == null || allotmentDto.studentId() <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Student is required");
+            return "redirect:/allotment";
+        }
+        if (allotmentDto.bookId() == null || allotmentDto.bookId() <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Book is required");
+            return "redirect:/allotment";
+        }
+        // Fetch Student and Book entities
+        var student = studentService.getStudentById(allotmentDto.studentId());
+        if (student == null) {
+            redirectAttributes.addFlashAttribute("error", "Student not found");
+            return "redirect:/allotment";
+        }
+        var book = bookService.getBookById(allotmentDto.bookId());
+        if (book == null) {
+            redirectAttributes.addFlashAttribute("error", "Book not found");
+            return "redirect:/allotment";
+        }
+
+        Allotment allotment = new Allotment();
+        allotment.setStudent(student);
+        allotment.setBook(book);
+        // Issue date defaults to today if not provided
+        allotment.setIssueDate(allotmentDto.issueDate() != null ? allotmentDto.issueDate() : LocalDate.now());
+        // Return date will be automatically set to 14 days from issue date in service
+        allotment.setStatus(allotmentDto.status() != null ? allotmentDto.status() : "Active");
+        // Fine will be calculated when returning the book
         try {
-            Allotment allotment = new Allotment();
-            allotment.setStudentId(allotmentDto.studentId());
-            allotment.setBookId(allotmentDto.bookId());
-            allotment.setIssueDate(allotmentDto.issueDate());
-            allotment.setReturnDate(allotmentDto.returnDate());
-            allotment.setStatus(allotmentDto.status());
-            allotment
-                    .setFineAmount(allotmentService.calculateFine(allotment.getIssueDate(), allotment.getReturnDate()));
             allotmentService.saveAllotment(allotment);
             redirectAttributes.addFlashAttribute("success", "Allotment created successfully");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to create allotment: " + e.getMessage());
         }
         return "redirect:/allotment";
     }
 
     @PostMapping("/allotment/update")
-    public String updateAllotment(@ModelAttribute AllotmentDto allotmentDto, String id,
+    public String updateAllotment(@ModelAttribute AllotmentDto allotmentDto, int id,
             RedirectAttributes redirectAttributes) {
+        if (allotmentDto.studentId() == null || allotmentDto.studentId() <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Student is required");
+            return "redirect:/allotment";
+        }
+        if (allotmentDto.bookId() == null || allotmentDto.bookId() <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Book is required");
+            return "redirect:/allotment";
+        }
+        // Fetch Student and Book entities
+        var student = studentService.getStudentById(allotmentDto.studentId());
+        if (student == null) {
+            redirectAttributes.addFlashAttribute("error", "Student not found");
+            return "redirect:/allotment";
+        }
+        var book = bookService.getBookById(allotmentDto.bookId());
+        if (book == null) {
+            redirectAttributes.addFlashAttribute("error", "Book not found");
+            return "redirect:/allotment";
+        }
+
+        Allotment allotment = new Allotment();
+        allotment.setStudent(student);
+        allotment.setBook(book);
+        // Issue date defaults to today if not provided
+        allotment.setIssueDate(allotmentDto.issueDate() != null ? allotmentDto.issueDate() : LocalDate.now());
+        // Return date will be automatically set to 14 days from issue date in service
+        allotment.setStatus(allotmentDto.status() != null ? allotmentDto.status() : "Active");
+        // Fine will be recalculated in service based on current date vs return date
         try {
-            Allotment allotment = new Allotment();
-            allotment.setStudentId(allotmentDto.studentId());
-            allotment.setBookId(allotmentDto.bookId());
-            allotment.setIssueDate(allotmentDto.issueDate());
-            allotment.setReturnDate(allotmentDto.returnDate());
-            allotment.setStatus(allotmentDto.status());
-            allotment
-                    .setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate(), allotmentDto.returnDate()));
-            allotmentService.updateAllotment(id, allotment);
-            redirectAttributes.addFlashAttribute("success", "Allotment updated successfully");
+            if (allotmentService.updateAllotment(id, allotment) == null) {
+                redirectAttributes.addFlashAttribute("error", "Allotment not found");
+            } else {
+                redirectAttributes.addFlashAttribute("success", "Allotment updated successfully");
+            }
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to update allotment: " + e.getMessage());
         }
         return "redirect:/allotment";
     }
 
     @PostMapping("/allotment/delete")
-    public String deleteAllotment(String id, RedirectAttributes redirectAttributes) {
-        try {
-            allotmentService.deleteAllotment(id);
-            redirectAttributes.addFlashAttribute("success", "Allotment deleted successfully");
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to delete allotment: " + e.getMessage());
-        }
+    public String deleteAllotment(int id, RedirectAttributes redirectAttributes) {
+        allotmentService.deleteAllotment(id);
+        redirectAttributes.addFlashAttribute("success", "Allotment deleted successfully");
         return "redirect:/allotment";
     }
 
     @PostMapping("/allotment/return")
-    public String returnAllotment(String id, RedirectAttributes redirectAttributes) {
-        try {
-            allotmentService.returnAllotment(id);
-            redirectAttributes.addFlashAttribute("success", "BookRepo returned successfully");
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to return book: " + e.getMessage());
-        }
+    public String returnAllotment(int id, RedirectAttributes redirectAttributes) {
+        allotmentService.returnAllotment(id);
+        redirectAttributes.addFlashAttribute("success", "Book returned successfully");
         return "redirect:/allotment";
     }
 
-    private ArrayList<String> buildStudentNames(List<Allotment> allotments, List<Student> students) {
+    private ArrayList<String> buildStudentNames(List<Allotment> allotments) {
         ArrayList<String> names = new ArrayList<>();
         for (Allotment allotment : allotments) {
-            names.add(findStudentName(students, allotment.getStudentId()));
+            Student student = allotment.getStudent();
+            if (student != null && student.getName() != null) {
+                names.add(student.getName());
+            } else {
+                names.add("Unknown Student");
+            }
         }
         return names;
     }
 
-    private ArrayList<String> buildBookTitles(List<Allotment> allotments, List<Book> books) {
+    private ArrayList<String> buildBookTitles(List<Allotment> allotments) {
         ArrayList<String> titles = new ArrayList<>();
         for (Allotment allotment : allotments) {
-            titles.add(findBookTitle(books, allotment.getBookId()));
+            Book book = allotment.getBook();
+            if (book != null && book.getTitle() != null) {
+                titles.add(book.getTitle());
+            } else {
+                titles.add("Unknown Book");
+            }
         }
         return titles;
-    }
-
-    private String findStudentName(List<Student> students, String studentId) {
-        if (studentId == null) {
-            return "Unknown Student";
-        }
-        for (Student student : students) {
-            if (studentId.equals(student.getId()) && student.getName() != null) {
-                return student.getName();
-            }
-        }
-        return "Unknown Student";
-    }
-
-    private String findBookTitle(List<Book> books, String bookId) {
-        if (bookId == null) {
-            return "Unknown BookRepo";
-        }
-        for (Book book : books) {
-            if (bookId.equals(book.getId()) && book.getTitle() != null) {
-                return book.getTitle();
-            }
-        }
-        return "Unknown BookRepo";
     }
 }
