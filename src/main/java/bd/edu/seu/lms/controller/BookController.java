@@ -91,7 +91,7 @@ public class BookController {
                     book.getAvailableCopies() != null && book.getAvailableCopies() > 0 ? "Available" : "Unavailable");
             book.setDescription(bookDto.description() != null ? bookDto.description() : "");
             bookService.saveBook(book);
-            redirectAttributes.addFlashAttribute("success", "Book added successfully");
+            redirectAttributes.addFlashAttribute("success", "BookRepo added successfully");
             return "redirect:/books";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -103,7 +103,7 @@ public class BookController {
     public String updateBook(@ModelAttribute BookDto bookDto, String id, RedirectAttributes redirectAttributes) {
         try {
             if (id == null || id.trim().equals("")) {
-                throw new IllegalArgumentException("Book ID is required");
+                throw new IllegalArgumentException("BookRepo ID is required");
             }
             if (bookDto.title() == null || bookDto.title().trim().equals("")) {
                 throw new IllegalArgumentException("Title is required");
@@ -149,7 +149,7 @@ public class BookController {
                     book.getAvailableCopies() != null && book.getAvailableCopies() > 0 ? "Available" : "Unavailable");
             book.setDescription(bookDto.description() != null ? bookDto.description() : "");
             bookService.updateBook(id, book);
-            redirectAttributes.addFlashAttribute("success", "Book updated successfully");
+            redirectAttributes.addFlashAttribute("success", "BookRepo updated successfully");
             return "redirect:/books";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -161,7 +161,7 @@ public class BookController {
     public String deleteBook(String id, RedirectAttributes redirectAttributes) {
         try {
             bookService.deleteBook(id);
-            redirectAttributes.addFlashAttribute("success", "Book deleted successfully");
+            redirectAttributes.addFlashAttribute("success", "BookRepo deleted successfully");
             return "redirect:/books";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

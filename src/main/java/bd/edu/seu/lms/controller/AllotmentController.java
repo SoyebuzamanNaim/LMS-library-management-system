@@ -124,7 +124,7 @@ public class AllotmentController {
     public String returnAllotment(String id, RedirectAttributes redirectAttributes) {
         try {
             allotmentService.returnAllotment(id);
-            redirectAttributes.addFlashAttribute("success", "Book returned successfully");
+            redirectAttributes.addFlashAttribute("success", "BookRepo returned successfully");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
@@ -163,13 +163,13 @@ public class AllotmentController {
 
     private String findBookTitle(List<Book> books, String bookId) {
         if (bookId == null) {
-            return "Unknown Book";
+            return "Unknown BookRepo";
         }
         for (Book book : books) {
             if (bookId.equals(book.getId()) && book.getTitle() != null) {
                 return book.getTitle();
             }
         }
-        return "Unknown Book";
+        return "Unknown BookRepo";
     }
 }

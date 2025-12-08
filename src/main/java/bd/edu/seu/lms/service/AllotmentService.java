@@ -55,10 +55,10 @@ public class AllotmentService {
         simpleValidation(allotment);
         Book book = bookService.getBookById(allotment.getBookId());
         if (book == null) {
-            throw new IllegalArgumentException("Book not found");
+            throw new IllegalArgumentException("BookRepo not found");
         }
         if (book.getAvailableCopies() == null || book.getAvailableCopies() <= 0) {
-            throw new IllegalArgumentException("Book is not available");
+            throw new IllegalArgumentException("BookRepo is not available");
         }
 
         allotment.setId(Long.toString(ind++));
@@ -136,7 +136,7 @@ public class AllotmentService {
             throw new IllegalArgumentException("Student not found");
         }
         if (allotment.getBookId() == null || allotment.getBookId().trim().equals("")) {
-            throw new IllegalArgumentException("Book is required");
+            throw new IllegalArgumentException("BookRepo is required");
         }
         if (allotment.getIssueDate() == null) {
             throw new IllegalArgumentException("Issue date is required");

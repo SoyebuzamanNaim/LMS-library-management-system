@@ -90,7 +90,7 @@ public class VendorService {
 
         Vendor v3 = new Vendor();
         v3.setId(Long.toString(ind++));
-        v3.setName("Academic Book House");
+        v3.setName("Academic BookRepo House");
         v3.setContactPerson("Dr. Md. Atahar Hossain");
         v3.setEmail("ataharhossain@gmail.com");
         v3.setPhone("015XXXXXXXX");
@@ -99,7 +99,7 @@ public class VendorService {
 
         Vendor v4 = new Vendor();
         v4.setId(Long.toString(ind++));
-        v4.setName("Bangladesh Book House");
+        v4.setName("Bangladesh BookRepo House");
         v4.setContactPerson("Mr. Md. Ashikur Rahman");
         v4.setEmail("bangladeshbookhouse@gmail.com");
         v4.setPhone("015XXXXXXXX");

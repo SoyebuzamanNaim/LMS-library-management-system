@@ -13,10 +13,10 @@ public class BookService {
 
     public void saveBook(Book book) {
         if (books.stream().anyMatch(b -> b.getId().equals(book.getId()))) {
-            throw new IllegalArgumentException("Book already exists");
+            throw new IllegalArgumentException("BookRepo already exists");
         }
         if (books.stream().anyMatch(b -> b.getTitle().equals(book.getTitle()))) {
-            throw new IllegalArgumentException("Book with this title already exists");
+            throw new IllegalArgumentException("BookRepo with this title already exists");
         }
         book.setId(Long.toString(ind++));
         books.add(book);
@@ -24,10 +24,10 @@ public class BookService {
 
     public void updateBook(String id, Book book) {
         if (!books.stream().anyMatch(b -> b.getId().equals(id))) {
-            throw new IllegalArgumentException("Book not found");
+            throw new IllegalArgumentException("BookRepo not found");
         }
         if (books.stream().anyMatch(b -> b.getTitle().equals(book.getTitle()))) {
-            throw new IllegalArgumentException("Book with this title already exists");
+            throw new IllegalArgumentException("BookRepo with this title already exists");
         }
         books.stream().filter(b -> b.getId().equals(id)).findFirst().ifPresent(b -> {
             b.setTitle(book.getTitle());
@@ -46,7 +46,7 @@ public class BookService {
 
     public void deleteBook(String id) {
         if (!books.stream().anyMatch(b -> b.getId().equals(id))) {
-            throw new IllegalArgumentException("Book not found");
+            throw new IllegalArgumentException("BookRepo not found");
         }
         books.removeIf(b -> b.getId().equals(id));
     }
