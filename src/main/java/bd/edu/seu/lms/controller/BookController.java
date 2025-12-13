@@ -15,9 +15,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class BookController {
-    private BookService bookService;
-    private PublicationService publicationService;
-    private VendorService vendorService;
+    private final BookService bookService;
+    private final PublicationService publicationService;
+    private final VendorService vendorService;
 
     public BookController(BookService bookService, PublicationService publicationService, VendorService vendorService) {
         this.bookService = bookService;
@@ -39,133 +39,132 @@ public class BookController {
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("publications", publicationService.getAllPublications());
         model.addAttribute("vendors", vendorService.getAllVendors());
-        model.addAttribute("bookdto", new BookDto("", "", "", "", "", 0, 0, 0.0, "Available", ""));
+        model.addAttribute("bookdto", new BookDto("", "", null, null, "", 0, 0, 0.0, "Available", ""));
         return "books";
     }
 
     @PostMapping("/books/save")
     public String saveBook(@ModelAttribute("bookdto") BookDto bookDto, RedirectAttributes redirectAttributes) {
         try {
-            if (bookDto.title() == null || bookDto.title().trim().equals("")) {
-                throw new IllegalArgumentException("Title is required");
+            if (bookDto.title() == null || bookDto.title().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Title is required");
+                return "redirect:/books";
             }
-            if (bookDto.author() == null || bookDto.author().trim().equals("")) {
-                throw new IllegalArgumentException("Author is required");
+            if (bookDto.author() == null || bookDto.author().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Author is required");
+                return "redirect:/books";
             }
-            if (bookDto.category() == null || bookDto.category().trim().equals("")) {
-                throw new IllegalArgumentException("Category is required");
+            if (bookDto.publicationId() == null || bookDto.publicationId() <= 0) {
+                redirectAttributes.addFlashAttribute("error", "Publication is required");
+                return "redirect:/books";
             }
-            if (bookDto.totalCopies() == null || bookDto.totalCopies() < 0) {
-                throw new IllegalArgumentException("Total copies must be a positive number");
+            if (bookDto.vendorId() == null || bookDto.vendorId() <= 0) {
+                redirectAttributes.addFlashAttribute("error", "Vendor is required");
+                return "redirect:/books";
             }
-            if (bookDto.availableCopies() == null || bookDto.availableCopies() < 0) {
-                throw new IllegalArgumentException("Available copies must be a positive number");
+            if (bookDto.availableCopies() > bookDto.totalCopies()) {
+                redirectAttributes.addFlashAttribute("error", "Available copies cannot be greater than total copies");
+                return "redirect:/books";
             }
-            if (bookDto.pricePerCopy() == null || bookDto.pricePerCopy() < 0) {
-                throw new IllegalArgumentException("Price per copy must be a positive number");
+
+            // Fetch Publication and Vendor entities
+            var publication = publicationService.getPublicationById(bookDto.publicationId());
+            if (publication == null) {
+                redirectAttributes.addFlashAttribute("error", "Publication not found");
+                return "redirect:/books";
             }
-            if (bookDto.publicationId() == null || bookDto.publicationId().trim().equals("")) {
-                throw new IllegalArgumentException("Publication is required");
-            }
-            if (bookDto.vendorId() == null || bookDto.vendorId().trim().equals("")) {
-                throw new IllegalArgumentException("Vendor is required");
+            var vendor = vendorService.getVendorById(bookDto.vendorId());
+            if (vendor == null) {
+                redirectAttributes.addFlashAttribute("error", "Vendor not found");
+                return "redirect:/books";
             }
 
             Book book = new Book();
             book.setTitle(bookDto.title());
             book.setAuthor(bookDto.author());
-            book.setPublicationId(bookDto.publicationId());
-            book.setVendorId(bookDto.vendorId());
+            book.setPublication(publication);
+            book.setVendor(vendor);
             book.setCategory(bookDto.category());
-            book.setTotalCopies(bookDto.totalCopies() != null ? bookDto.totalCopies() : 0);
-            book.setAvailableCopies(
-                    bookDto.availableCopies() != null ? bookDto.availableCopies() : bookDto.totalCopies());
-            // Validate that available copies cannot exceed total copies
-            if (book.getAvailableCopies() != null && book.getTotalCopies() != null
-                    && book.getAvailableCopies() > book.getTotalCopies()) {
-                throw new IllegalArgumentException("Available copies cannot be greater than total copies");
-            }
+            book.setTotalCopies(bookDto.totalCopies());
+            book.setAvailableCopies(bookDto.availableCopies());
             book.setPricePerCopy(bookDto.pricePerCopy() != null ? bookDto.pricePerCopy() : 0.0);
-            // Set status based on available copies
-            book.setStatus(
-                    book.getAvailableCopies() != null && book.getAvailableCopies() > 0 ? "Available" : "Unavailable");
+            book.setStatus(book.getAvailableCopies() > 0 ? "Available" : "Unavailable");
             book.setDescription(bookDto.description() != null ? bookDto.description() : "");
             bookService.saveBook(book);
-            redirectAttributes.addFlashAttribute("success", "BookRepo added successfully");
-            return "redirect:/books";
-        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("success", "Book added successfully");
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/books";
         }
+        return "redirect:/books";
     }
 
     @PostMapping("/books/update")
-    public String updateBook(@ModelAttribute BookDto bookDto, String id, RedirectAttributes redirectAttributes) {
+    public String updateBook(@ModelAttribute BookDto bookDto, int id, RedirectAttributes redirectAttributes) {
         try {
-            if (id == null || id.trim().equals("")) {
-                throw new IllegalArgumentException("BookRepo ID is required");
+            if (bookDto.title() == null || bookDto.title().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Title is required");
+                return "redirect:/books";
             }
-            if (bookDto.title() == null || bookDto.title().trim().equals("")) {
-                throw new IllegalArgumentException("Title is required");
+            if (bookDto.author() == null || bookDto.author().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Author is required");
+                return "redirect:/books";
             }
-            if (bookDto.author() == null || bookDto.author().trim().equals("")) {
-                throw new IllegalArgumentException("Author is required");
+            if (bookDto.publicationId() == null || bookDto.publicationId() <= 0) {
+                redirectAttributes.addFlashAttribute("error", "Publication is required");
+                return "redirect:/books";
             }
-            if (bookDto.category() == null || bookDto.category().trim().equals("")) {
-                throw new IllegalArgumentException("Category is required");
+            if (bookDto.vendorId() == null || bookDto.vendorId() <= 0) {
+                redirectAttributes.addFlashAttribute("error", "Vendor is required");
+                return "redirect:/books";
             }
-            if (bookDto.totalCopies() == null || bookDto.totalCopies() < 0) {
-                throw new IllegalArgumentException("Total copies must be a positive number");
+            if (bookDto.availableCopies() > bookDto.totalCopies()) {
+                redirectAttributes.addFlashAttribute("error", "Available copies cannot be greater than total copies");
+                return "redirect:/books";
             }
-            if (bookDto.availableCopies() == null || bookDto.availableCopies() < 0) {
-                throw new IllegalArgumentException("Available copies must be a positive number");
+
+            // Fetch Publication and Vendor entities
+            var publication = publicationService.getPublicationById(bookDto.publicationId());
+            if (publication == null) {
+                redirectAttributes.addFlashAttribute("error", "Publication not found");
+                return "redirect:/books";
             }
-            if (bookDto.pricePerCopy() == null || bookDto.pricePerCopy() < 0) {
-                throw new IllegalArgumentException("Price per copy must be a positive number");
-            }
-            if (bookDto.publicationId() == null || bookDto.publicationId().trim().equals("")) {
-                throw new IllegalArgumentException("Publication is required");
-            }
-            if (bookDto.vendorId() == null || bookDto.vendorId().trim().equals("")) {
-                throw new IllegalArgumentException("Vendor is required");
+            var vendor = vendorService.getVendorById(bookDto.vendorId());
+            if (vendor == null) {
+                redirectAttributes.addFlashAttribute("error", "Vendor not found");
+                return "redirect:/books";
             }
 
             Book book = new Book();
             book.setTitle(bookDto.title());
             book.setAuthor(bookDto.author());
-            book.setPublicationId(bookDto.publicationId());
-            book.setVendorId(bookDto.vendorId());
+            book.setPublication(publication);
+            book.setVendor(vendor);
             book.setCategory(bookDto.category());
-            book.setTotalCopies(bookDto.totalCopies() != null ? bookDto.totalCopies() : 0);
-            book.setAvailableCopies(bookDto.availableCopies() != null ? bookDto.availableCopies() : 0);
-            // Validate that available copies cannot exceed total copies
-            if (book.getAvailableCopies() != null && book.getTotalCopies() != null
-                    && book.getAvailableCopies() > book.getTotalCopies()) {
-                throw new IllegalArgumentException("Available copies cannot be greater than total copies");
-            }
+            book.setTotalCopies(bookDto.totalCopies());
+            book.setAvailableCopies(bookDto.availableCopies());
             book.setPricePerCopy(bookDto.pricePerCopy() != null ? bookDto.pricePerCopy() : 0.0);
-            // Set status based on available copies
-            book.setStatus(
-                    book.getAvailableCopies() != null && book.getAvailableCopies() > 0 ? "Available" : "Unavailable");
+            book.setStatus(book.getAvailableCopies() > 0 ? "Available" : "Unavailable");
             book.setDescription(bookDto.description() != null ? bookDto.description() : "");
-            bookService.updateBook(id, book);
-            redirectAttributes.addFlashAttribute("success", "BookRepo updated successfully");
-            return "redirect:/books";
-        } catch (IllegalArgumentException e) {
+            if (bookService.updateBook(id, book) == null) {
+                redirectAttributes.addFlashAttribute("error", "Book not found");
+                return "redirect:/books";
+            }
+            redirectAttributes.addFlashAttribute("success", "Book updated successfully");
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/books";
         }
+        return "redirect:/books";
     }
 
     @PostMapping("/books/delete")
-    public String deleteBook(String id, RedirectAttributes redirectAttributes) {
+    public String deleteBook(int id, RedirectAttributes redirectAttributes) {
         try {
             bookService.deleteBook(id);
-            redirectAttributes.addFlashAttribute("success", "BookRepo deleted successfully");
-            return "redirect:/books";
-        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("success", "Book deleted successfully");
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/books";
         }
+        return "redirect:/books";
     }
+
 }

@@ -4,6 +4,7 @@ package bd.edu.seu.lms.service;
 import bd.edu.seu.lms.model.Allotment;
 import bd.edu.seu.lms.model.Book;
 import bd.edu.seu.lms.model.Student;
+import bd.edu.seu.lms.repository.AllotmentRepo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,19 +14,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class AllotmentService {
-    private final ArrayList<Allotment> allotments = new ArrayList<>();
-    private long ind = 1;
-    private final StudentService studentService;
+    private final AllotmentRepo allotmentRepo;
     private final BookService bookService;
 
-    public AllotmentService(StudentService studentService, BookService bookService) {
-        this.studentService = studentService;
+    public AllotmentService(AllotmentRepo allotmentRepo, BookService bookService) {
+        this.allotmentRepo = allotmentRepo;
         this.bookService = bookService;
-        loadDummyData();
     }
 
     public ArrayList<Allotment> getAllAllotments() {
-        return new ArrayList<>(allotments);
+        return new ArrayList<>(allotmentRepo.findAll());
     }
 
     public ArrayList<Allotment> searchAllotments(String keyword) {
@@ -33,9 +31,9 @@ public class AllotmentService {
             return getAllAllotments();
         }
         String lowerKeyword = keyword.toLowerCase();
-        return allotments.stream().filter(allotment -> {
-            Student student = studentService.getStudentById(allotment.getStudentId());
-            Book book = bookService.getBookById(allotment.getBookId());
+        return allotmentRepo.findAll().stream().filter(allotment -> {
+            Student student = allotment.getStudent();
+            Book book = allotment.getBook();
             String studentName = student != null && student.getName() != null ? student.getName().toLowerCase() : "";
             String bookTitle = book != null && book.getTitle() != null ? book.getTitle().toLowerCase() : "";
             String status = allotment.getStatus() != null ? allotment.getStatus().toLowerCase() : "";
@@ -44,156 +42,159 @@ public class AllotmentService {
         }).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public Allotment getAllotmentById(String id) {
-        if (id == null) {
+    public Allotment getAllotmentById(int id) {
+        if (id <= 0) {
             return null;
         }
-        return allotments.stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);
+        return allotmentRepo.findById(id).orElse(null);
     }
 
-    public void saveAllotment(Allotment allotment) {
-        simpleValidation(allotment);
-        Book book = bookService.getBookById(allotment.getBookId());
-        if (book == null) {
-            throw new IllegalArgumentException("BookRepo not found");
+    public Allotment saveAllotment(Allotment allotment) {
+        // Validate foreign key relationships
+        if (allotment.getStudent() == null) {
+            throw new IllegalArgumentException("Student is required");
         }
-        if (book.getAvailableCopies() == null || book.getAvailableCopies() <= 0) {
-            throw new IllegalArgumentException("BookRepo is not available");
+        if (allotment.getBook() == null) {
+            throw new IllegalArgumentException("Book is required");
         }
 
-        allotment.setId(Long.toString(ind++));
-        if (allotment.getReturnDate() == null && allotment.getIssueDate() != null) {
+        Book book = allotment.getBook();
+        if (book.getAvailableCopies() == null || book.getAvailableCopies() <= 0) {
+            throw new IllegalArgumentException("Book is not available");
+        }
+
+        // Automatically set return date to 14 days from issue date
+        if (allotment.getIssueDate() != null) {
             allotment.setReturnDate(allotment.getIssueDate().plusDays(14));
         }
         if (allotment.getStatus() == null || allotment.getStatus().trim().equals("")) {
             allotment.setStatus("Active");
         }
-        allotment.setFineAmount(calculateFine(allotment.getIssueDate(), allotment.getReturnDate()));
-        allotments.add(allotment);
+        // Fine is 0 when creating, will be calculated when returning
+        allotment.setFineAmount(0.0);
+        Allotment saved = allotmentRepo.save(allotment);
 
         int copies = book.getAvailableCopies();
         book.setAvailableCopies(copies - 1);
         if (book.getAvailableCopies() <= 0) {
             book.setStatus("Unavailable");
         }
+        bookService.updateBook(book.getId(), book);
+        return saved;
     }
 
-    public void updateAllotment(String id, Allotment allotment) {
-        Allotment existing = getAllotmentById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("Allotment not found");
-        }
-        simpleValidation(allotment);
-        existing.setStudentId(allotment.getStudentId());
-        existing.setBookId(allotment.getBookId());
-        existing.setIssueDate(allotment.getIssueDate());
-        existing.setReturnDate(allotment.getReturnDate());
-        existing.setStatus(allotment.getStatus());
-        existing.setFineAmount(calculateFine(allotment.getIssueDate(), allotment.getReturnDate()));
-    }
-
-    public void deleteAllotment(String id) {
-        Allotment existing = getAllotmentById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("Allotment not found");
-        }
-        allotments.removeIf(a -> a.getId().equals(id));
-        Book book = bookService.getBookById(existing.getBookId());
-        if (book != null) {
-            int copies = book.getAvailableCopies() != null ? book.getAvailableCopies() : 0;
-            book.setAvailableCopies(copies + 1);
-            if (book.getAvailableCopies() > 0) {
-                book.setStatus("Available");
-            }
-        }
-    }
-
-    public void returnAllotment(String id) {
-        Allotment allotment = getAllotmentById(id);
-        if (allotment == null) {
-            throw new IllegalArgumentException("Allotment not found");
-        }
-        allotment.setStatus("Returned");
-        allotment.setReturnDate(LocalDate.now());
-        Book book = bookService.getBookById(allotment.getBookId());
-        if (book != null) {
-            Integer copies = book.getAvailableCopies() != null ? book.getAvailableCopies() : 0;
-            book.setAvailableCopies(copies + 1);
-            if (book.getAvailableCopies() > 0) {
-                book.setStatus("Available");
-            }
-        }
-    }
-
-    private void simpleValidation(Allotment allotment) {
-        if (allotment == null) {
-            throw new IllegalArgumentException("Allotment is required");
-        }
-        if (allotment.getStudentId() == null || allotment.getStudentId().trim().equals("")) {
+    public Allotment updateAllotment(int id, Allotment allotment) {
+        // Validate foreign key relationships
+        if (allotment.getStudent() == null) {
             throw new IllegalArgumentException("Student is required");
         }
-        if (studentService.getStudentById(allotment.getStudentId()) == null) {
-            throw new IllegalArgumentException("Student not found");
-        }
-        if (allotment.getBookId() == null || allotment.getBookId().trim().equals("")) {
-            throw new IllegalArgumentException("BookRepo is required");
-        }
-        if (allotment.getIssueDate() == null) {
-            throw new IllegalArgumentException("Issue date is required");
-        }
-    }
-
-    private void loadDummyData() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        ArrayList<Student> students = studentService.getAllStudents();
-        ArrayList<Book> books = bookService.getAllBooks();
-        if (students.isEmpty() || books.isEmpty()) {
-            return;
+        if (allotment.getBook() == null) {
+            throw new IllegalArgumentException("Book is required");
         }
 
-        for (int i = 0; i < 2; i++) {
-            Student student = students.get(i);
-            Book book = books.get(i);
-            if (student == null || book == null) {
-                continue;
+        return allotmentRepo.findById(id).map(existing -> {
+            // Handle book change - return copy to old book, check new book availability
+            if (existing.getBook().getId() != allotment.getBook().getId()) {
+                // Return copy to old book
+                Book oldBook = existing.getBook();
+                int oldCopies = oldBook.getAvailableCopies() != null ? oldBook.getAvailableCopies() : 0;
+                oldBook.setAvailableCopies(oldCopies + 1);
+                if (oldBook.getAvailableCopies() > 0) {
+                    oldBook.setStatus("Available");
+                }
+                bookService.updateBook(oldBook.getId(), oldBook);
+
+                // Check new book availability
+                Book newBook = allotment.getBook();
+                if (newBook.getAvailableCopies() == null || newBook.getAvailableCopies() <= 0) {
+                    throw new IllegalArgumentException("New book is not available");
+                }
+                // Decrement new book's available copies
+                int newCopies = newBook.getAvailableCopies();
+                newBook.setAvailableCopies(newCopies - 1);
+                if (newBook.getAvailableCopies() <= 0) {
+                    newBook.setStatus("Unavailable");
+                }
+                bookService.updateBook(newBook.getId(), newBook);
             }
 
-            Allotment allotment = new Allotment();
-            allotment.setId(Long.toString(ind++));
-            allotment.setStudentId(student.getId());
-            allotment.setBookId(book.getId());
-            allotment.setIssueDate(LocalDate.now().minusDays(i * 2L));
-            allotment.setReturnDate(allotment.getIssueDate().plusDays(14));
-            allotment.setStatus("Active");
-            allotment.setFineAmount(calculateFine(allotment.getIssueDate(), allotment.getReturnDate()));
-            allotments.add(allotment);
-        }
+            existing.setStudent(allotment.getStudent());
+            existing.setBook(allotment.getBook());
+            existing.setIssueDate(allotment.getIssueDate());
+            // Automatically set return date to 14 days from issue date
+            if (allotment.getIssueDate() != null) {
+                existing.setReturnDate(allotment.getIssueDate().plusDays(14));
+            }
+            existing.setStatus(allotment.getStatus());
+            // Fine is only calculated when returning the book, not during updates
+            // Keep existing fine amount if status is already "Returned", otherwise set to 0
+            if (!"Returned".equals(existing.getStatus())) {
+                existing.setFineAmount(0.0);
+            }
+            return allotmentRepo.save(existing);
+        }).orElse(null);
+    }
+
+    public void deleteAllotment(int id) {
+        allotmentRepo.findById(id).ifPresent(existing -> {
+            Book book = existing.getBook();
+            if (book != null) {
+                int copies = book.getAvailableCopies() != null ? book.getAvailableCopies() : 0;
+                book.setAvailableCopies(copies + 1);
+                if (book.getAvailableCopies() > 0) {
+                    book.setStatus("Available");
+                }
+                bookService.updateBook(book.getId(), book);
+            }
+            allotmentRepo.deleteById(id);
+        });
+    }
+
+    public void returnAllotment(int id) {
+        allotmentRepo.findById(id).ifPresent(allotment -> {
+            LocalDate actualReturnDate = LocalDate.now();
+            LocalDate plannedReturnDate = allotment.getReturnDate();
+
+            // Fine is only calculated if the actual return date has passed the planned
+            // return date
+            double fine = 0.0;
+            if (plannedReturnDate != null && actualReturnDate.isAfter(plannedReturnDate)) {
+                // Calculate fine: 20 taka/day for each day after the planned return date
+                long overdueDays = ChronoUnit.DAYS.between(plannedReturnDate, actualReturnDate);
+                fine = overdueDays * 20.0;
+            }
+            // If returned on or before the planned return date, fine remains 0
+
+            allotment.setStatus("Returned");
+            allotment.setFineAmount(fine);
+            allotmentRepo.save(allotment);
+
+            Book book = allotment.getBook();
+            if (book != null) {
+                Integer copies = book.getAvailableCopies() != null ? book.getAvailableCopies() : 0;
+                book.setAvailableCopies(copies + 1);
+                if (book.getAvailableCopies() > 0) {
+                    book.setStatus("Available");
+                }
+                bookService.updateBook(book.getId(), book);
+            }
+        });
     }
 
     public double calculateFine(LocalDate issueDate, LocalDate plannedReturnDate) {
-        if (issueDate == null) {
+        if (issueDate == null || plannedReturnDate == null) {
             return 0.0;
         }
 
         LocalDate today = LocalDate.now();
-        if (today.isBefore(issueDate)) {
+        // Fine applies only if today is after the planned return date
+        if (!today.isAfter(plannedReturnDate)) {
             return 0.0;
         }
 
-        LocalDate dueDate = plannedReturnDate != null ? plannedReturnDate : issueDate.plusDays(14);
-        if (!today.isAfter(dueDate)) {
-            return 0.0;
-        }
-
-        long overdueDays = ChronoUnit.DAYS.between(dueDate, today);
-        if (overdueDays <= 7) {
-            return 0.0;
-        }
-        return (overdueDays - 7) * 20.0;
+        // Calculate fine: 20/day for each day after the planned return date
+        long overdueDays = ChronoUnit.DAYS.between(plannedReturnDate, today);
+        return overdueDays * 20.0;
     }
 
 }

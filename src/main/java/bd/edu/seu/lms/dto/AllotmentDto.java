@@ -3,8 +3,8 @@ package bd.edu.seu.lms.dto;
 import java.time.LocalDate;
 
 public record AllotmentDto(
-        String studentId,
-        String bookId,
+        Integer studentId,
+        Integer bookId,
         LocalDate issueDate,
         LocalDate returnDate,
 

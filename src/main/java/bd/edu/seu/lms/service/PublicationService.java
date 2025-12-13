@@ -1,6 +1,7 @@
 package bd.edu.seu.lms.service;
 
 import bd.edu.seu.lms.model.Publication;
+import bd.edu.seu.lms.repository.PublicationRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,97 +9,48 @@ import java.util.stream.Collectors;
 
 @Service
 public class PublicationService {
-    private final ArrayList<Publication> publications = new ArrayList<>();
-    private long ind = 1;
+    private final PublicationRepo publicationRepo;
 
-    public void savePublication(Publication publication) {
-        if (publication.getId() != null && publications.stream().anyMatch(p -> p.getId().equals(publication.getId()))) {
-            throw new IllegalArgumentException("Publication already exists");
-        }
-        if (publication.getName() != null && publications.stream()
-                .anyMatch(p -> p.getName() != null && p.getName().equalsIgnoreCase(publication.getName()))) {
-            throw new IllegalArgumentException("Publication with this name already exists");
-        }
-        publication.setId(Long.toString(ind++));
-        publications.add(publication);
+    public PublicationService(PublicationRepo publicationRepo) {
+        this.publicationRepo = publicationRepo;
     }
 
-    public void updatePublication(String id, Publication publication) {
-        if (!publications.stream().anyMatch(p -> p.getId().equals(id))) {
-            throw new IllegalArgumentException("Publication not found");
-        }
-        // Check for duplicate name (excluding the current publication being updated)
-        if (publication.getName() != null && publications.stream().anyMatch(p -> !p.getId().equals(id)
-                && p.getName() != null && p.getName().equalsIgnoreCase(publication.getName()))) {
-            throw new IllegalArgumentException("Publication with this name already exists");
-        }
-        publications.stream().filter(p -> p.getId().equals(id)).findFirst().ifPresent(p -> {
-            p.setName(publication.getName());
-            p.setAddress(publication.getAddress());
-        });
+    public Publication savePublication(Publication publication) {
+        return publicationRepo.save(publication);
     }
 
-    public void deletePublication(String id) {
-        if (!publications.stream().anyMatch(p -> p.getId().equals(id))) {
-            throw new IllegalArgumentException("Publication not found");
+    public Publication updatePublication(int id, Publication publication) {
+        return publicationRepo.findById(id).map(existing -> {
+            existing.setName(publication.getName());
+            existing.setAddress(publication.getAddress());
+            return publicationRepo.save(existing);
+        }).orElse(null);
+    }
+
+    public void deletePublication(int id) {
+        if (publicationRepo.existsById(id)) {
+            publicationRepo.deleteById(id);
         }
-        publications.removeIf(p -> p.getId().equals(id));
     }
 
     public ArrayList<Publication> getAllPublications() {
-        return new ArrayList<>(publications);
+        return new ArrayList<>(publicationRepo.findAll());
     }
 
-    public Publication getPublicationById(String id) {
-        return publications.stream().filter(p -> p.getId().equals(id)).findFirst().orElse(null);
+    public Publication getPublicationById(int id) {
+        return publicationRepo.findById(id).orElse(null);
     }
 
     public ArrayList<Publication> searchPublications(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
-            return new ArrayList<>(publications);
+            return new ArrayList<>(publicationRepo.findAll());
         }
         String lowerKeyword = keyword.toLowerCase();
-        return publications.stream().filter(p -> {
+        return publicationRepo.findAll().stream().filter(p -> {
             String name = p.getName() != null ? p.getName().toLowerCase() : "";
             String address = p.getAddress() != null ? p.getAddress().toLowerCase() : "";
             return name.contains(lowerKeyword) || address.contains(lowerKeyword);
         }).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    // Initialize with dummy data
-    public PublicationService() {
-        initializeDummyData();
-    }
-
-    private void initializeDummyData() {
-        Publication p1 = new Publication();
-        p1.setId(Long.toString(ind++));
-        p1.setName("Dhaka University Press");
-        p1.setAddress("Dhaka, Bangladesh");
-        publications.add(p1);
-
-        Publication p2 = new Publication();
-        p2.setId(Long.toString(ind++));
-        p2.setName("Oxford University Press");
-        p2.setAddress("Oxford, UK");
-        publications.add(p2);
-
-        Publication p3 = new Publication();
-        p3.setId(Long.toString(ind++));
-        p3.setName("Southeast University Press");
-        p3.setAddress("Dhaka, Bangladesh");
-        publications.add(p3);
-
-        Publication p4 = new Publication();
-        p4.setId(Long.toString(ind++));
-        p4.setName("Rokomari");
-        p4.setAddress("Dhaka, Bangladesh");
-        publications.add(p4);
-
-        Publication p5 = new Publication();
-        p5.setId(Long.toString(ind++));
-        p5.setName("Prothom Alo");
-        p5.setAddress("Dhaka, Bangladesh");
-        publications.add(p5);
-    }
 }

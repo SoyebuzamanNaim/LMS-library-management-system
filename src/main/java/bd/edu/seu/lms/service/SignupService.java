@@ -1,25 +1,27 @@
 package bd.edu.seu.lms.service;
 
 import bd.edu.seu.lms.model.User;
+import bd.edu.seu.lms.repository.UserRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
 public class SignupService {
-    // memory
-    private final ArrayList<User> users = new ArrayList<>();
+    private final UserRepo userRepo;
+
+    public SignupService(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
 
     public void saveUser(User user) {
-        if (users.stream().anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
-            // IO.println("User email already exists");
+        if (userRepo.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("User already exists");
         }
-        users.add(user);
+        userRepo.save(user);
     }
 
     public ArrayList<User> getAllUsers() {
-        // return a copy of the users list
-        return new ArrayList<>(users);
+        return new ArrayList<>(userRepo.findAll());
     }
 }

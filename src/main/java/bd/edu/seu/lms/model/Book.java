@@ -1,13 +1,11 @@
 package bd.edu.seu.lms.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Entity
 @Getter
 @Setter
@@ -15,13 +13,19 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Book {
     @Id
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private int id;
     private String title;
     private String author;
-    private String publicationId;
-    private String vendorId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publication_id", nullable = false)
+    private Publication publication;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id", nullable = false)
+    private Vendor vendor;
+
     private String category;
     private Integer totalCopies;
     private Integer availableCopies;

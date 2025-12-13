@@ -39,54 +39,51 @@ public class PublicationController {
     public String savePublication(@ModelAttribute("publicationdto") PublicationDto publicationDto,
             RedirectAttributes redirectAttributes) {
         try {
-            Publication publication = new Publication();
-            if (publicationDto.name() == null || publicationDto.name().trim().equals("")) {
-                throw new IllegalArgumentException("Name is required");
+            if (publicationDto.name() == null || publicationDto.name().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Name is required");
+                return "redirect:/publications";
             }
-
+            Publication publication = new Publication();
             publication.setName(publicationDto.name());
             publication.setAddress(publicationDto.address() != null ? publicationDto.address() : "N/A");
             publicationService.savePublication(publication);
             redirectAttributes.addFlashAttribute("success", "Publication added successfully");
-            return "redirect:/publications";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/publications";
         }
+        return "redirect:/publications";
     }
 
     @PostMapping("/publications/update")
-    public String updatePublication(@ModelAttribute PublicationDto publicationDto, String id,
+    public String updatePublication(@ModelAttribute PublicationDto publicationDto, int id,
             RedirectAttributes redirectAttributes) {
         try {
-            if (id == null || id.trim().equals("")) {
-                throw new IllegalArgumentException("Publication ID is required");
+            if (publicationDto.name() == null || publicationDto.name().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Name is required");
+                return "redirect:/publications";
             }
-            if (publicationDto.name() == null || publicationDto.name().trim().equals("")) {
-                throw new IllegalArgumentException("Name is required");
-            }
-
             Publication publication = new Publication();
             publication.setName(publicationDto.name());
             publication.setAddress(publicationDto.address() != null ? publicationDto.address() : "N/A");
-            publicationService.updatePublication(id, publication);
+            if (publicationService.updatePublication(id, publication) == null) {
+                redirectAttributes.addFlashAttribute("error", "Publication not found");
+                return "redirect:/publications";
+            }
             redirectAttributes.addFlashAttribute("success", "Publication updated successfully");
-            return "redirect:/publications";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/publications";
         }
+        return "redirect:/publications";
     }
 
     @PostMapping("/publications/delete")
-    public String deletePublication(String id, RedirectAttributes redirectAttributes) {
+    public String deletePublication(int id, RedirectAttributes redirectAttributes) {
         try {
             publicationService.deletePublication(id);
             redirectAttributes.addFlashAttribute("success", "Publication deleted successfully");
-            return "redirect:/publications";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/publications";
         }
+        return "redirect:/publications";
     }
 }

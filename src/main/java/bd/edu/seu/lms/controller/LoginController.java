@@ -31,14 +31,16 @@ public class LoginController {
     public String login(@ModelAttribute("logindto") LoginDto loginDto,
             RedirectAttributes redirectAttributes,
             HttpSession session) {
-        if (loginService.validateUser(loginDto.email(), loginDto.password())) {
-
-            redirectAttributes.addFlashAttribute("success", session.getAttribute("user") + " logged in successfully");
-            redirectAttributes.addFlashAttribute("email", session.getAttribute("email"));
-            return "redirect:/dashboard";
-        }
+        if (!loginService.validateUser(loginDto.email(), loginDto.password())) {
         redirectAttributes.addFlashAttribute("loginError", "Invalid email or password");
         return "redirect:/login";
+        }
+
+        var user = loginService.findByEmail(loginDto.email());
+        session.setAttribute("user", user != null ? user.getUsername() : loginDto.email());
+        session.setAttribute("email", loginDto.email());
+        redirectAttributes.addFlashAttribute("success", "Logged in successfully");
+        return "redirect:/dashboard";
     }
 
     @PostMapping("/logout")

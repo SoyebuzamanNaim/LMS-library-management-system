@@ -165,9 +165,7 @@
                     </td>
                     <td class="px-6 py-4 font-medium text-slate-800">
                       <span
-                        th:each="student : ${students}"
-                        th:if="${student.id == subscription.studentId}"
-                        th:text="${student.name}"
+                        th:text="${subscription.student != null ? subscription.student.name : 'Unknown'}"
                         >Unknown</span
                       >
                     </td>
@@ -186,14 +184,10 @@
                       >
                     </td>
                     <td class="px-6 py-4 text-xs text-slate-500">
-                      <div
-                        th:text="|Start: ${#temporals.format(subscription.startDate, 'MMM dd, yyyy')}|"
-                      >
+                      <div th:text="|Start: ${subscription.startDate}|">
                         Start: Jan 01, 2023
                       </div>
-                      <div
-                        th:text="|End: ${#temporals.format(subscription.endDate, 'MMM dd, yyyy')}|"
-                      >
+                      <div th:text="|End: ${subscription.endDate}|">
                         End: Jan 01, 2024
                       </div>
                     </td>
@@ -212,22 +206,10 @@
                     <td
                       class="px-6 py-4 text-center flex justify-center space-x-3"
                     >
-                      <th:block th:each="student : ${students}">
-                        <button
-                          th:if="${student.id == subscription.studentId}"
-                          class="text-indigo-600 hover:text-indigo-800"
-                          title="View"
-                          th:attr="data-id=${subscription.id}, data-student-id=${subscription.studentId}, data-student-name=${student.name}, data-type=${subscription.type}, data-start-date=${#temporals.format(subscription.startDate, 'yyyy-MM-dd')}, data-end-date=${#temporals.format(subscription.endDate, 'yyyy-MM-dd')}, data-status=${subscription.status}"
-                          onclick="showViewModal(this)"
-                        >
-                          <i class="fa-solid fa-eye"></i>
-                        </button>
-                      </th:block>
                       <button
-                        th:if="${#lists.isEmpty(students)}"
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${subscription.id}, data-student-id=${subscription.studentId}, data-student-name='Unknown', data-type=${subscription.type}, data-start-date=${#temporals.format(subscription.startDate, 'yyyy-MM-dd')}, data-end-date=${#temporals.format(subscription.endDate, 'yyyy-MM-dd')}, data-status=${subscription.status}"
+                        th:attr="data-id=${subscription.id}, data-student-id=${subscription.student != null ? subscription.student.id : ''}, data-student-name=${subscription.student != null ? subscription.student.name : 'Unknown'}, data-type=${subscription.type}, data-start-date=${subscription.startDate}, data-end-date=${subscription.endDate}, data-status=${subscription.status}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -235,7 +217,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${subscription.id}, data-student-id=${subscription.studentId}, data-type=${subscription.type}, data-start-date=${subscription.startDate != null ? #temporals.format(subscription.startDate, 'yyyy-MM-dd') : ''}, data-end-date=${subscription.endDate != null ? #temporals.format(subscription.endDate, 'yyyy-MM-dd') : ''}, data-status=${subscription.status}"
+                        th:attr="data-id=${subscription.id}, data-student-id=${subscription.student != null ? subscription.student.id : ''}, data-type=${subscription.type}, data-start-date=${subscription.startDate}, data-end-date=${subscription.endDate}, data-status=${subscription.status}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
@@ -334,7 +316,7 @@
               required
             />
             <p class="text-xs text-slate-500 mt-1">
-              Subscription will expire automatically after 14 days
+              Subscription will expire automatically after 1 years
             </p>
           </div>
           <div class="modal-action">
@@ -411,7 +393,7 @@
               required
             />
             <p class="text-xs text-slate-500 mt-1">
-              Subscription will expire automatically after 14 days from start
+              Subscription will expire automatically after 1 year from start
               date
             </p>
           </div>
