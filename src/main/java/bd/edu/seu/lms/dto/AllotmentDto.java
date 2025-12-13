@@ -7,6 +7,8 @@ public record AllotmentDto(
         String bookId,
         LocalDate issueDate,
         LocalDate returnDate,
+
+//        Apply enum
         String status, // Active, Returned
         Double fineAmount) {
 }
