@@ -1,11 +1,13 @@
 package bd.edu.seu.lms.dto;
 
+import bd.edu.seu.lms.model.SubscriptionType;
 import java.time.LocalDate;
+import bd.edu.seu.lms.model.SubscriptionStatus;
 
 public record SubscriptionDto(
-                Integer studentId,
-                String type,
-                LocalDate startDate,
-                LocalDate endDate,
-                String status) {
+        Integer studentId,
+        SubscriptionType type,
+        LocalDate startDate,
+        LocalDate endDate,
+        SubscriptionStatus status) {
 }

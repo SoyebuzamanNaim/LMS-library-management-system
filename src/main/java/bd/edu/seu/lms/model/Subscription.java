@@ -26,5 +26,8 @@ public class Subscription {
     private SubscriptionType type; // Premium, Standard, Basic
     private LocalDate startDate;
     private LocalDate endDate;
-    private String status; // Active, Expired
+    @Enumerated(EnumType.STRING)
+    private SubscriptionStatus status; // Active, Expired
+    
+
 }
