@@ -16,13 +16,14 @@ import java.time.LocalDate;
 public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    private String type; // Premium, Standard, Basic
+    @Enumerated(EnumType.STRING)
+    private SubscriptionType type; // Premium, Standard, Basic
     private LocalDate startDate;
     private LocalDate endDate;
     private String status; // Active, Expired

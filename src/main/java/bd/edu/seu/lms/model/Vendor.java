@@ -17,7 +17,7 @@ import lombok.Setter;
 public class Vendor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String name;
     private String contactPerson;
     private String email;

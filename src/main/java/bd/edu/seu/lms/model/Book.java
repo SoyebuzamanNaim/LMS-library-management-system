@@ -14,22 +14,23 @@ import lombok.Setter;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String title;
     private String author;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "publication_id", nullable = false)
     private Publication publication;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
     private String category;
-    private Integer totalCopies;
-    private Integer availableCopies;
+    private int totalCopies;
+    private int availableCopies;
     private Double pricePerCopy;
-    private String status; // Available, Unavailable
+    @Enumerated(EnumType.STRING)
+    private BookStatus status; // Available, Unavailable
     private String description;
 }
