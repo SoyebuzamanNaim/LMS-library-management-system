@@ -7,7 +7,6 @@ import bd.edu.seu.lms.model.SubscriptionStatus;
 public record SubscriptionDto(
         Integer studentId,
         SubscriptionType type,
-        LocalDate startDate,
-        LocalDate endDate,
+       
         SubscriptionStatus status) {
 }

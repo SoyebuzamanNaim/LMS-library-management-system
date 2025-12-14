@@ -26,8 +26,11 @@ public class Allotment {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+    @Column(nullable = false)
     private LocalDate issueDate;
-    private LocalDate returnDate;
+
+    
+
     @Enumerated(EnumType.STRING)
     private AllotmentStatus status; // Active, Returned
     private Double fineAmount;

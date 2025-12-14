@@ -5,6 +5,7 @@ import bd.edu.seu.lms.repository.StudentRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,59 +17,56 @@ public class StudentService {
     }
 
     public Student saveStudent(Student student) {
-        if (student.getStatus() == null || student.getStatus().trim().isEmpty()) {
-            student.setStatus("Active");
+        if (student.getId() != null) {
+            throw new IllegalArgumentException("Student already exists");
         }
         return studentRepo.save(student);
     }
 
-    public Student updateStudent(int id, Student student) {
-        return studentRepo.findById(id).map(existing -> {
-            existing.setName(student.getName());
-            existing.setRoll(student.getRoll());
-            existing.setDepartment(student.getDepartment());
-            existing.setEmail(student.getEmail());
-            existing.setPhone(student.getPhone());
-            existing.setStatus(
-                    student.getStatus() != null && !student.getStatus().trim().isEmpty() ? student.getStatus()
-                            : "Active");
-            return studentRepo.save(existing);
-        }).orElse(null);
+    public Student updateStudent(Student student) {
+        if (student.getId() == null) {
+            throw new IllegalArgumentException("Student does not exist");
+        }
+        return studentRepo.save(student);
     }
 
     public void deleteStudent(int id) {
-        if (studentRepo.existsById(id)) {
+        try {
             studentRepo.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Student does not exist");
         }
     }
 
-    public ArrayList<Student> getAllStudents() {
-        return new ArrayList<>(studentRepo.findAll());
+    public List<Student> getAllStudents() {
+        return studentRepo.findAll();
     }
 
     public Student getStudentById(int id) {
-        return studentRepo.findById(id).orElse(null);
+        return studentRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Student does not exist"));
     }
 
-    public Student getStudentByRoll(String roll) {
-        return studentRepo.findAll().stream().filter(s -> s.getRoll() != null && s.getRoll().equals(roll)).findFirst()
-                .orElse(null);
-    }
-
-    public ArrayList<Student> searchStudents(String keyword) {
+    public List<Student> searchStudents(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
-            return new ArrayList<>(studentRepo.findAll());
+            return studentRepo.findAll();
         }
-        String lowerKeyword = keyword.toLowerCase();
-        return studentRepo.findAll().stream().filter(s -> {
-            String name = s.getName() != null ? s.getName().toLowerCase() : "";
-            String roll = s.getRoll() != null ? s.getRoll().toLowerCase() : "";
-            String department = s.getDepartment() != null ? s.getDepartment().toLowerCase() : "";
-            String email = s.getEmail() != null ? s.getEmail().toLowerCase() : "";
-            String phone = s.getPhone() != null ? s.getPhone().toLowerCase() : "";
-            return name.contains(lowerKeyword) || roll.contains(lowerKeyword) || department.contains(lowerKeyword)
-                    || email.contains(lowerKeyword) || phone.contains(lowerKeyword);
-        }).collect(Collectors.toCollection(ArrayList::new));
+        // Idea stolen from ChatGPT to remove duplicates
+        List<Student> nameMatches = studentRepo.findByNameContainingIgnoreCase(keyword);
+        List<Student> rollMatches = studentRepo.findByRollContainingIgnoreCase(keyword);
+        List<Student> departmentMatches = studentRepo.findByDepartmentContainingIgnoreCase(keyword);
+        List<Student> emailMatches = studentRepo.findByEmailContainingIgnoreCase(keyword);
+        
+
+        List<Student> combined = new ArrayList<>();
+        combined.addAll(nameMatches);
+        combined.addAll(rollMatches);
+        combined.addAll(departmentMatches);
+        combined.addAll(emailMatches);
+
+        // Remove duplicates
+        return combined.stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
 }

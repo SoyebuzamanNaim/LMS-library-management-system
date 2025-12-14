@@ -5,6 +5,7 @@ import bd.edu.seu.lms.repository.BookRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,67 +17,45 @@ public class BookService {
     }
 
     public Book saveBook(Book book) {
-        // Validate foreign key relationships
-        if (book.getPublication() == null) {
-            throw new IllegalArgumentException("Publication is required");
-        }
-        if (book.getVendor() == null) {
-            throw new IllegalArgumentException("Vendor is required");
-        }
-        // Derive status based on availability before saving
-        if (book.getAvailableCopies() != null && book.getAvailableCopies() > 0) {
-            book.setStatus("Available");
-        } else {
-            book.setStatus("Unavailable");
+       if(book.getId() != null) {
+        throw new IllegalArgumentException("Book already exists");
+       }
+        return bookRepo.save(book);
+    }
+
+    public Book updateBook(Book book) {
+        if(book.getId() == null) {
+            throw new IllegalArgumentException("Book does not exist");
         }
         return bookRepo.save(book);
     }
 
-    public Book updateBook(int id, Book book) {
-        return bookRepo.findById(id).map(existing -> {
-            existing.setTitle(book.getTitle());
-            existing.setAuthor(book.getAuthor());
-            existing.setPublication(book.getPublication());
-            existing.setVendor(book.getVendor());
-            existing.setCategory(book.getCategory());
-            existing.setTotalCopies(book.getTotalCopies());
-            existing.setAvailableCopies(book.getAvailableCopies());
-            existing.setPricePerCopy(book.getPricePerCopy());
-            if (existing.getAvailableCopies() != null && existing.getAvailableCopies() > 0) {
-                existing.setStatus("Available");
-            } else {
-                existing.setStatus("Unavailable");
-            }
-            existing.setDescription(book.getDescription());
-            return bookRepo.save(existing);
-        }).orElse(null);
-    }
-
     public void deleteBook(int id) {
-        if (bookRepo.existsById(id)) {
+        try {
             bookRepo.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Book does not exist");
         }
     }
 
-    public ArrayList<Book> getAllBooks() {
-        return new ArrayList<>(bookRepo.findAll());
+    public List<Book> getAllBooks() {
+        return bookRepo.findAll();
     }
 
     public Book getBookById(int id) {
-        return bookRepo.findById(id).orElse(null);
+        return bookRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Book does not exist"));
     }
-
-    public ArrayList<Book> searchBooks(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            return new ArrayList<>(bookRepo.findAll());
+//by gpt idea to remove duplicates
+    public List<Book> searchBooks(String keyword) {
+        if (keyword == null || keyword.trim().equals("")) {
+            return getAllBooks();
         }
-        String lowerKeyword = keyword.toLowerCase();
-        return bookRepo.findAll().stream().filter(b -> {
-            String title = b.getTitle() != null ? b.getTitle().toLowerCase() : "";
-            String author = b.getAuthor() != null ? b.getAuthor().toLowerCase() : "";
-            String category = b.getCategory() != null ? b.getCategory().toLowerCase() : "";
-            return title.contains(lowerKeyword) || author.contains(lowerKeyword) || category.contains(lowerKeyword);
-        }).collect(Collectors.toCollection(ArrayList::new));
+        List<Book>byTitle= bookRepo.findByTitleContainingIgnoreCase(keyword);
+        List<Book>byAuthor= bookRepo.findByAuthorContainingIgnoreCase(keyword);
+        List<Book>combined= new ArrayList<>();
+        combined.addAll(byTitle);
+        combined.addAll(byAuthor);
+        return combined.stream().distinct().collect(Collectors.toList());
     }
 
 }

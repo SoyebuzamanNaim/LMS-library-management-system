@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+
 
 @Entity
 @Getter
@@ -24,10 +24,9 @@ public class Subscription {
 
     @Enumerated(EnumType.STRING)
     private SubscriptionType type; // Premium, Standard, Basic
-    private LocalDate startDate;
-    private LocalDate endDate;
+    
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus status; // Active, Expired
-    
+
 
 }

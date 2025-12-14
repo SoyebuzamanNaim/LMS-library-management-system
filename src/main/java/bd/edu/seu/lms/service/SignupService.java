@@ -4,7 +4,7 @@ import bd.edu.seu.lms.model.User;
 import bd.edu.seu.lms.repository.UserRepo;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SignupService {
@@ -21,7 +21,7 @@ public class SignupService {
         userRepo.save(user);
     }
 
-    public ArrayList<User> getAllUsers() {
-        return new ArrayList<>(userRepo.findAll());
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
     }
 }

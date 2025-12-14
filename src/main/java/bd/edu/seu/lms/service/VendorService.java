@@ -5,6 +5,7 @@ import bd.edu.seu.lms.repository.VendorRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,45 +20,50 @@ public class VendorService {
         return vendorRepo.save(vendor);
     }
 
-    public Vendor updateVendor(int id, Vendor vendor) {
-        return vendorRepo.findById(id).map(existing -> {
-            existing.setName(vendor.getName());
-            existing.setContactPerson(vendor.getContactPerson());
-            existing.setEmail(vendor.getEmail());
-            existing.setPhone(vendor.getPhone());
-            existing.setAddress(vendor.getAddress());
-            return vendorRepo.save(existing);
-        }).orElse(null);
+    public Vendor updateVendor(Vendor vendor) {
+        if(vendor.getId() == null) {
+            throw new IllegalArgumentException("Vendor does not exist");
+        }
+        return vendorRepo.save(vendor);
     }
 
     public void deleteVendor(int id) {
-        if (vendorRepo.existsById(id)) {
+        try {
             vendorRepo.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Vendor does not exist");
         }
     }
 
-    public ArrayList<Vendor> getAllVendors() {
-        return new ArrayList<>(vendorRepo.findAll());
+    public List<Vendor> getAllVendors() {
+        return vendorRepo.findAll();
     }
 
     public Vendor getVendorById(int id) {
-        return vendorRepo.findById(id).orElse(null);
+        return vendorRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Vendor does not exist"));
     }
 
-    public ArrayList<Vendor> searchVendors(String keyword) {
+    public List<Vendor> searchVendors(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
-            return new ArrayList<>(vendorRepo.findAll());
+            return vendorRepo.findAll();
         }
-        String lowerKeyword = keyword.toLowerCase();
-        return vendorRepo.findAll().stream().filter(v -> {
-            String name = v.getName() != null ? v.getName().toLowerCase() : "";
-            String contactPerson = v.getContactPerson() != null ? v.getContactPerson().toLowerCase() : "";
-            String email = v.getEmail() != null ? v.getEmail().toLowerCase() : "";
-            String phone = v.getPhone() != null ? v.getPhone().toLowerCase() : "";
-            String address = v.getAddress() != null ? v.getAddress().toLowerCase() : "";
-            return name.contains(lowerKeyword) || contactPerson.contains(lowerKeyword) || email.contains(lowerKeyword)
-                    || phone.contains(lowerKeyword) || address.contains(lowerKeyword);
-        }).collect(Collectors.toCollection(ArrayList::new));
+        
+       //Idea stolen from ChatGPT to remove duplicates
+        List<Vendor> nameMatches = vendorRepo.findByNameContainingIgnoreCase(keyword);
+        List<Vendor> contactPersonMatches = vendorRepo.findByContactPersonContainingIgnoreCase(keyword);
+        List<Vendor> emailMatches = vendorRepo.findByEmailContainingIgnoreCase(keyword);
+        List<Vendor> phoneMatches = vendorRepo.findByPhoneContainingIgnoreCase(keyword);
+
+        List<Vendor> combined = new ArrayList<>();
+        combined.addAll(nameMatches);
+        combined.addAll(contactPersonMatches);
+        combined.addAll(emailMatches);
+        combined.addAll(phoneMatches);
+
+       
+        return combined.stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
 }

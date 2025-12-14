@@ -1,7 +1,10 @@
 package bd.edu.seu.lms.service;
 
+import bd.edu.seu.lms.model.User;
 import bd.edu.seu.lms.repository.UserRepo;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class LoginService {
@@ -12,18 +15,14 @@ public class LoginService {
     }
 
     public boolean validateUser(String email, String password) {
-        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+        if (email == null || email.trim().equals("") || password == null || password.trim().equals("")) {
             return false;
         }
-        return userRepo.findByEmail(email)
-                .map(user -> password.equals(user.getPassword()))
-                .orElse(false);
-    }
-
-    public bd.edu.seu.lms.model.User findByEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            return null;
+        Optional<User> user = userRepo.findByEmail(email);
+        boolean isValid= user.isPresent() && user.get().getPassword().equals(password);
+        if(!isValid) {
+            throw new IllegalArgumentException("Invalid email or password");
         }
-        return userRepo.findByEmail(email).orElse(null);
+        return true;
     }
 }

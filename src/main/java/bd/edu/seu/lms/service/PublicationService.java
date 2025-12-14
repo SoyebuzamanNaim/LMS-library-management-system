@@ -4,8 +4,7 @@ import bd.edu.seu.lms.model.Publication;
 import bd.edu.seu.lms.repository.PublicationRepo;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 public class PublicationService {
@@ -19,38 +18,35 @@ public class PublicationService {
         return publicationRepo.save(publication);
     }
 
-    public Publication updatePublication(int id, Publication publication) {
-        return publicationRepo.findById(id).map(existing -> {
-            existing.setName(publication.getName());
-            existing.setAddress(publication.getAddress());
-            return publicationRepo.save(existing);
-        }).orElse(null);
+    public Publication updatePublication(Publication publication) {
+        if (publication.getId() == null) {
+            throw new IllegalArgumentException("Publication does not exist");
+        }
+        return publicationRepo.save(publication);
     }
 
     public void deletePublication(int id) {
-        if (publicationRepo.existsById(id)) {
+
+        try {
             publicationRepo.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Publication does not exist");
         }
     }
 
-    public ArrayList<Publication> getAllPublications() {
-        return new ArrayList<>(publicationRepo.findAll());
+    public List<Publication> getAllPublications() {
+        return publicationRepo.findAll();
     }
 
     public Publication getPublicationById(int id) {
-        return publicationRepo.findById(id).orElse(null);
+        return publicationRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Publication does not exist"));
     }
 
-    public ArrayList<Publication> searchPublications(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            return new ArrayList<>(publicationRepo.findAll());
+    public List<Publication> searchPublications(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return publicationRepo.findAll();
         }
-        String lowerKeyword = keyword.toLowerCase();
-        return publicationRepo.findAll().stream().filter(p -> {
-            String name = p.getName() != null ? p.getName().toLowerCase() : "";
-            String address = p.getAddress() != null ? p.getAddress().toLowerCase() : "";
-            return name.contains(lowerKeyword) || address.contains(lowerKeyword);
-        }).collect(Collectors.toCollection(ArrayList::new));
+        return publicationRepo.findByNameContainingIgnoreCase(keyword);
     }
 
 }
