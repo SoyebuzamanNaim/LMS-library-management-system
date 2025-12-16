@@ -4,8 +4,6 @@ import bd.edu.seu.lms.model.User;
 import bd.edu.seu.lms.repository.UserRepo;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class LoginService {
     private final UserRepo userRepo;
@@ -15,14 +13,19 @@ public class LoginService {
     }
 
     public boolean validateUser(String email, String password) {
-        if (email == null || email.trim().equals("") || password == null || password.trim().equals("")) {
-            return false;
+        User user = userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User does not exist"));
+        if (user.getPassword() == null || password == null) {
+            throw new SecurityException("Incorrect password.");
+            
         }
-        Optional<User> user = userRepo.findByEmail(email);
-        boolean isValid= user.isPresent() && user.get().getPassword().equals(password);
-        if(!isValid) {
-            throw new IllegalArgumentException("Invalid email or password");
+        if (user.getPassword().equals(password)) {
+            return true;
+        } else {
+            throw new SecurityException("Incorrect password.");
         }
-        return true;
+    }
+
+    public User findByEmail(String email) {
+        return userRepo.findByEmail(email).orElse(null);
     }
 }

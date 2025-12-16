@@ -17,14 +17,14 @@ public class StudentService {
     }
 
     public Student saveStudent(Student student) {
-        if (student.getId() != null) {
+        if (studentRepo.existsById(student.getId())) {
             throw new IllegalArgumentException("Student already exists");
         }
         return studentRepo.save(student);
     }
 
     public Student updateStudent(Student student) {
-        if (student.getId() == null) {
+        if (student.getId() == null || !studentRepo.existsById(student.getId())) {
             throw new IllegalArgumentException("Student does not exist");
         }
         return studentRepo.save(student);
@@ -50,12 +50,11 @@ public class StudentService {
         if (keyword == null || keyword.isEmpty()) {
             return studentRepo.findAll();
         }
-        // Idea stolen from ChatGPT to remove duplicates
+        // isfai
         List<Student> nameMatches = studentRepo.findByNameContainingIgnoreCase(keyword);
         List<Student> rollMatches = studentRepo.findByRollContainingIgnoreCase(keyword);
         List<Student> departmentMatches = studentRepo.findByDepartmentContainingIgnoreCase(keyword);
         List<Student> emailMatches = studentRepo.findByEmailContainingIgnoreCase(keyword);
-        
 
         List<Student> combined = new ArrayList<>();
         combined.addAll(nameMatches);
@@ -63,7 +62,6 @@ public class StudentService {
         combined.addAll(departmentMatches);
         combined.addAll(emailMatches);
 
-        // Remove duplicates
         return combined.stream()
                 .distinct()
                 .collect(Collectors.toList());

@@ -16,7 +16,7 @@ public class SubscriptionService {
     }
 
     public Subscription saveSubscription(Subscription subscription) {
-        if (subscriptionRepo.existsById(subscription.getId())){
+        if (subscriptionRepo.existsById(subscription.getId())) {
             throw new IllegalArgumentException("Subscription already exists");
         }
         return subscriptionRepo.save(subscription);
@@ -46,7 +46,6 @@ public class SubscriptionService {
                 .orElseThrow(() -> new IllegalArgumentException("Subscription does not exist"));
     }
 
-
     public List<Subscription> searchSubscriptions(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
             return subscriptionRepo.findAll();
@@ -64,4 +63,3 @@ public class SubscriptionService {
         return subscriptionRepo.save(subscription);
     }
 }
-

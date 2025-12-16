@@ -50,7 +50,7 @@ public class VendorService {
         if (keyword == null || keyword.isEmpty()) {
             return vendorRepo.findAll();
         }
-        // Idea stolen from ChatGPT to remove duplicates
+        // isfai
         List<Vendor> nameMatches = vendorRepo.findByNameContainingIgnoreCase(keyword);
         List<Vendor> contactPersonMatches = vendorRepo.findByContactPersonContainingIgnoreCase(keyword);
         List<Vendor> emailMatches = vendorRepo.findByEmailContainingIgnoreCase(keyword);

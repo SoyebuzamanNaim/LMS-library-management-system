@@ -15,11 +15,14 @@ public class PublicationService {
     }
 
     public Publication savePublication(Publication publication) {
+        if (publicationRepo.existsById(publication.getId())) {
+            throw new IllegalArgumentException("Publication already exists");
+        }
         return publicationRepo.save(publication);
     }
 
     public Publication updatePublication(Publication publication) {
-        if (publication.getId() == null) {
+        if (publication.getId() == null || !publicationRepo.existsById(publication.getId())) {
             throw new IllegalArgumentException("Publication does not exist");
         }
         return publicationRepo.save(publication);
@@ -39,7 +42,8 @@ public class PublicationService {
     }
 
     public Publication getPublicationById(int id) {
-        return publicationRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Publication does not exist"));
+        return publicationRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Publication does not exist"));
     }
 
     public List<Publication> searchPublications(String keyword) {

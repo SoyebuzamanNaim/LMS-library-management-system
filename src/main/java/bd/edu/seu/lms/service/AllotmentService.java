@@ -20,17 +20,16 @@ public class AllotmentService {
         this.allotmentRepo = allotmentRepo;
     }
 
-    public List<Allotment> getAllAllotments() {
-        return allotmentRepo.findAll();
-    }
-
-    public Allotment getAllotmentById(int id) {
-        return allotmentRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Allotment does not exist"));
-    }
-
     public Allotment saveAllotment(Allotment allotment) {
-        if (allotment.getId() != null) {
+        if (allotmentRepo.existsById(allotment.getId())) {
             throw new IllegalArgumentException("Allotment already exists");
+        }
+        return allotmentRepo.save(allotment);
+    }
+
+    public Allotment updateAllotment(Allotment allotment) {
+        if (allotment.getId() == null || !allotmentRepo.existsById(allotment.getId())) {
+            throw new IllegalArgumentException("Allotment does not exist");
         }
         return allotmentRepo.save(allotment);
     }
@@ -43,11 +42,12 @@ public class AllotmentService {
         }
     }
 
-    public Allotment updateAllotment(Allotment allotment) {
-        if (allotment.getId() == null) {
-            throw new IllegalArgumentException("Allotment does not exist");
-        }
-        return allotmentRepo.save(allotment);
+    public List<Allotment> getAllAllotments() {
+        return allotmentRepo.findAll();
+    }
+
+    public Allotment getAllotmentById(int id) {
+        return allotmentRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Allotment does not exist"));
     }
 
     public double calculateFine(LocalDate issueDate) {
@@ -61,7 +61,7 @@ public class AllotmentService {
 
         // 20 takafor each day after the planned return date
         long overdueDays = ChronoUnit.DAYS.between(plannedReturnDate, today);
-        // Chronounit from gpt didnot learn it
+        // isfai
         return overdueDays * 20.0;
     }
 
@@ -69,12 +69,13 @@ public class AllotmentService {
         if (keyword == null || keyword.trim().equals("")) {
             return getAllAllotments();
         }
-        List<Allotment> byStudents = allotmentRepo.findByStudent_NameContainingIgnoreCase(keyword);
-        List<Allotment> byTitle = allotmentRepo.findByBook_TitleContainingIgnoreCase(keyword);
+        // isfai
+        List<Allotment> studentMatches = allotmentRepo.findByStudent_NameContainingIgnoreCase(keyword);
+        List<Allotment> titleMatches = allotmentRepo.findByBook_TitleContainingIgnoreCase(keyword);
         List<Allotment> combined = new ArrayList<>();
 
-        combined.addAll(byStudents);
-        combined.addAll(byTitle);
+        combined.addAll(studentMatches);
+        combined.addAll(titleMatches);
 
         return combined.stream().distinct().collect(Collectors.toList());
     }

@@ -17,14 +17,14 @@ public class BookService {
     }
 
     public Book saveBook(Book book) {
-       if(book.getId() != null) {
-        throw new IllegalArgumentException("Book already exists");
-       }
+        if (bookRepo.existsById(book.getId())) {
+            throw new IllegalArgumentException("Book already exists");
+        }
         return bookRepo.save(book);
     }
 
     public Book updateBook(Book book) {
-        if(book.getId() == null) {
+        if (book.getId() == null || !bookRepo.existsById(book.getId())) {
             throw new IllegalArgumentException("Book does not exist");
         }
         return bookRepo.save(book);
@@ -45,14 +45,15 @@ public class BookService {
     public Book getBookById(int id) {
         return bookRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Book does not exist"));
     }
-//by gpt idea to remove duplicates
+
+    // isfai
     public List<Book> searchBooks(String keyword) {
         if (keyword == null || keyword.trim().equals("")) {
             return getAllBooks();
         }
-        List<Book>byTitle= bookRepo.findByTitleContainingIgnoreCase(keyword);
-        List<Book>byAuthor= bookRepo.findByAuthorContainingIgnoreCase(keyword);
-        List<Book>combined= new ArrayList<>();
+        List<Book> byTitle = bookRepo.findByTitleContainingIgnoreCase(keyword);
+        List<Book> byAuthor = bookRepo.findByAuthorContainingIgnoreCase(keyword);
+        List<Book> combined = new ArrayList<>();
         combined.addAll(byTitle);
         combined.addAll(byAuthor);
         return combined.stream().distinct().collect(Collectors.toList());
