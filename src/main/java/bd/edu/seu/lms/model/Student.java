@@ -25,5 +25,8 @@ public class Student {
     @CollectionTable(name = "student_phone", joinColumns = @JoinColumn(name = "student_id"))
     private List<String> phones;
     @Enumerated(EnumType.STRING)
-    private StudentStatus status; // Active, Inactive
+    private StudentStatus status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Subscription subscription;
+
 }

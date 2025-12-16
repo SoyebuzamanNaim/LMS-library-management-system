@@ -1,13 +1,12 @@
 package bd.edu.seu.lms.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,6 +20,10 @@ public class Vendor {
     private String name;
     private String contactPerson;
     private String email;
-    private String phone;
+    @ElementCollection
+    @CollectionTable(name="vendor_phone", joinColumns = @JoinColumn(name="vendor_id"))
+    private List<String> phones;
     private String address;
+    @OneToMany(mappedBy = "vendor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Book> books;
 }

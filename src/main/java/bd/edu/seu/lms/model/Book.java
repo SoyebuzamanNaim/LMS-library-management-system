@@ -31,6 +31,6 @@ public class Book {
     private int availableCopies;
     private Double pricePerCopy;
     @Enumerated(EnumType.STRING)
-    private BookStatus status; // Available, Unavailable
+    private BookStatus status; 
     private String description;
 }

@@ -4,6 +4,9 @@ import bd.edu.seu.lms.dto.VendorDto;
 import bd.edu.seu.lms.model.Vendor;
 import bd.edu.seu.lms.service.VendorService;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,14 +27,12 @@ public class VendorController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        if (search != null && !search.trim().equals("")) {
+
             model.addAttribute("search", search);
             model.addAttribute("vendors", vendorService.searchVendors(search));
-        } else {
-            model.addAttribute("vendors", vendorService.getAllVendors());
-        }
+
         model.addAttribute("user", session.getAttribute("user"));
-        model.addAttribute("vendordto", new VendorDto("", "", "", "", ""));
+        model.addAttribute("vendordto", new VendorDto(null, null, null, null, null));
         return "vendors";
     }
 

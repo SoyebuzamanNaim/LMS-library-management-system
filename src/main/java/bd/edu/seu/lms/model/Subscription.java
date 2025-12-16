@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,16 +17,10 @@ public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
-
     @Enumerated(EnumType.STRING)
-    private SubscriptionType type; // Premium, Standard, Basic
-    
+    SubscriptionStatus status;
     @Enumerated(EnumType.STRING)
-    private SubscriptionStatus status; // Active, Expired
-
-
+    SubscriptionType type;
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Student> students;
 }

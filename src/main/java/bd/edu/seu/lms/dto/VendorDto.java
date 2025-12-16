@@ -1,4 +1,6 @@
 package bd.edu.seu.lms.dto;
 
-public record VendorDto(String name, String contactPerson, String email, String phone, String address) {
+import java.util.List;
+
+public record VendorDto(String name, String contactPerson, String email, List<String> phones, String address) {
 }

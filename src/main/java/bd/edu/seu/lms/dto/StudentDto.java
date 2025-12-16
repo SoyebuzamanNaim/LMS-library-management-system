@@ -8,6 +8,6 @@ public record StudentDto(
                 String roll,
                 String department,
                 String email,
-                List<String> phones,
+                List<String> phones,    
                 StudentStatus status) {
 }

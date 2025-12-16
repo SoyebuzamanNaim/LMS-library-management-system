@@ -17,4 +17,6 @@ public class ProfileController {
         model.addAttribute("email", session.getAttribute("email"));
         return "profile";
     }
+
+    //delete account
 }

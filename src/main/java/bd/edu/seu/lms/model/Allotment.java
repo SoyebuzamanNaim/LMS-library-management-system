@@ -32,7 +32,7 @@ public class Allotment {
     
 
     @Enumerated(EnumType.STRING)
-    private AllotmentStatus status; // Active, Returned
+    private AllotmentStatus status; 
     private Double fineAmount;
 
 }
