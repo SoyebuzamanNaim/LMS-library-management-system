@@ -3,7 +3,7 @@ package bd.edu.seu.lms.service;
 import bd.edu.seu.lms.model.User;
 import bd.edu.seu.lms.repository.UserRepo;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SignupService {
     private final UserRepo userRepo;
@@ -11,7 +11,7 @@ public class SignupService {
     public SignupService(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
-
+    @Transactional
     public void saveUser(User user) {
         if (userRepo.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("User already exists");

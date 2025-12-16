@@ -3,7 +3,7 @@ package bd.edu.seu.lms.service;
 import bd.edu.seu.lms.model.Student;
 import bd.edu.seu.lms.repository.StudentRepo;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +16,7 @@ public class StudentService {
         this.studentRepo = studentRepo;
     }
 
+    @Transactional
     public Student saveStudent(Student student) {
         if (studentRepo.existsById(student.getId())) {
             throw new IllegalArgumentException("Student already exists");
@@ -23,6 +24,7 @@ public class StudentService {
         return studentRepo.save(student);
     }
 
+    @Transactional
     public Student updateStudent(Student student) {
         if (student.getId() == null || !studentRepo.existsById(student.getId())) {
             throw new IllegalArgumentException("Student does not exist");
@@ -30,6 +32,7 @@ public class StudentService {
         return studentRepo.save(student);
     }
 
+    @Transactional
     public void deleteStudent(int id) {
         try {
             studentRepo.deleteById(id);

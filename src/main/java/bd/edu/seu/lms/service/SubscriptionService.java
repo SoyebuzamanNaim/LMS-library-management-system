@@ -4,7 +4,7 @@ import bd.edu.seu.lms.model.Subscription;
 import bd.edu.seu.lms.model.SubscriptionStatus;
 import bd.edu.seu.lms.repository.SubscriptionRepo;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -14,7 +14,7 @@ public class SubscriptionService {
     public SubscriptionService(SubscriptionRepo subscriptionRepo) {
         this.subscriptionRepo = subscriptionRepo;
     }
-
+    @Transactional
     public Subscription saveSubscription(Subscription subscription) {
         if (subscriptionRepo.existsById(subscription.getId())) {
             throw new IllegalArgumentException("Subscription already exists");
@@ -22,6 +22,7 @@ public class SubscriptionService {
         return subscriptionRepo.save(subscription);
     }
 
+    @Transactional
     public Subscription updateSubscription(Subscription subscription) {
         if (subscription.getId() == null || !subscriptionRepo.existsById(subscription.getId())) {
             throw new IllegalArgumentException("Subscription does not exist");
@@ -29,6 +30,7 @@ public class SubscriptionService {
         return subscriptionRepo.save(subscription);
     }
 
+    @Transactional
     public void deleteSubscription(int id) {
         try {
             subscriptionRepo.deleteById(id);
@@ -52,7 +54,7 @@ public class SubscriptionService {
         }
         return subscriptionRepo.findByStudent_NameContainingIgnoreCase(keyword);
     }
-
+    @Transactional
     public Subscription toggleSubscriptionStatus(int id) {
         Subscription subscription = getSubscriptionById(id);
         if (subscription.getStatus() == SubscriptionStatus.ACTIVE) {

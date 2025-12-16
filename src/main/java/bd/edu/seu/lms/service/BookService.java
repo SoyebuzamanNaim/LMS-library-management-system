@@ -3,7 +3,7 @@ package bd.edu.seu.lms.service;
 import bd.edu.seu.lms.model.Book;
 import bd.edu.seu.lms.repository.BookRepo;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +16,7 @@ public class BookService {
         this.bookRepo = bookRepo;
     }
 
+    @Transactional
     public Book saveBook(Book book) {
         if (bookRepo.existsById(book.getId())) {
             throw new IllegalArgumentException("Book already exists");
@@ -23,6 +24,7 @@ public class BookService {
         return bookRepo.save(book);
     }
 
+    @Transactional
     public Book updateBook(Book book) {
         if (book.getId() == null || !bookRepo.existsById(book.getId())) {
             throw new IllegalArgumentException("Book does not exist");
@@ -30,6 +32,7 @@ public class BookService {
         return bookRepo.save(book);
     }
 
+    @Transactional
     public void deleteBook(int id) {
         try {
             bookRepo.deleteById(id);

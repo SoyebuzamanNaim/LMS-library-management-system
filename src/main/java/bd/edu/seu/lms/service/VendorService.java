@@ -3,7 +3,7 @@ package bd.edu.seu.lms.service;
 import bd.edu.seu.lms.model.Vendor;
 import bd.edu.seu.lms.repository.VendorRepo;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +15,7 @@ public class VendorService {
     public VendorService(VendorRepo vendorRepo) {
         this.vendorRepo = vendorRepo;
     }
-
+    @Transactional
     public Vendor saveVendor(Vendor vendor) {
         if (vendorRepo.existsById(vendor.getId())) {
             throw new IllegalArgumentException("Vendor already exist");
@@ -23,6 +23,7 @@ public class VendorService {
         return vendorRepo.save(vendor);
     }
 
+    @Transactional
     public Vendor updateVendor(Vendor vendor) {
         if (vendor.getId() == null || !vendorRepo.existsById(vendor.getId())) {
             throw new IllegalArgumentException("Vendor does not exist");
@@ -30,6 +31,7 @@ public class VendorService {
         return vendorRepo.save(vendor);
     }
 
+    @Transactional
     public void deleteVendor(int id) {
         try {
             vendorRepo.deleteById(id);

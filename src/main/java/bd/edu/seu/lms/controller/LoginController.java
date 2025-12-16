@@ -1,6 +1,7 @@
 package bd.edu.seu.lms.controller;
 
 import bd.edu.seu.lms.dto.LoginDto;
+import bd.edu.seu.lms.model.User;
 import bd.edu.seu.lms.service.LoginService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -21,9 +22,7 @@ public class LoginController {
     @GetMapping({ "/", "/login" })
     public String login(Model model, HttpSession session) {
 
-        if (!model.containsAttribute("logindto")) {
-            model.addAttribute("logindto", new LoginDto("", ""));
-        }
+        model.addAttribute("logindto", new LoginDto("", ""));
         return "login";
     }
 
@@ -31,16 +30,16 @@ public class LoginController {
     public String login(@ModelAttribute("logindto") LoginDto loginDto,
             RedirectAttributes redirectAttributes,
             HttpSession session) {
-        if (!loginService.validateUser(loginDto.email(), loginDto.password())) {
-        redirectAttributes.addFlashAttribute("loginError", "Invalid email or password");
-        return "redirect:/login";
+        if (loginService.validateUser(loginDto.email(), loginDto.password())) {
+            User user = loginService.findByEmail(loginDto.email());
+            session.setAttribute("user", user.getUsername());
+            session.setAttribute("email", loginDto.email());
+            redirectAttributes.addFlashAttribute("success", "Logged in successfully");
+            return "redirect:/dashboard";
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Invalid email or password");
+            return "redirect:/login";
         }
-
-        var user = loginService.findByEmail(loginDto.email());
-        session.setAttribute("user", user != null ? user.getUsername() : loginDto.email());
-        session.setAttribute("email", loginDto.email());
-        redirectAttributes.addFlashAttribute("success", "Logged in successfully");
-        return "redirect:/dashboard";
     }
 
     @PostMapping("/logout")

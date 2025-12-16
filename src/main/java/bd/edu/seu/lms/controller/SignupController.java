@@ -13,7 +13,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SignupController {
-    // Constructor injection
     private final SignupService signupService;
 
     public SignupController(SignupService signupService) {
@@ -33,12 +32,16 @@ public class SignupController {
     public String signup(@ModelAttribute("signupdto") SignupDto signupdto,
             RedirectAttributes redirectAttributes, HttpSession session) {
         try {
-            signupService.saveUser(new User(signupdto.username(), signupdto.email(), signupdto.password()));
+            User user = new User();
+            user.setUsername(signupdto.username());
+            user.setEmail(signupdto.email());
+            user.setPassword(signupdto.password());
+            signupService.saveUser(user);
             session.setAttribute("user", signupdto.username());
             session.setAttribute("email", signupdto.email());
             redirectAttributes.addFlashAttribute("success", "Account created! Please log in.");
             return "redirect:/login";
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("signupError", e.getMessage());
             return "redirect:/signup";
         }

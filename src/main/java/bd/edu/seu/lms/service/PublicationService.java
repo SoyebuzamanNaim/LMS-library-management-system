@@ -3,7 +3,7 @@ package bd.edu.seu.lms.service;
 import bd.edu.seu.lms.model.Publication;
 import bd.edu.seu.lms.repository.PublicationRepo;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -13,21 +13,21 @@ public class PublicationService {
     public PublicationService(PublicationRepo publicationRepo) {
         this.publicationRepo = publicationRepo;
     }
-
+    @Transactional
     public Publication savePublication(Publication publication) {
         if (publicationRepo.existsById(publication.getId())) {
             throw new IllegalArgumentException("Publication already exists");
         }
         return publicationRepo.save(publication);
     }
-
+    @Transactional
     public Publication updatePublication(Publication publication) {
         if (publication.getId() == null || !publicationRepo.existsById(publication.getId())) {
             throw new IllegalArgumentException("Publication does not exist");
         }
         return publicationRepo.save(publication);
     }
-
+    @Transactional
     public void deletePublication(int id) {
 
         try {

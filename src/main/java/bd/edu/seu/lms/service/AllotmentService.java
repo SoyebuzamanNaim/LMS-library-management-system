@@ -5,7 +5,7 @@ import bd.edu.seu.lms.model.Allotment;
 
 import bd.edu.seu.lms.repository.AllotmentRepo;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ public class AllotmentService {
         this.allotmentRepo = allotmentRepo;
     }
 
+    @Transactional
     public Allotment saveAllotment(Allotment allotment) {
         if (allotmentRepo.existsById(allotment.getId())) {
             throw new IllegalArgumentException("Allotment already exists");
@@ -27,6 +28,7 @@ public class AllotmentService {
         return allotmentRepo.save(allotment);
     }
 
+    @Transactional
     public Allotment updateAllotment(Allotment allotment) {
         if (allotment.getId() == null || !allotmentRepo.existsById(allotment.getId())) {
             throw new IllegalArgumentException("Allotment does not exist");
@@ -34,6 +36,7 @@ public class AllotmentService {
         return allotmentRepo.save(allotment);
     }
 
+    @Transactional
     public void deleteAllotment(int id) {
         try {
             allotmentRepo.deleteById(id);

@@ -28,39 +28,24 @@ public class VendorController {
             return "redirect:/login";
         }
 
-            model.addAttribute("search", search);
-            model.addAttribute("vendors", vendorService.searchVendors(search));
+        model.addAttribute("search", search);
+        model.addAttribute("vendors", vendorService.searchVendors(search));
 
         model.addAttribute("user", session.getAttribute("user"));
-        model.addAttribute("vendordto", new VendorDto(null, null, null, null, null));
+        model.addAttribute("vendordto", new VendorDto("", "", "", null, ""));
         return "vendors";
     }
 
     @PostMapping("/vendors/save")
     public String vendors(@ModelAttribute("vendordto") VendorDto vendorDto, RedirectAttributes redirectAttributes) {
         try {
-            if (vendorDto.name() == null || vendorDto.name().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Name is required");
-                return "redirect:/vendors";
-            }
-            if (vendorDto.contactPerson() == null || vendorDto.contactPerson().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Contact Person is required");
-                return "redirect:/vendors";
-            }
-            if (vendorDto.email() == null || vendorDto.email().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Email is required");
-                return "redirect:/vendors";
-            }
-            if (vendorDto.phone() == null || vendorDto.phone().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Phone is required");
-                return "redirect:/vendors";
-            }
+
             Vendor vendor = new Vendor();
-            vendor.setName(vendorDto.name());
-            vendor.setContactPerson(vendorDto.contactPerson());
-            vendor.setEmail(vendorDto.email());
-            vendor.setPhone(vendorDto.phone());
-            vendor.setAddress(vendorDto.address() != null ? vendorDto.address() : "N/A");
+            vendor.setName(vendorDto.name().trim());
+            vendor.setContactPerson(vendorDto.contactPerson().trim());
+            vendor.setEmail(vendorDto.email().trim());
+            vendor.setPhones(vendorDto.phones());
+            vendor.setAddress(vendorDto.address().trim());
             vendorService.saveVendor(vendor);
             redirectAttributes.addFlashAttribute("success", "Vendor added successfully");
         } catch (Exception e) {
@@ -70,34 +55,16 @@ public class VendorController {
     }
 
     @PostMapping("/vendors/update")
-    public String updateVendor(@ModelAttribute VendorDto vendorDto, int id, RedirectAttributes redirectAttributes) {
+    public String updateVendor(@ModelAttribute VendorDto vendorDto,  RedirectAttributes redirectAttributes) {
         try {
-            if (vendorDto.name() == null || vendorDto.name().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Name is required");
-                return "redirect:/vendors";
-            }
-            if (vendorDto.contactPerson() == null || vendorDto.contactPerson().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Contact Person is required");
-                return "redirect:/vendors";
-            }
-            if (vendorDto.email() == null || vendorDto.email().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Email is required");
-                return "redirect:/vendors";
-            }
-            if (vendorDto.phone() == null || vendorDto.phone().trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Phone is required");
-                return "redirect:/vendors";
-            }
+            
             Vendor vendor = new Vendor();
-            vendor.setName(vendorDto.name());
-            vendor.setContactPerson(vendorDto.contactPerson());
-            vendor.setEmail(vendorDto.email());
-            vendor.setPhone(vendorDto.phone());
-            vendor.setAddress(vendorDto.address() != null ? vendorDto.address() : "N/A");
-            if (vendorService.updateVendor(id, vendor) == null) {
-                redirectAttributes.addFlashAttribute("error", "Vendor not found");
-                return "redirect:/vendors";
-            }
+            vendor.setName(vendorDto.name().trim());
+            vendor.setContactPerson(vendorDto.contactPerson().trim());
+            vendor.setEmail(vendorDto.email().trim());
+            vendor.setPhones(vendorDto.phones());
+            vendor.setAddress(vendorDto.address().trim());
+            vendorService.updateVendor(vendor) ;
             redirectAttributes.addFlashAttribute("success", "Vendor updated successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -116,3 +83,5 @@ public class VendorController {
         return "redirect:/vendors";
     }
 }
+
+
