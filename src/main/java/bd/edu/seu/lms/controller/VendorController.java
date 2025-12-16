@@ -5,7 +5,7 @@ import bd.edu.seu.lms.model.Vendor;
 import bd.edu.seu.lms.service.VendorService;
 import jakarta.servlet.http.HttpSession;
 
-import java.util.List;
+
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,16 +55,16 @@ public class VendorController {
     }
 
     @PostMapping("/vendors/update")
-    public String updateVendor(@ModelAttribute VendorDto vendorDto,  RedirectAttributes redirectAttributes) {
+    public String updateVendor(@ModelAttribute VendorDto vendorDto, RedirectAttributes redirectAttributes) {
         try {
-            
+
             Vendor vendor = new Vendor();
             vendor.setName(vendorDto.name().trim());
             vendor.setContactPerson(vendorDto.contactPerson().trim());
             vendor.setEmail(vendorDto.email().trim());
             vendor.setPhones(vendorDto.phones());
             vendor.setAddress(vendorDto.address().trim());
-            vendorService.updateVendor(vendor) ;
+            vendorService.updateVendor(vendor);
             redirectAttributes.addFlashAttribute("success", "Vendor updated successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -83,5 +83,3 @@ public class VendorController {
         return "redirect:/vendors";
     }
 }
-
-
