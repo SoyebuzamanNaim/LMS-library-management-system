@@ -14,6 +14,7 @@ public class SubscriptionService {
     public SubscriptionService(SubscriptionRepo subscriptionRepo) {
         this.subscriptionRepo = subscriptionRepo;
     }
+
     @Transactional
     public Subscription saveSubscription(Subscription subscription) {
         if (subscriptionRepo.existsById(subscription.getId())) {
@@ -54,6 +55,7 @@ public class SubscriptionService {
         }
         return subscriptionRepo.findByStudent_NameContainingIgnoreCase(keyword);
     }
+
     @Transactional
     public Subscription toggleSubscriptionStatus(int id) {
         Subscription subscription = getSubscriptionById(id);
@@ -64,4 +66,5 @@ public class SubscriptionService {
         }
         return subscriptionRepo.save(subscription);
     }
+
 }

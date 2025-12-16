@@ -18,11 +18,11 @@ public class Book {
     private String title;
     private String author;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "publication_id", nullable = false)
     private Publication publication;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 

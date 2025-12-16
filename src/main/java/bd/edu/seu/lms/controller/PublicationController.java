@@ -24,12 +24,8 @@ public class PublicationController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        if (search != null && !search.trim().equals("")) {
-            model.addAttribute("search", search);
-            model.addAttribute("publications", publicationService.searchPublications(search));
-        } else {
-            model.addAttribute("publications", publicationService.getAllPublications());
-        }
+        model.addAttribute("search", search);
+        model.addAttribute("publications", publicationService.searchPublications(search));
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("publicationdto", new PublicationDto("", ""));
         return "publications";
@@ -62,13 +58,10 @@ public class PublicationController {
                 redirectAttributes.addFlashAttribute("error", "Name is required");
                 return "redirect:/publications";
             }
-            Publication publication = new Publication();
+            Publication publication = publicationService.getPublicationById(id);
             publication.setName(publicationDto.name());
             publication.setAddress(publicationDto.address() != null ? publicationDto.address() : "N/A");
-            if (publicationService.updatePublication(id, publication) == null) {
-                redirectAttributes.addFlashAttribute("error", "Publication not found");
-                return "redirect:/publications";
-            }
+            publicationService.updatePublication(publication);
             redirectAttributes.addFlashAttribute("success", "Publication updated successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

@@ -2,6 +2,7 @@ package bd.edu.seu.lms.controller;
 
 import bd.edu.seu.lms.dto.StudentDto;
 import bd.edu.seu.lms.model.Student;
+import bd.edu.seu.lms.model.StudentStatus;
 import bd.edu.seu.lms.service.StudentService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
 
 @Controller
 public class StudentController {
@@ -24,14 +27,10 @@ public class StudentController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        if (search != null && !search.trim().equals("")) {
-            model.addAttribute("search", search);
-            model.addAttribute("students", studentService.searchStudents(search));
-        } else {
-            model.addAttribute("students", studentService.getAllStudents());
-        }
+        model.addAttribute("search", search);
+        model.addAttribute("students", studentService.searchStudents(search));
         model.addAttribute("user", session.getAttribute("user"));
-        model.addAttribute("studentdto", new StudentDto("", "", "", "", "", "Active"));
+        model.addAttribute("studentdto", new StudentDto("", "", "", "", new ArrayList<>(), StudentStatus.ACTIVE));
         return "students";
     }
 
@@ -39,11 +38,11 @@ public class StudentController {
     public String saveStudent(@ModelAttribute("studentdto") StudentDto studentDto,
             RedirectAttributes redirectAttributes) {
         try {
-            if (studentDto.name() == null || studentDto.name().trim().isEmpty()) {
+            if (studentDto.name() == null ) {
                 redirectAttributes.addFlashAttribute("error", "Name is required");
                 return "redirect:/students";
             }
-            if (studentDto.roll() == null || studentDto.roll().trim().isEmpty()) {
+            if (studentDto.roll() == null ) {
                 redirectAttributes.addFlashAttribute("error", "Roll is required");
                 return "redirect:/students";
             }
@@ -52,8 +51,8 @@ public class StudentController {
             student.setRoll(studentDto.roll());
             student.setDepartment(studentDto.department());
             student.setEmail(studentDto.email());
-            student.setPhone(studentDto.phone());
-            student.setStatus(studentDto.status());
+            student.setPhones(studentDto.phones() != null ? studentDto.phones() : new ArrayList<>());
+            student.setStatus(studentDto.status() != null ? studentDto.status() : StudentStatus.ACTIVE);
             studentService.saveStudent(student);
             redirectAttributes.addFlashAttribute("success", "Student added successfully");
         } catch (Exception e) {
@@ -66,27 +65,22 @@ public class StudentController {
     public String updateStudent(@ModelAttribute StudentDto studentDto, int id,
             RedirectAttributes redirectAttributes) {
         try {
-            if (studentDto.name() == null || studentDto.name().trim().isEmpty()) {
+            if (studentDto.name() == null ) {
                 redirectAttributes.addFlashAttribute("error", "Name is required");
                 return "redirect:/students";
             }
-            if (studentDto.roll() == null || studentDto.roll().trim().isEmpty()) {
+            if (studentDto.roll() == null ) {
                 redirectAttributes.addFlashAttribute("error", "Roll is required");
                 return "redirect:/students";
             }
-            Student student = new Student();
+            Student student = studentService.getStudentById(id);
             student.setName(studentDto.name());
             student.setRoll(studentDto.roll());
             student.setDepartment(studentDto.department());
             student.setEmail(studentDto.email());
-            student.setPhone(studentDto.phone() != null ? studentDto.phone() : "");
-            student.setStatus(
-                    studentDto.status() != null && !studentDto.status().trim().equals("") ? studentDto.status()
-                            : "Active");
-            if (studentService.updateStudent(id, student) == null) {
-                redirectAttributes.addFlashAttribute("error", "Student not found");
-                return "redirect:/students";
-            }
+            student.setPhones(studentDto.phones() != null ? studentDto.phones() : new ArrayList<>());
+            student.setStatus(studentDto.status() != null ? studentDto.status() : StudentStatus.ACTIVE);
+            studentService.updateStudent(student);
             redirectAttributes.addFlashAttribute("success", "Student updated successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

@@ -25,6 +25,6 @@ public class Publication {
     private Integer id;
     private String name;
     private String address;
-    @OneToMany(mappedBy = "publication", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Book> books;
 }

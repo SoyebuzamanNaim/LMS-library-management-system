@@ -1,9 +1,11 @@
 package bd.edu.seu.lms.controller;
 
 import bd.edu.seu.lms.model.Allotment;
+import bd.edu.seu.lms.model.AllotmentStatus;
 import bd.edu.seu.lms.model.Book;
 import bd.edu.seu.lms.model.Student;
 import bd.edu.seu.lms.model.Subscription;
+import bd.edu.seu.lms.model.SubscriptionStatus;
 import bd.edu.seu.lms.model.Vendor;
 import bd.edu.seu.lms.service.AllotmentService;
 import bd.edu.seu.lms.service.BookService;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class DashboardController {
@@ -45,17 +47,17 @@ public class DashboardController {
             return "redirect:/login";
         }
 
-        ArrayList<Book> books = bookService.getAllBooks();
-        ArrayList<Student> students = studentService.getAllStudents();
-        ArrayList<Allotment> allotments = allotmentService.getAllAllotments();
-        ArrayList<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
-        ArrayList<Vendor> vendors = vendorService.getAllVendors();
+        List<Book> books = bookService.getAllBooks();
+        List<Student> students = studentService.getAllStudents();
+        List<Allotment> allotments = allotmentService.getAllAllotments();
+        List<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
+        List<Vendor> vendors = vendorService.getAllVendors();
 
         long issuedBooks = allotments.stream()
-                .filter(a -> a.getStatus() != null && a.getStatus().equalsIgnoreCase("Active"))
+                .filter(a -> a.getStatus() != null && a.getStatus() == AllotmentStatus.ACTIVE)
                 .count();
         long activeSubscriptions = subscriptions.stream()
-                .filter(s -> s.getStatus() != null && s.getStatus().equalsIgnoreCase("Active"))
+                .filter(s -> s.getStatus() != null && s.getStatus() == SubscriptionStatus.ACTIVE)
                 .count();
 
         model.addAttribute("user", session.getAttribute("user"));

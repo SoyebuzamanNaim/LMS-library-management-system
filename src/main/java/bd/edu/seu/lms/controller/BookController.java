@@ -2,6 +2,7 @@ package bd.edu.seu.lms.controller;
 
 import bd.edu.seu.lms.dto.BookDto;
 import bd.edu.seu.lms.model.Book;
+import bd.edu.seu.lms.model.BookStatus;
 import bd.edu.seu.lms.service.BookService;
 import bd.edu.seu.lms.service.PublicationService;
 import bd.edu.seu.lms.service.VendorService;
@@ -39,7 +40,7 @@ public class BookController {
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("publications", publicationService.getAllPublications());
         model.addAttribute("vendors", vendorService.getAllVendors());
-        model.addAttribute("bookdto", new BookDto("", "", null, null, "", 0, 0, 0.0, "Available", ""));
+        model.addAttribute("bookdto", new BookDto("", "", null, null, "", 0, 0, 0.0, BookStatus.AVAILABLE, ""));
         return "books";
     }
 
@@ -88,7 +89,7 @@ public class BookController {
             book.setTotalCopies(bookDto.totalCopies());
             book.setAvailableCopies(bookDto.availableCopies());
             book.setPricePerCopy(bookDto.pricePerCopy() != null ? bookDto.pricePerCopy() : 0.0);
-            book.setStatus(book.getAvailableCopies() > 0 ? "Available" : "Unavailable");
+            book.setStatus(book.getAvailableCopies() > 0 ? BookStatus.AVAILABLE : BookStatus.UNAVAILABLE);
             book.setDescription(bookDto.description() != null ? bookDto.description() : "");
             bookService.saveBook(book);
             redirectAttributes.addFlashAttribute("success", "Book added successfully");
@@ -134,7 +135,7 @@ public class BookController {
                 return "redirect:/books";
             }
 
-            Book book = new Book();
+            Book book = bookService.getBookById(id);
             book.setTitle(bookDto.title());
             book.setAuthor(bookDto.author());
             book.setPublication(publication);
@@ -143,12 +144,9 @@ public class BookController {
             book.setTotalCopies(bookDto.totalCopies());
             book.setAvailableCopies(bookDto.availableCopies());
             book.setPricePerCopy(bookDto.pricePerCopy() != null ? bookDto.pricePerCopy() : 0.0);
-            book.setStatus(book.getAvailableCopies() > 0 ? "Available" : "Unavailable");
+            book.setStatus(book.getAvailableCopies() > 0 ? BookStatus.AVAILABLE : BookStatus.UNAVAILABLE);
             book.setDescription(bookDto.description() != null ? bookDto.description() : "");
-            if (bookService.updateBook(id, book) == null) {
-                redirectAttributes.addFlashAttribute("error", "Book not found");
-                return "redirect:/books";
-            }
+            bookService.updateBook(book);
             redirectAttributes.addFlashAttribute("success", "Book updated successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

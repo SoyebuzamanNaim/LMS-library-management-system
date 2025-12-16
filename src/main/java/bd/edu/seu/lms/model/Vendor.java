@@ -21,9 +21,9 @@ public class Vendor {
     private String contactPerson;
     private String email;
     @ElementCollection
-    @CollectionTable(name="vendor_phone", joinColumns = @JoinColumn(name="vendor_id"))
+    @CollectionTable(name = "vendor_phone", joinColumns = @JoinColumn(name = "vendor_id"))
     private List<String> phones;
     private String address;
-    @OneToMany(mappedBy = "vendor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Book> books;
 }

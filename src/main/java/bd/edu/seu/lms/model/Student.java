@@ -26,7 +26,8 @@ public class Student {
     private List<String> phones;
     @Enumerated(EnumType.STRING)
     private StudentStatus status;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
 }

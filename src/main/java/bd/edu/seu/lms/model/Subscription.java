@@ -21,6 +21,6 @@ public class Subscription {
     SubscriptionStatus status;
     @Enumerated(EnumType.STRING)
     SubscriptionType type;
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Student> students;
 }
