@@ -16,14 +16,14 @@ public class SubscriptionService {
     }
 
     public Subscription saveSubscription(Subscription subscription) {
-        if (subscription.getId() != null) {
+        if (subscriptionRepo.existsById(subscription.getId())){
             throw new IllegalArgumentException("Subscription already exists");
         }
         return subscriptionRepo.save(subscription);
     }
 
     public Subscription updateSubscription(Subscription subscription) {
-        if (subscription.getId() == null) {
+        if (subscription.getId() == null || !subscriptionRepo.existsById(subscription.getId())) {
             throw new IllegalArgumentException("Subscription does not exist");
         }
         return subscriptionRepo.save(subscription);
@@ -46,7 +46,7 @@ public class SubscriptionService {
                 .orElseThrow(() -> new IllegalArgumentException("Subscription does not exist"));
     }
 
-    // search by student name
+
     public List<Subscription> searchSubscriptions(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
             return subscriptionRepo.findAll();
@@ -56,8 +56,12 @@ public class SubscriptionService {
 
     public Subscription toggleSubscriptionStatus(int id) {
         Subscription subscription = getSubscriptionById(id);
-        subscription.setStatus(subscription.getStatus() == SubscriptionStatus.ACTIVE ? SubscriptionStatus.EXPIRED
-                : SubscriptionStatus.ACTIVE);
+        if (subscription.getStatus() == SubscriptionStatus.ACTIVE) {
+            subscription.setStatus(SubscriptionStatus.EXPIRED);
+        } else {
+            subscription.setStatus(SubscriptionStatus.ACTIVE);
+        }
         return subscriptionRepo.save(subscription);
     }
 }
+

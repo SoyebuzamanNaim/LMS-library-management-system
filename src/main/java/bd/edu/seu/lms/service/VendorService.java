@@ -17,11 +17,14 @@ public class VendorService {
     }
 
     public Vendor saveVendor(Vendor vendor) {
+        if (vendorRepo.existsById(vendor.getId())) {
+            throw new IllegalArgumentException("Vendor already exist");
+        }
         return vendorRepo.save(vendor);
     }
 
     public Vendor updateVendor(Vendor vendor) {
-        if(vendor.getId() == null) {
+        if (vendor.getId() == null || !vendorRepo.existsById(vendor.getId())) {
             throw new IllegalArgumentException("Vendor does not exist");
         }
         return vendorRepo.save(vendor);
@@ -47,8 +50,7 @@ public class VendorService {
         if (keyword == null || keyword.isEmpty()) {
             return vendorRepo.findAll();
         }
-        
-       //Idea stolen from ChatGPT to remove duplicates
+        // Idea stolen from ChatGPT to remove duplicates
         List<Vendor> nameMatches = vendorRepo.findByNameContainingIgnoreCase(keyword);
         List<Vendor> contactPersonMatches = vendorRepo.findByContactPersonContainingIgnoreCase(keyword);
         List<Vendor> emailMatches = vendorRepo.findByEmailContainingIgnoreCase(keyword);
@@ -59,8 +61,6 @@ public class VendorService {
         combined.addAll(contactPersonMatches);
         combined.addAll(emailMatches);
         combined.addAll(phoneMatches);
-
-       
         return combined.stream()
                 .distinct()
                 .collect(Collectors.toList());
