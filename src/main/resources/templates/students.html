@@ -153,9 +153,7 @@
                     th:each="student : ${students}"
                     class="hover:bg-slate-50 transition-colors"
                   >
-                    <td class="px-6 py-4" th:text=" ${student.roll}">
-                      S-2023001
-                    </td>
+                    <td class="px-6 py-4" th:text="${student.id}">1</td>
                     <td class="px-6 py-4">
                       <div
                         class="font-medium text-slate-800"

@@ -155,7 +155,7 @@
                     class="hover:bg-slate-50 transition-colors"
                   >
                     <td class="px-6 py-4" th:text=" ${subscription.id}">
-                      #SUB-1
+                      SUB-1
                     </td>
                     <td class="px-6 py-4 font-medium text-slate-800">
                       <span
@@ -199,7 +199,11 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${subscription.id}, data-student-id=${subscription.student.id}, data-student-name=${subscription.student.name}, data-type=${subscription.type}, data-status=${subscription.status.name()}"
+                        th:attr="data-id=${subscription.id}, 
+                                 data-student-id=${subscription.student != null ? subscription.student.id : ''}, 
+                                 data-student-name=${subscription.student != null ? subscription.student.name : 'N/A'}, 
+                                 data-type=${subscription.type != null ? subscription.type.name() : ''}, 
+                                 data-status=${subscription.status != null ? subscription.status.name() : ''}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -207,7 +211,10 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${subscription.id}, data-student-id=${subscription.student.id}, data-type=${subscription.type.name()}, data-status=${subscription.status.name()}"
+                        th:attr="data-id=${subscription.id}, 
+                                 data-student-id=${subscription.student != null ? subscription.student.id : ''}, 
+                                 data-type=${subscription.type != null ? subscription.type.name() : ''}, 
+                                 data-status=${subscription.status != null ? subscription.status.name() : ''}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
