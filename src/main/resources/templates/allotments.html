@@ -85,9 +85,7 @@
           <div
             class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
-            <span
-              th:text="${user}"
-            ></span>
+            <span th:text="${user}"></span>
           </div>
         </header>
 
@@ -156,36 +154,50 @@
                     th:each="allotment, iterStat : ${allotments}"
                     class="hover:bg-slate-50 transition-colors"
                   >
-                    <td class="px-6 py-4" th:text="#${allotment.id}">id</td>
-                    <td
-                      class="px-6 py-4 font-medium text-slate-800"
-                      th:text="${allotment.student != null ? allotment.student.name : 'Unknown Student'}"
-                    >
-                      Student Name
+                    <td class="px-6 py-4" th:text="${allotment.id}">id</td>
+                    <td class="px-6 py-4 font-medium text-slate-800">
+                      <span
+                        th:if="${allotment.student != null}"
+                        th:text="${allotment.student.name}"
+                        >Student Name</span
+                      >
+                      <span th:if="${allotment.student == null}"
+                        >Unknown Student</span
+                      >
                     </td>
-                    <td
-                      class="px-6 py-4"
-                      th:text="${allotment.book != null ? allotment.book.title : 'Unknown Book'}"
-                    >
-                      Book Title
+                    <td class="px-6 py-4">
+                      <span
+                        th:if="${allotment.book != null}"
+                        th:text="${allotment.book.title}"
+                        >Book Title</span
+                      >
+                      <span th:if="${allotment.book == null}"
+                        >Unknown Book</span
+                      >
                     </td>
-                    <td
-                      class="px-6 py-4"
-                      th:text="${allotment.issueDate != null ? allotment.issueDate : 'N/A'}"
-                    >
-                      2024-01-15
+                    <td class="px-6 py-4">
+                      <span
+                        th:if="${allotment.issueDate != null}"
+                        th:text="${allotment.issueDate}"
+                        >2024-01-15</span
+                      >
+                      <span th:if="${allotment.issueDate == null}">N/A</span>
                     </td>
-                    <td
-                      class="px-6 py-4"
-                      th:text="${allotment.issueDate != null ? allotment.issueDate.plusDays(14) : 'N/A'}"
-                    >
-                      2024-02-15
+                    <td class="px-6 py-4">
+                      <span
+                        th:if="${allotment.issueDate != null}"
+                        th:text="${allotment.issueDate.plusDays(14)}"
+                        >2024-02-15</span
+                      >
+                      <span th:if="${allotment.issueDate == null}">N/A</span>
                     </td>
-                    <td
-                      class="px-6 py-4 font-semibold"
-                      th:text="${allotment.fineAmount != null ? allotment.fineAmount : 0.0}"
-                    >
-                      0.00
+                    <td class="px-6 py-4 font-semibold">
+                      <span
+                        th:if="${allotment.fineAmount != null}"
+                        th:text="${allotment.fineAmount}"
+                        >0.00</span
+                      >
+                      <span th:if="${allotment.fineAmount == null}">0.0</span>
                     </td>
                     <td class="px-6 py-4">
                       <span
@@ -205,7 +217,7 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${allotment.id}, data-student-name=${allotment.student != null ? allotment.student.name : 'Unknown Student'}, data-book-title=${allotment.book != null ? allotment.book.title : 'Unknown Book'}, data-issue-date=${allotment.issueDate != null ? allotment.issueDate.toString() : ''}, data-status=${allotment.status != null ? allotment.status.name() : ''}, data-fine=${allotment.fineAmount}"
+                        th:attr="data-id=${allotment.id}, data-student-name=${allotment.student.name}, data-book-title=${allotment.book.title}, data-issue-date=${allotment.issueDate.toString()}, data-status=${allotment.status.name()}, data-fine=${allotment.fineAmount}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -222,7 +234,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${allotment.id}, data-student-id=${allotment.student != null ? allotment.student.id : ''}, data-book-id=${allotment.book != null ? allotment.book.id : ''}, data-issue-date=${allotment.issueDate != null ? allotment.issueDate.toString() : ''}, data-status=${allotment.status != null ? allotment.status.name() : ''}, data-fine=${allotment.fineAmount}"
+                        th:attr="data-id=${allotment.id}, data-student-id=${allotment.student.id}, data-book-id=${allotment.book.id}, data-issue-date=${allotment.issueDate.toString()}, data-status=${allotment.status.name()}, data-fine=${allotment.fineAmount}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
@@ -287,7 +299,7 @@
               <option
                 th:each="student : ${students}"
                 th:value="${student.id}"
-                th:text="${student.roll }"
+                th:text="${student.name + ' (' + student.roll + ')'}"
               ></option>
             </select>
           </div>
@@ -307,6 +319,19 @@
                 th:value="${book.id}"
                 th:text="${book.title + ' (Available: ' + book.availableCopies + ')'}"
               ></option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Allotment Status *</label
+            >
+            <select
+              th:field="*{status}"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              required
+            >
+              <option value="ACTIVE">Active</option>
+              <option value="RETURNED">Returned</option>
             </select>
           </div>
           <div>
@@ -411,19 +436,6 @@
               <option value="RETURNED">Returned</option>
             </select>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1"
-              >Fine Amount</label
-            >
-            <input
-              type="number"
-              id="edit_allotment_fine"
-              name="fineAmount"
-              step="0.01"
-              min="0"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-            />
-          </div>
           <div class="modal-action">
             <button
               type="button"
@@ -503,7 +515,7 @@
         const status = button.getAttribute("data-status") || "-";
         const fine = button.getAttribute("data-fine") || "0.00";
 
-        document.getElementById("view_allotment_id").textContent = "#A-" + id;
+        document.getElementById("view_allotment_id").textContent = id;
         document.getElementById("view_allotment_student_name").textContent =
           studentName;
         document.getElementById("view_allotment_book_title").textContent =
@@ -511,7 +523,8 @@
         document.getElementById("view_allotment_issue_date").textContent =
           formatDate(issueDate);
         document.getElementById("view_allotment_status").textContent = status;
-        document.getElementById("view_allotment_fine").textContent = fine + " taka";
+        document.getElementById("view_allotment_fine").textContent =
+          fine + " taka";
         allotment_view_modal.showModal();
       }
 
@@ -521,7 +534,6 @@
         const bookId = button.getAttribute("data-book-id");
         const issueDate = button.getAttribute("data-issue-date");
         const status = button.getAttribute("data-status");
-        const fine = button.getAttribute("data-fine");
 
         document.getElementById("edit_allotment_id").value = id;
         document.getElementById("edit_allotment_student_id").value =
@@ -531,28 +543,7 @@
           issueDate || "";
         document.getElementById("edit_allotment_status").value =
           status || "ACTIVE";
-        document.getElementById("edit_allotment_fine").value = fine || "0.00";
         allotment_edit_modal.showModal();
-      }
-
-      function returnBook(button) {
-        const id = button.getAttribute("data-id");
-        if (
-          confirm(
-            "Are you sure you want to return this book? Fine will be calculated if overdue."
-          )
-        ) {
-          const form = document.createElement("form");
-          form.method = "POST";
-          form.action = "/allotment/return";
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = "id";
-          input.value = id;
-          form.appendChild(input);
-          document.body.appendChild(form);
-          form.submit();
-        }
       }
 
       function formatDate(dateString) {
@@ -563,6 +554,19 @@
           month: "short",
           day: "numeric",
         });
+      }
+      function returnBook(button) {
+        const id = button.getAttribute("data-id");
+        const form = document.createElement("form");
+        form.method = "post";
+        form.action = "/allotment/return";
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "id";
+        input.value = id;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
       }
     </script>
   </body>

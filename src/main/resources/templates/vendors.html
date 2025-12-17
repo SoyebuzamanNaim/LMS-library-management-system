@@ -86,9 +86,7 @@
           <div
             class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
-            <span
-              th:text="${user}"
-            ></span>
+            <span th:text="${user}"></span>
           </div>
         </header>
 
@@ -243,9 +241,7 @@
                     th:each="vendor : ${vendors}"
                     class="hover:bg-slate-50 transition-colors"
                   >
-                    <td class="px-6 py-4" th:text="'#' + ${vendor.id}">
-                      #V001
-                    </td>
+                    <td class="px-6 py-4" th:text="${vendor.id}">V001</td>
                     <td
                       class="px-6 py-4 font-medium text-slate-800"
                       th:text="${vendor.name}"
@@ -261,7 +257,7 @@
                       </div>
                       <div
                         class="text-slate-400 text-xs"
-                        th:text="${vendor.phones != null && !vendor.phones.isEmpty() ? vendor.phones[0] : 'N/A'}"
+                        th:text="${vendor.phones[0]}"
                       >
                         015XXXXXXXX
                       </div>
@@ -277,7 +273,7 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${vendor.id}, data-name=${vendor.name}, data-contact=${vendor.contactPerson}, data-email=${vendor.email}, data-phone=${vendor.phones != null && !vendor.phones.isEmpty() ? vendor.phones[0] : 'N/A'}, data-address=${vendor.address}"
+                        th:attr="data-id=${vendor.id}, data-name=${vendor.name}, data-contact=${vendor.contactPerson}, data-email=${vendor.email}, data-phone=${vendor.phones[0]}, data-address=${vendor.address}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -285,7 +281,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${vendor.id}, data-name=${vendor.name}, data-contact=${vendor.contactPerson}, data-email=${vendor.email}, data-phone=${vendor.phones != null && !vendor.phones.isEmpty() ? vendor.phones[0] : ''}, data-address=${vendor.address}"
+                        th:attr="data-id=${vendor.id}, data-name=${vendor.name}, data-contact=${vendor.contactPerson}, data-email=${vendor.email}, data-phone=${vendor.phones[0]}, data-address=${vendor.address}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>

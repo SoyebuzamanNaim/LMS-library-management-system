@@ -63,12 +63,11 @@ public class AllotmentController {
             return "redirect:/allotment";
         }
 
-
         Allotment allotment = new Allotment();
         allotment.setStudent(student);
         allotment.setBook(book);
-        allotment.setIssueDate(allotmentDto.issueDate() );
-        allotment.setStatus(allotmentDto.status() );
+        allotment.setIssueDate(allotmentDto.issueDate());
+        allotment.setStatus(allotmentDto.status());
         allotment.setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate()));
 
         try {
@@ -83,7 +82,6 @@ public class AllotmentController {
     @PostMapping("/allotment/update")
     public String updateAllotment(@ModelAttribute AllotmentDto allotmentDto, int id,
             RedirectAttributes redirectAttributes) {
-        
 
         Student student = studentService.getStudentById(allotmentDto.studentId());
         if (student == null || allotmentDto.studentId() == null) {
@@ -99,8 +97,10 @@ public class AllotmentController {
         Allotment allotment = allotmentService.getAllotmentById(id);
         allotment.setStudent(student);
         allotment.setBook(book);
-        allotment.setIssueDate(allotmentDto.issueDate() );
-        allotment.setStatus(allotmentDto.status() );
+        allotment.setIssueDate(allotmentDto.issueDate());
+        allotment.setStatus(allotmentDto.status());
+
+        allotment.setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate()));
         try {
             allotmentService.updateAllotment(allotment);
             redirectAttributes.addFlashAttribute("success", "Allotment updated successfully");
@@ -127,6 +127,8 @@ public class AllotmentController {
             Allotment allotment = allotmentService.getAllotmentById(id);
 
             allotment.setStatus(AllotmentStatus.RETURNED);
+
+            allotment.setFineAmount(allotmentService.calculateFine(allotment.getIssueDate()));
             allotmentService.updateAllotment(allotment);
 
             redirectAttributes.addFlashAttribute("success", "Book returned successfully");

@@ -85,14 +85,11 @@
           <div
             class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
-            <span
-              th:text="${user}"
-            ></span>
+            <span th:text="${user}"></span>
           </div>
         </header>
 
         <main class="flex-1 overflow-y-auto p-8">
-          <!-- Success/Error Messages -->
           <div
             th:if="${success}"
             class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700"
@@ -156,7 +153,7 @@
                     th:each="book : ${books}"
                     class="hover:bg-slate-50 transition-colors"
                   >
-                    <td class="px-6 py-4" th:text="'#' + ${book.id}">#B-001</td>
+                    <td class="px-6 py-4" th:text="${book.id}">B-001</td>
                     <td
                       class="px-6 py-4 font-medium text-slate-800"
                       th:text="${book.title}"
@@ -169,14 +166,9 @@
                     </td>
                     <td class="px-6 py-4">
                       <span
-                        th:if="${book.status != null && book.status.name() == 'AVAILABLE'}"
+                        th:text="${book.status.name()}"
                         class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700"
-                        >Available</span
-                      >
-                      <span
-                        th:if="${book.status == null || book.status.name() != 'AVAILABLE'}"
-                        class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700"
-                        >Unavailable</span
+                        >status</span
                       >
                     </td>
                     <td
@@ -185,7 +177,7 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-category=${book.category}, data-status=${book.status != null ? book.status.name() : 'UNAVAILABLE'}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-description=${book.description != null ? book.description : 'N/A'}"
+                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-category=${book.category}, data-status=${book.status.name()}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-description=${book.description}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -193,7 +185,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-publication=${book.publication != null ? book.publication.id : ''}, data-vendor=${book.vendor != null ? book.vendor.id : ''}, data-category=${book.category}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-status=${book.status != null ? book.status.name() : 'UNAVAILABLE'}, data-description=${book.description != null ? book.description : ''}"
+                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-publication=${book.publication.id}, data-vendor=${book.vendor.id}, data-category=${book.category}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-status=${book.status.name()}, data-description=${book.description}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
@@ -337,7 +329,7 @@
                 type="number"
                 id="add_available_copies"
                 th:field="*{availableCopies}"
-                th:attr="max=${bookdto.totalCopies != null ? bookdto.totalCopies : 0}"
+                th:attr="max=${bookdto.totalCopies}"
                 class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 placeholder="0"
                 min="0"
@@ -613,7 +605,7 @@
     <script>
       function showViewModal(button) {
         document.getElementById("view_book_id").textContent =
-          "#" + button.getAttribute("data-id");
+          button.getAttribute("data-id");
         document.getElementById("view_book_title").textContent =
           button.getAttribute("data-title");
         document.getElementById("view_book_author").textContent =
@@ -629,7 +621,7 @@
           button.getAttribute("data-available");
         const price = button.getAttribute("data-price");
         document.getElementById("view_book_price").textContent = price
-          ? "$" + parseFloat(price).toFixed(2)
+          ? parseFloat(price).toFixed(2)
           : "N/A";
         document.getElementById("view_book_description").textContent =
           button.getAttribute("data-description");
@@ -653,7 +645,7 @@
         document.getElementById("edit_book_total").value = totalCopies;
         document.getElementById("edit_book_available").value =
           button.getAttribute("data-available");
-        // Set max attribute using Thymeleaf-like approach via JavaScript
+
         document
           .getElementById("edit_book_available")
           .setAttribute("max", totalCopies || 0);

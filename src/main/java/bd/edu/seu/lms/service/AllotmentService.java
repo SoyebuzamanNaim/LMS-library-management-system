@@ -29,10 +29,10 @@ public class AllotmentService {
         if (allotment.getId() != null && allotmentRepo.existsById(allotment.getId())) {
             throw new IllegalArgumentException("Allotment already exists");
         }
-        if (allotment.getBook() !=null) {
+        if (allotment.getBook() != null) {
             Book book = allotment.getBook();
             if (book.getAvailableCopies() == 0) {
-               
+
                 throw new IllegalArgumentException("Book is not available");
             }
             book.setAvailableCopies(book.getAvailableCopies() - 1);
@@ -59,8 +59,7 @@ public class AllotmentService {
 
         if (allotment.getBook() != null) {
             Book book = allotment.getBook();
-            if (
-                    allotment.getStatus() != AllotmentStatus.RETURNED) {
+            if (allotment.getStatus() != AllotmentStatus.RETURNED) {
                 book.setAvailableCopies(book.getAvailableCopies() + 1);
                 bookService.updateBook(book);
             }
@@ -89,7 +88,7 @@ public class AllotmentService {
         LocalDate plannedReturnDate = issueDate.plusDays(14);
 
         LocalDate today = LocalDate.now();
-        
+
         if (!today.isAfter(plannedReturnDate)) {
             return 0;
         }

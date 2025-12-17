@@ -85,9 +85,7 @@
           <div
             class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
-            <span
-              th:text="${user}"
-            ></span>
+            <span th:text="${user}"></span>
           </div>
         </header>
 
@@ -155,8 +153,8 @@
                     th:each="student : ${students}"
                     class="hover:bg-slate-50 transition-colors"
                   >
-                    <td class="px-6 py-4" th:text="'#S-' + ${student.roll}">
-                      #S-2023001
+                    <td class="px-6 py-4" th:text=" ${student.roll}">
+                      S-2023001
                     </td>
                     <td class="px-6 py-4">
                       <div
@@ -175,7 +173,7 @@
                       </div>
                       <div
                         class="text-slate-400 text-xs"
-                        th:text="${student.phones != null && !student.phones.isEmpty() ? student.phones[0] : 'N/A'}"
+                        th:text="${student.phones[0]}"
                       >
                         +1 555-0199
                       </div>
@@ -198,7 +196,7 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phones=${student.phones != null && !student.phones.isEmpty() ? student.phones[0] : 'N/A'}, data-status=${student.status != null ? student.status.name() : ''}"
+                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phones=${student.phones[0]}, data-status=${student.status.name()}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -206,7 +204,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phones=${student.phones != null && !student.phones.isEmpty() ? student.phones[0] : ''}, data-status=${student.status != null ? student.status.name() : ''}"
+                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phones=${student.phones[0]}, data-status=${student.status.name()}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
