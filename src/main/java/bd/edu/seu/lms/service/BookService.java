@@ -24,6 +24,10 @@ public class BookService {
     public Book saveBook(Book book) {
         if (book.getId() != null && bookRepo.existsById(book.getId())) {
             throw new IllegalArgumentException("Book already exists");
+
+        }
+        if(book.getAvailableCopies()>book.getTotalCopies()||book.getAvailableCopies()<0||book.getTotalCopies()<0){
+            throw new IllegalArgumentException("Check Available book and Total books ");
         }
         return bookRepo.save(book);
     }
