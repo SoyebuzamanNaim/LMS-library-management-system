@@ -42,17 +42,20 @@ public class SubscriptionService {
             throw new IllegalArgumentException("Subscription does not exist");
         }
 
-      
-            Student student = subscriptionRepo.findByStudent_Id(id);
-            student.setSubscription(null);
-            studentRepo.save(student);
+        Student student = subscriptionRepo.findByStudent_Id(id);
+        student.setSubscription(null);
+        studentRepo.save(student);
 
-            subscriptionRepo.deleteById(id);
-        
+        subscriptionRepo.deleteById(id);
+
     }
 
     public List<Subscription> getAllSubscriptions() {
         return subscriptionRepo.findAll();
+    }
+
+    public long countActiveSubscriptions() {
+        return subscriptionRepo.countByStatus(SubscriptionStatus.ACTIVE);
     }
 
     public Subscription getSubscriptionById(int id) {

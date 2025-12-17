@@ -77,6 +77,10 @@ public class AllotmentService {
         return allotmentRepo.findAll();
     }
 
+    public long countActiveAllotments() {
+        return allotmentRepo.countByStatus(AllotmentStatus.ACTIVE);
+    }
+
     public Allotment getAllotmentById(int id) {
         return allotmentRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Allotment does not exist"));
     }

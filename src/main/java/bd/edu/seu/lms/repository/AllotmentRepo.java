@@ -1,6 +1,7 @@
 package bd.edu.seu.lms.repository;
 
 import bd.edu.seu.lms.model.Allotment;
+import bd.edu.seu.lms.model.AllotmentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,6 @@ public interface AllotmentRepo extends JpaRepository<Allotment, Integer> {
     List<Allotment> findByBook_Id(Integer bookId);
 
     List<Allotment> findByStudent_Id(Integer studentId);
+
+    long countByStatus(AllotmentStatus status);
 }

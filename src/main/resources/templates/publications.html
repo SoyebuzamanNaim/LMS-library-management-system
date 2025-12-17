@@ -85,10 +85,10 @@
             Publications Management
           </h1>
           <div
-            class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
+            class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
             <span
-              th:text="${user != null ? (#strings.substring(user, 0, 1).toUpperCase()) : 'U'}"
+              th:text="${user}"
             ></span>
           </div>
         </header>
