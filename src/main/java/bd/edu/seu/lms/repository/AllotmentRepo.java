@@ -11,4 +11,8 @@ public interface AllotmentRepo extends JpaRepository<Allotment, Integer> {
     List<Allotment> findByStudent_NameContainingIgnoreCase(String name);
 
     List<Allotment> findByBook_TitleContainingIgnoreCase(String title);
+
+    List<Allotment> findByBook_Id(Integer bookId);
+
+    List<Allotment> findByStudent_Id(Integer studentId);
 }

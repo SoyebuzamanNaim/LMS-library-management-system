@@ -9,8 +9,10 @@ import java.util.List;
 @Repository
 public interface VendorRepo extends JpaRepository<Vendor, Integer> {
     List<Vendor> findByNameContainingIgnoreCase(String name);
+
     List<Vendor> findByContactPersonContainingIgnoreCase(String contactPerson);
+
     List<Vendor> findByEmailContainingIgnoreCase(String email);
-    List<Vendor> findByPhoneContainingIgnoreCase(String phone);
+
     boolean existsById(int id);
 }

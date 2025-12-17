@@ -17,15 +17,22 @@
       >
         <div class="px-8 py-8 text-center">
           <h2 class="text-2xl font-bold text-slate-800">Create Account</h2>
-          <div th:if="${signupError}" class="text-red-500 text-sm font-bold">
-            <p th:text="${signupError}"></p>
-          </div>
           <p class="text-slate-500 mt-2 text-sm">
             Join the library management system today.
           </p>
         </div>
 
         <div class="px-8 pb-8">
+          <div
+            th:if="${signupError}"
+            class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700"
+            th:text="${signupError}"
+          ></div>
+          <div
+            th:if="${success}"
+            class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700"
+            th:text="${success}"
+          ></div>
           <form
             action="/signup"
             th:action="@{signup}"

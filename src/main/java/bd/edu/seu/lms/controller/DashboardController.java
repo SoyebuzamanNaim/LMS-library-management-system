@@ -47,26 +47,16 @@ public class DashboardController {
             return "redirect:/login";
         }
 
-        List<Book> books = bookService.getAllBooks();
-        List<Student> students = studentService.getAllStudents();
-        List<Allotment> allotments = allotmentService.getAllAllotments();
-        List<Subscription> subscriptions = subscriptionService.getAllSubscriptions();
-        List<Vendor> vendors = vendorService.getAllVendors();
+        
 
-        long issuedBooks = allotments.stream()
-                .filter(a -> a.getStatus() != null && a.getStatus() == AllotmentStatus.ACTIVE)
-                .count();
-        long activeSubscriptions = subscriptions.stream()
-                .filter(s -> s.getStatus() != null && s.getStatus() == SubscriptionStatus.ACTIVE)
-                .count();
-
+      
         model.addAttribute("user", session.getAttribute("user"));
-        model.addAttribute("totalBooks", books.size());
-        // model.addAttribute(("totalAvailableBook"),);
-        model.addAttribute("totalStudents", students.size());
-        model.addAttribute("issuedBooks", issuedBooks);
-        model.addAttribute("activeSubscriptions", activeSubscriptions);
-        model.addAttribute("totalVendors", vendors.size());
+        model.addAttribute("totalBooks", bookService.getAllBooks().size());
+        // model.addAttribute("totalAvailableBooks",);
+        model.addAttribute("totalStudents", studentService.getAllStudents().size());
+        model.addAttribute("totalAllotments", allotmentService.getAllAllotments().size());
+        model.addAttribute("totalSubscriptions", subscriptionService.getAllSubscriptions().size());
+        model.addAttribute("totalVendors", vendorService.getAllVendors().size());
         model.addAttribute("totalPublications", publicationService.getAllPublications().size());
         return "dashboard";
     }

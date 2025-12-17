@@ -17,7 +17,8 @@ public class UserService {
 
     @Transactional
     public User saveUser(User user) {
-        if (userRepo.existsById(user.getId()) || userRepo.existsByEmail(user.getEmail())) {
+       
+        if ((user.getId() != null && userRepo.existsById(user.getId())) || userRepo.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("User already exists");
         }
         return userRepo.save(user);
@@ -28,7 +29,7 @@ public class UserService {
         if (user.getId() == null || !userRepo.existsById(user.getId())) {
             throw new IllegalArgumentException("User does not exist");
         }
-        
+
         User userExist = getUserByEmail(user.getEmail());
         if (userExist != null && !userExist.getId().equals(user.getId())) {
             throw new IllegalArgumentException("This email is already taken");
@@ -52,8 +53,10 @@ public class UserService {
     public User getUserById(int id) {
         return userRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("No user found with this id"));
     }
+
     public User getUserByEmail(String email) {
-        return userRepo.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("No user found with this email"));
+        return userRepo.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("No user found with this email"));
     }
 
 }

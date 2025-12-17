@@ -2,9 +2,6 @@ package bd.edu.seu.lms.controller;
 
 import bd.edu.seu.lms.dto.SubscriptionDto;
 import bd.edu.seu.lms.model.Subscription;
-import bd.edu.seu.lms.model.Student;
-import bd.edu.seu.lms.model.SubscriptionType;
-import bd.edu.seu.lms.model.SubscriptionStatus;
 import bd.edu.seu.lms.service.StudentService;
 import bd.edu.seu.lms.service.SubscriptionService;
 import jakarta.servlet.http.HttpSession;
@@ -14,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Arrays;
 
 @Controller
 public class SubscriptionController {
@@ -39,18 +34,24 @@ public class SubscriptionController {
         model.addAttribute("students", studentService.getAllStudents());
         model.addAttribute("subscriptiondto",
                 new SubscriptionDto(null, null, null));
-    return "subscription";
+        return "subscription";
     }
 
     @PostMapping("/subscriptions/save")
     public String saveSubscription(@ModelAttribute("subscriptiondto") SubscriptionDto subscriptionDto,
             RedirectAttributes redirectAttributes) {
         try {
+            if ( subscriptionDto.student().getId() == null) {
+                redirectAttributes.addFlashAttribute("error", "Student is required");
+                return "redirect:/subscriptions";
+            }
             Subscription subscription = new Subscription();
-            subscription.setStudents(Arrays.asList(subscriptionDto.student()));
+            subscription.setStudent(subscriptionDto.student());
             subscription.setType(subscriptionDto.type());
             subscription.setStatus(subscriptionDto.status());
-            subscriptionService.saveSubscription(subscription);
+            subscription = subscriptionService.saveSubscription(subscription);
+
+           subscriptionService.saveSubscription(subscription);
 
             redirectAttributes.addFlashAttribute("success", "Subscription added successfully");
         } catch (Exception e) {
@@ -63,13 +64,18 @@ public class SubscriptionController {
     public String updateSubscription(@ModelAttribute SubscriptionDto subscriptionDto, int id,
             RedirectAttributes redirectAttributes) {
         try {
+            if (subscriptionDto.student() == null || subscriptionDto.student().getId() == null) {
+                redirectAttributes.addFlashAttribute("error", "Student is required");
+                return "redirect:/subscriptions";
+            }
 
             Subscription subscription = subscriptionService.getSubscriptionById(id);
-
+            subscription.setStudent(subscriptionDto.student());
             subscription.setType(subscriptionDto.type());
             subscription.setStatus(subscriptionDto.status());
-            subscription.setStudents(Arrays.asList(subscriptionDto.student()));
             subscriptionService.updateSubscription(subscription);
+
+           subscriptionService.updateSubscription(subscription);
 
             redirectAttributes.addFlashAttribute("success", "Subscription updated successfully");
         } catch (Exception e) {

@@ -175,19 +175,19 @@
                       </div>
                       <div
                         class="text-slate-400 text-xs"
-                        th:text="${student.phone != null and !student.phone.isEmpty() ? student.phone : 'N/A'}"
+                        th:text="${student.phones != null && !student.phones.isEmpty() ? student.phones[0] : 'N/A'}"
                       >
                         +1 555-0199
                       </div>
                     </td>
                     <td class="px-6 py-4">
                       <span
-                        th:if="${student.status == 'Active'}"
+                        th:if="${student.status != null && student.status.name() == 'ACTIVE'}"
                         class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700"
                         >Active</span
                       >
                       <span
-                        th:if="${student.status == 'Inactive'}"
+                        th:if="${student.status != null && student.status.name() == 'INACTIVE'}"
                         class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700"
                         >Inactive</span
                       >
@@ -198,7 +198,7 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phone=${student.phone != null ? student.phone : 'N/A'}, data-status=${student.status}"
+                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phones=${student.phones != null && !student.phones.isEmpty() ? student.phones[0] : 'N/A'}, data-status=${student.status != null ? student.status.name() : ''}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -206,7 +206,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phone=${student.phone != null ? student.phone : ''}, data-status=${student.status}"
+                        th:attr="data-id=${student.id}, data-name=${student.name}, data-roll=${student.roll}, data-department=${student.department}, data-email=${student.email}, data-phones=${student.phones != null && !student.phones.isEmpty() ? student.phones[0] : ''}, data-status=${student.status != null ? student.status.name() : ''}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
@@ -252,19 +252,14 @@
     <dialog id="student_add_modal" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box">
         <h3 class="text-lg font-bold">Add New Student</h3>
-        <form
-          th:action="@{/students/save}"
-          th:object="${studentdto}"
-          method="post"
-          class="space-y-4"
-        >
+        <form th:action="@{/students/save}" method="post" class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1"
               >Full Name *</label
             >
             <input
               type="text"
-              th:field="*{name}"
+              name="name"
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               placeholder="Enter full name"
               required
@@ -276,7 +271,7 @@
             >
             <input
               type="text"
-              th:field="*{roll}"
+              name="roll"
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               placeholder="Enter roll number"
               required
@@ -288,7 +283,7 @@
             >
             <input
               type="text"
-              th:field="*{department}"
+              name="department"
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               placeholder="Enter department"
               required
@@ -300,7 +295,7 @@
             >
             <input
               type="email"
-              th:field="*{email}"
+              name="email"
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               placeholder="Enter email"
               required
@@ -312,7 +307,7 @@
             >
             <input
               type="text"
-              th:field="*{phone}"
+              name="phones[0]"
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               placeholder="Enter phone number"
             />
@@ -322,12 +317,12 @@
               >Status *</label
             >
             <select
-              th:field="*{status}"
+              name="status"
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               required
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
             </select>
           </div>
           <div class="modal-action">
@@ -411,7 +406,7 @@
             <input
               type="text"
               id="edit_student_phone"
-              name="phone"
+              name="phones[0]"
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               placeholder="Enter phone number"
             />
@@ -426,8 +421,8 @@
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
               required
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
             </select>
           </div>
           <div class="modal-action">
@@ -507,7 +502,7 @@
         document.getElementById("view_student_email").textContent =
           button.getAttribute("data-email") || "-";
         document.getElementById("view_student_phone").textContent =
-          button.getAttribute("data-phone") || "-";
+          button.getAttribute("data-phones") || "-";
         document.getElementById("view_student_status").textContent =
           button.getAttribute("data-status") || "-";
         student_view_modal.showModal();
@@ -525,7 +520,7 @@
         document.getElementById("edit_student_email").value =
           button.getAttribute("data-email");
         document.getElementById("edit_student_phone").value =
-          button.getAttribute("data-phone") || "";
+          button.getAttribute("data-phones") || "";
         document.getElementById("edit_student_status").value =
           button.getAttribute("data-status");
         student_edit_modal.showModal();

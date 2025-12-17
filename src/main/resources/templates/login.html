@@ -34,9 +34,9 @@
             th:text="${success}"
           ></div>
           <div
-            th:if="${loginError}"
+            th:if="${error}"
             class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700"
-            th:text="${loginError}"
+            th:text="${error}"
           ></div>
           <form
             th:action="@{/login}"

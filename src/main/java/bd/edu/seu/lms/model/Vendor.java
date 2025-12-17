@@ -24,6 +24,6 @@ public class Vendor {
     @CollectionTable(name = "vendor_phone", joinColumns = @JoinColumn(name = "vendor_id"))
     private List<String> phones;
     private String address;
-    @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
     private List<Book> books;
 }

@@ -30,6 +30,7 @@ public class LoginController {
     public String login(@ModelAttribute("logindto") LoginDto loginDto,
             RedirectAttributes redirectAttributes,
             HttpSession session) {
+        try {
         if (loginService.validateUser(loginDto.email(), loginDto.password())) {
             User user = loginService.findByEmail(loginDto.email());
             session.setAttribute("user", user.getUsername());
@@ -37,6 +38,10 @@ public class LoginController {
             redirectAttributes.addFlashAttribute("success", "Logged in successfully");
             return "redirect:/dashboard";
         } else {
+                redirectAttributes.addFlashAttribute("error", "Invalid email or password");
+                return "redirect:/login";
+            }
+        } catch (IllegalArgumentException | SecurityException e) {
             redirectAttributes.addFlashAttribute("error", "Invalid email or password");
             return "redirect:/login";
         }

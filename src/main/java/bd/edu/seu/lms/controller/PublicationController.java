@@ -24,8 +24,8 @@ public class PublicationController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        model.addAttribute("search", search);
-        model.addAttribute("publications", publicationService.searchPublications(search));
+            model.addAttribute("search", search);
+            model.addAttribute("publications", publicationService.searchPublications(search));
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("publicationdto", new PublicationDto("", ""));
         return "publications";
@@ -41,7 +41,7 @@ public class PublicationController {
             }
             Publication publication = new Publication();
             publication.setName(publicationDto.name());
-            publication.setAddress(publicationDto.address() != null ? publicationDto.address() : "N/A");
+            publication.setAddress(publicationDto.address() );
             publicationService.savePublication(publication);
             redirectAttributes.addFlashAttribute("success", "Publication added successfully");
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class PublicationController {
             }
             Publication publication = publicationService.getPublicationById(id);
             publication.setName(publicationDto.name());
-            publication.setAddress(publicationDto.address() != null ? publicationDto.address() : "N/A");
+            publication.setAddress(publicationDto.address() );
             publicationService.updatePublication(publication);
             redirectAttributes.addFlashAttribute("success", "Publication updated successfully");
         } catch (Exception e) {

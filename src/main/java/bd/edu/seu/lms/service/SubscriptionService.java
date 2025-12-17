@@ -1,7 +1,9 @@
 package bd.edu.seu.lms.service;
 
+import bd.edu.seu.lms.model.Student;
 import bd.edu.seu.lms.model.Subscription;
 import bd.edu.seu.lms.model.SubscriptionStatus;
+import bd.edu.seu.lms.repository.StudentRepo;
 import bd.edu.seu.lms.repository.SubscriptionRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,14 +12,17 @@ import java.util.List;
 @Service
 public class SubscriptionService {
     private final SubscriptionRepo subscriptionRepo;
+    private final StudentRepo studentRepo;
 
-    public SubscriptionService(SubscriptionRepo subscriptionRepo) {
+    public SubscriptionService(SubscriptionRepo subscriptionRepo, StudentRepo studentRepo) {
         this.subscriptionRepo = subscriptionRepo;
+        this.studentRepo = studentRepo;
     }
 
     @Transactional
     public Subscription saveSubscription(Subscription subscription) {
-        if (subscriptionRepo.existsById(subscription.getId())) {
+
+        if (subscription.getId() != null && subscriptionRepo.existsById(subscription.getId())) {
             throw new IllegalArgumentException("Subscription already exists");
         }
         return subscriptionRepo.save(subscription);
@@ -33,11 +38,17 @@ public class SubscriptionService {
 
     @Transactional
     public void deleteSubscription(int id) {
-        try {
-            subscriptionRepo.deleteById(id);
-        } catch (Exception e) {
+        if (!subscriptionRepo.existsById(id)) {
             throw new IllegalArgumentException("Subscription does not exist");
         }
+
+      
+            Student student = subscriptionRepo.findByStudent_Id(id);
+            student.setSubscription(null);
+            studentRepo.save(student);
+
+            subscriptionRepo.deleteById(id);
+        
     }
 
     public List<Subscription> getAllSubscriptions() {
@@ -53,7 +64,7 @@ public class SubscriptionService {
         if (keyword == null || keyword.isEmpty()) {
             return subscriptionRepo.findAll();
         }
-        return subscriptionRepo.findByStudent_NameContainingIgnoreCase(keyword);
+        return subscriptionRepo.findByStudentNameContainingIgnoreCase(keyword);
     }
 
     @Transactional

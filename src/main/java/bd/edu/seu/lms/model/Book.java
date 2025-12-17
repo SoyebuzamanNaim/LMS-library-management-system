@@ -18,11 +18,11 @@ public class Book {
     private String title;
     private String author;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "publication_id", nullable = false)
     private Publication publication;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
@@ -31,6 +31,6 @@ public class Book {
     private int availableCopies;
     private Double pricePerCopy;
     @Enumerated(EnumType.STRING)
-    private BookStatus status; 
+    private BookStatus status;
     private String description;
 }

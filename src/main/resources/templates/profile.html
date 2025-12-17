@@ -12,7 +12,7 @@
   </head>
   <body class="bg-slate-100 font-sans text-slate-800">
     <div class="flex h-screen overflow-hidden">
-     <aside
+      <aside
         class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl flex-shrink-0"
       >
         <div class="h-16 flex items-center px-6 border-b border-slate-800">
@@ -20,56 +20,56 @@
           <span class="text-lg font-bold">LibroSystem</span>
         </div>
         <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-            <a
-                    href="/dashboard"
-                    class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
-            >
-                <i class="fa-solid fa-chart-pie w-8"></i> Dashboard
-            </a>
+          <a
+            th:href="@{/dashboard}"
+            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+          >
+            <i class="fa-solid fa-chart-pie w-8"></i> Dashboard
+          </a>
 
           <a
-            href="/books"
+            th:href="@{/books}"
             class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
           >
             <i class="fa-solid fa-book w-8"></i> Books
           </a>
           <a
-            href="/students"
+            th:href="@{/students}"
             class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
           >
             <i class="fa-solid fa-users w-8"></i> Students
           </a>
           <a
-            href="/allotment"
+            th:href="@{/allotment}"
             class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
           >
             <i class="fa-solid fa-hand-holding-hand w-8"></i> Allotment
           </a>
           <a
-            href="/vendors"
+            th:href="@{/vendors}"
             class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
           >
             <i class="fa-solid fa-shop w-8"></i> Vendors
           </a>
           <a
-            href="/publications"
+            th:href="@{/publications}"
             class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
           >
             <i class="fa-solid fa-newspaper w-8"></i> Publications
           </a>
           <a
-            href="/subscriptions"
+            th:href="@{/subscriptions}"
             class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
           >
             <i class="fa-solid fa-ticket w-8"></i> Subscriptions
           </a>
 
-            <a
-                    href="/profile"
-                    class="flex items-center px-3 py-2.5 bg-indigo-600 text-white rounded-lg"
-            >
-                <i class="fa-solid fa-user-gear w-8"></i> Profile
-            </a>
+          <a
+            th:href="@{/profile}"
+            class="flex items-center px-3 py-2.5 bg-indigo-600 text-white rounded-lg"
+          >
+            <i class="fa-solid fa-user-gear w-8"></i> Profile
+          </a>
         </nav>
       </aside>
 
@@ -89,6 +89,16 @@
 
         <main class="flex-1 overflow-y-auto p-8">
           <div class="max-w-2xl mx-auto">
+            <div
+              th:if="${success}"
+              class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700"
+              th:text="${success}"
+            ></div>
+            <div
+              th:if="${error}"
+              class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700"
+              th:text="${error}"
+            ></div>
             <div
               class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
             >
@@ -136,6 +146,7 @@
                     Logout
                   </button>
                 </form>
+                <br />
                 <form method="post" th:action="@{/delete-account}">
                   <button
                     type="submit"

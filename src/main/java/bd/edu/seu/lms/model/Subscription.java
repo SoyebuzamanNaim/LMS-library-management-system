@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -21,6 +19,7 @@ public class Subscription {
     SubscriptionStatus status;
     @Enumerated(EnumType.STRING)
     SubscriptionType type;
-    @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Student> students;
+    @OneToOne(mappedBy = "subscription", fetch = FetchType.EAGER)
+    @JoinColumn(name = "student_id")
+    private Student student;
 }

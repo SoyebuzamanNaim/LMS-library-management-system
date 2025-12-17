@@ -51,8 +51,8 @@ public class StudentController {
             student.setRoll(studentDto.roll());
             student.setDepartment(studentDto.department());
             student.setEmail(studentDto.email());
-            student.setPhones(studentDto.phones() != null ? studentDto.phones() : new ArrayList<>());
-            student.setStatus(studentDto.status() != null ? studentDto.status() : StudentStatus.ACTIVE);
+            student.setPhones(studentDto.phones() );
+            student.setStatus(studentDto.status() );
             studentService.saveStudent(student);
             redirectAttributes.addFlashAttribute("success", "Student added successfully");
         } catch (Exception e) {
@@ -78,8 +78,8 @@ public class StudentController {
             student.setRoll(studentDto.roll());
             student.setDepartment(studentDto.department());
             student.setEmail(studentDto.email());
-            student.setPhones(studentDto.phones() != null ? studentDto.phones() : new ArrayList<>());
-            student.setStatus(studentDto.status() != null ? studentDto.status() : StudentStatus.ACTIVE);
+            student.setPhones(studentDto.phones() );
+            student.setStatus(studentDto.status() );
             studentService.updateStudent(student);
             redirectAttributes.addFlashAttribute("success", "Student updated successfully");
         } catch (Exception e) {

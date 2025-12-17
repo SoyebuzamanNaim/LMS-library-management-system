@@ -31,12 +31,8 @@ public class BookController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        if (search != null && !search.trim().equals("")) {
             model.addAttribute("search", search);
             model.addAttribute("books", bookService.searchBooks(search));
-        } else {
-            model.addAttribute("books", bookService.getAllBooks());
-        }
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("publications", publicationService.getAllPublications());
         model.addAttribute("vendors", vendorService.getAllVendors());

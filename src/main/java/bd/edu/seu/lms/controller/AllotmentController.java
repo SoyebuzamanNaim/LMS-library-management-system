@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 
-
 @Controller
 public class AllotmentController {
 
@@ -39,7 +38,7 @@ public class AllotmentController {
             return "redirect:/login";
         }
         model.addAttribute("search", search);
-            model.addAttribute("allotments", allotmentService.searchAllotments(search));
+        model.addAttribute("allotments", allotmentService.searchAllotments(search));
 
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("students", studentService.getAllStudents());
@@ -52,7 +51,7 @@ public class AllotmentController {
     @PostMapping("/allotment/save")
     public String saveAllotment(@ModelAttribute("allotmentdto") AllotmentDto allotmentDto,
             RedirectAttributes redirectAttributes) {
-           
+
         Student student = studentService.getStudentById(allotmentDto.studentId());
         if (student == null) {
             redirectAttributes.addFlashAttribute("error", "Student not found");
@@ -64,11 +63,14 @@ public class AllotmentController {
             return "redirect:/allotment";
         }
 
+
         Allotment allotment = new Allotment();
         allotment.setStudent(student);
         allotment.setBook(book);
-        allotment.setIssueDate(allotmentDto.issueDate() != null ? allotmentDto.issueDate() : LocalDate.now());
-        allotment.setStatus(allotmentDto.status() != null ? allotmentDto.status() : AllotmentStatus.ACTIVE);
+        allotment.setIssueDate(allotmentDto.issueDate() );
+        allotment.setStatus(allotmentDto.status() );
+        allotment.setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate()));
+
         try {
             allotmentService.saveAllotment(allotment);
             redirectAttributes.addFlashAttribute("success", "Allotment created successfully");
@@ -81,22 +83,15 @@ public class AllotmentController {
     @PostMapping("/allotment/update")
     public String updateAllotment(@ModelAttribute AllotmentDto allotmentDto, int id,
             RedirectAttributes redirectAttributes) {
-        if (allotmentDto.studentId() == null ) {
-            redirectAttributes.addFlashAttribute("error", "Student is required");
-            return "redirect:/allotment";
-        }
-        if (allotmentDto.bookId() == null ) {
-            redirectAttributes.addFlashAttribute("error", "Book is required");
-            return "redirect:/allotment";
-        }
         
+
         Student student = studentService.getStudentById(allotmentDto.studentId());
-        if (student == null) {
+        if (student == null || allotmentDto.studentId() == null) {
             redirectAttributes.addFlashAttribute("error", "Student not found");
             return "redirect:/allotment";
         }
         Book book = bookService.getBookById(allotmentDto.bookId());
-        if (book == null) {
+        if (book == null || allotmentDto.bookId() == null) {
             redirectAttributes.addFlashAttribute("error", "Book not found");
             return "redirect:/allotment";
         }
@@ -104,8 +99,8 @@ public class AllotmentController {
         Allotment allotment = allotmentService.getAllotmentById(id);
         allotment.setStudent(student);
         allotment.setBook(book);
-        allotment.setIssueDate(allotmentDto.issueDate() != null ? allotmentDto.issueDate() : LocalDate.now());
-        allotment.setStatus(allotmentDto.status() != null ? allotmentDto.status() : AllotmentStatus.ACTIVE);
+        allotment.setIssueDate(allotmentDto.issueDate() );
+        allotment.setStatus(allotmentDto.status() );
         try {
             allotmentService.updateAllotment(allotment);
             redirectAttributes.addFlashAttribute("success", "Allotment updated successfully");
@@ -117,8 +112,12 @@ public class AllotmentController {
 
     @PostMapping("/allotment/delete")
     public String deleteAllotment(int id, RedirectAttributes redirectAttributes) {
-        allotmentService.deleteAllotment(id);
-        redirectAttributes.addFlashAttribute("success", "Allotment deleted successfully");
+        try {
+            allotmentService.deleteAllotment(id);
+            redirectAttributes.addFlashAttribute("success", "Allotment deleted successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/allotment";
     }
 
@@ -126,9 +125,10 @@ public class AllotmentController {
     public String returnAllotment(int id, RedirectAttributes redirectAttributes) {
         try {
             Allotment allotment = allotmentService.getAllotmentById(id);
+
             allotment.setStatus(AllotmentStatus.RETURNED);
-            allotment.setFineAmount(allotmentService.calculateFine(allotment.getIssueDate()));
             allotmentService.updateAllotment(allotment);
+
             redirectAttributes.addFlashAttribute("success", "Book returned successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -136,7 +136,4 @@ public class AllotmentController {
         return "redirect:/allotment";
     }
 
- 
-
-   
 }

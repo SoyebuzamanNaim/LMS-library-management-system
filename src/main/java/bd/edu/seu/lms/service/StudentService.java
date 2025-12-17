@@ -1,6 +1,8 @@
 package bd.edu.seu.lms.service;
 
+import bd.edu.seu.lms.model.Allotment;
 import bd.edu.seu.lms.model.Student;
+import bd.edu.seu.lms.repository.AllotmentRepo;
 import bd.edu.seu.lms.repository.StudentRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,14 +13,16 @@ import java.util.stream.Collectors;
 @Service
 public class StudentService {
     private final StudentRepo studentRepo;
+    private final AllotmentRepo allotmentRepo;
 
-    public StudentService(StudentRepo studentRepo) {
+    public StudentService(StudentRepo studentRepo, AllotmentRepo allotmentRepo) {
         this.studentRepo = studentRepo;
+        this.allotmentRepo = allotmentRepo;
     }
 
     @Transactional
     public Student saveStudent(Student student) {
-        if (studentRepo.existsById(student.getId())) {
+        if (student.getId() != null && studentRepo.existsById(student.getId())) {
             throw new IllegalArgumentException("Student already exists");
         }
         return studentRepo.save(student);
@@ -34,11 +38,24 @@ public class StudentService {
 
     @Transactional
     public void deleteStudent(int id) {
-        try {
-            studentRepo.deleteById(id);
-        } catch (Exception e) {
+        if (!studentRepo.existsById(id)) {
             throw new IllegalArgumentException("Student does not exist");
         }
+
+        List<Allotment> allotments = allotmentRepo.findByStudent_Id(id);
+
+        if (!allotments.isEmpty()) {
+            String middle = "";
+            for (Allotment a : allotments) {
+                middle += (a.getBook().getTitle() + " to " + a.getStudent().getId() + ", ");
+            }
+            String s = "Cannot delete allotments of student " +
+                    middle
+                    + ".";
+            throw new IllegalArgumentException(s);
+        }
+
+        studentRepo.deleteById(id);
     }
 
     public List<Student> getAllStudents() {

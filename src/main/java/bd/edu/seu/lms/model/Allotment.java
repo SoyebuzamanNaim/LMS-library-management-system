@@ -18,21 +18,19 @@ public class Allotment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
     @Column(nullable = false)
     private LocalDate issueDate;
 
-    
-
     @Enumerated(EnumType.STRING)
-    private AllotmentStatus status; 
+    private AllotmentStatus status;
     private Double fineAmount;
 
 }

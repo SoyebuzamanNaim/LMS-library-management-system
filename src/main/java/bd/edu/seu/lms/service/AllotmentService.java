@@ -2,7 +2,9 @@
 package bd.edu.seu.lms.service;
 
 import bd.edu.seu.lms.model.Allotment;
-
+import bd.edu.seu.lms.model.AllotmentStatus;
+import bd.edu.seu.lms.model.Book;
+import bd.edu.seu.lms.model.BookStatus;
 import bd.edu.seu.lms.repository.AllotmentRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +17,29 @@ import java.util.stream.Collectors;
 @Service
 public class AllotmentService {
     private final AllotmentRepo allotmentRepo;
+    private final BookService bookService;
 
-    public AllotmentService(AllotmentRepo allotmentRepo) {
+    public AllotmentService(AllotmentRepo allotmentRepo, BookService bookService) {
         this.allotmentRepo = allotmentRepo;
+        this.bookService = bookService;
     }
 
     @Transactional
     public Allotment saveAllotment(Allotment allotment) {
-        if (allotmentRepo.existsById(allotment.getId())) {
+        if (allotment.getId() != null && allotmentRepo.existsById(allotment.getId())) {
             throw new IllegalArgumentException("Allotment already exists");
+        }
+        if (allotment.getBook() !=null) {
+            Book book = allotment.getBook();
+            if (book.getAvailableCopies() == 0) {
+               
+                throw new IllegalArgumentException("Book is not available");
+            }
+            book.setAvailableCopies(book.getAvailableCopies() - 1);
+            if (book.getAvailableCopies() == 0) {
+                book.setStatus(BookStatus.UNAVAILABLE);
+            }
+            bookService.updateBook(book);
         }
         return allotmentRepo.save(allotment);
     }
@@ -38,10 +54,22 @@ public class AllotmentService {
 
     @Transactional
     public void deleteAllotment(int id) {
+        Allotment allotment = allotmentRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Allotment does not exist"));
+
+        if (allotment.getBook() != null) {
+            Book book = allotment.getBook();
+            if (
+                    allotment.getStatus() != AllotmentStatus.RETURNED) {
+                book.setAvailableCopies(book.getAvailableCopies() + 1);
+                bookService.updateBook(book);
+            }
+        }
+
         try {
             allotmentRepo.deleteById(id);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Allotment does not exist");
+            throw new IllegalArgumentException("Cannot delete allotment: " + e.getMessage());
         }
     }
 
@@ -57,7 +85,7 @@ public class AllotmentService {
         LocalDate plannedReturnDate = issueDate.plusDays(14);
 
         LocalDate today = LocalDate.now();
-        // planned date passed
+        
         if (!today.isAfter(plannedReturnDate)) {
             return 0;
         }
@@ -82,4 +110,5 @@ public class AllotmentService {
 
         return combined.stream().distinct().collect(Collectors.toList());
     }
+
 }

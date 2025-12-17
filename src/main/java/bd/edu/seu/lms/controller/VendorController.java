@@ -5,8 +5,6 @@ import bd.edu.seu.lms.model.Vendor;
 import bd.edu.seu.lms.service.VendorService;
 import jakarta.servlet.http.HttpSession;
 
-
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,13 +37,16 @@ public class VendorController {
     @PostMapping("/vendors/save")
     public String vendors(@ModelAttribute("vendordto") VendorDto vendorDto, RedirectAttributes redirectAttributes) {
         try {
-
+            if (vendorDto.name() == null || vendorDto.name().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Name is required");
+                return "redirect:/vendors";
+            }
             Vendor vendor = new Vendor();
             vendor.setName(vendorDto.name().trim());
-            vendor.setContactPerson(vendorDto.contactPerson().trim());
-            vendor.setEmail(vendorDto.email().trim());
+            vendor.setContactPerson(vendorDto.contactPerson());
+            vendor.setEmail(vendorDto.email());
             vendor.setPhones(vendorDto.phones());
-            vendor.setAddress(vendorDto.address().trim());
+            vendor.setAddress(vendorDto.address());
             vendorService.saveVendor(vendor);
             redirectAttributes.addFlashAttribute("success", "Vendor added successfully");
         } catch (Exception e) {
@@ -55,15 +56,18 @@ public class VendorController {
     }
 
     @PostMapping("/vendors/update")
-    public String updateVendor(@ModelAttribute VendorDto vendorDto, RedirectAttributes redirectAttributes) {
+    public String updateVendor(@ModelAttribute VendorDto vendorDto, int id, RedirectAttributes redirectAttributes) {
         try {
-
-            Vendor vendor = new Vendor();
+            if (vendorDto.name() == null || vendorDto.name().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Name is required");
+                return "redirect:/vendors";
+            }
+            Vendor vendor = vendorService.getVendorById(id);
             vendor.setName(vendorDto.name().trim());
-            vendor.setContactPerson(vendorDto.contactPerson().trim());
-            vendor.setEmail(vendorDto.email().trim());
+            vendor.setContactPerson(vendorDto.contactPerson());
+            vendor.setEmail(vendorDto.email());
             vendor.setPhones(vendorDto.phones());
-            vendor.setAddress(vendorDto.address().trim());
+            vendor.setAddress(vendorDto.address());
             vendorService.updateVendor(vendor);
             redirectAttributes.addFlashAttribute("success", "Vendor updated successfully");
         } catch (Exception e) {
