@@ -119,7 +119,7 @@
         <div
           class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs mr-2"
         >
-          <span th:text="${user}"></span>
+        <span class="overflow-hidden text-ellipsis" th:text="${user}"></span>
         </div>
       </div>
     </div>
@@ -191,7 +191,7 @@
           <div
             class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
-            <span th:text="${user}"></span>
+            <span class="overflow-hidden text-ellipsis" th:text="${user}"></span>
           </div>
         </header>
 
@@ -218,7 +218,7 @@
             <form
               th:action="@{/books}"
               method="get"
-              class="relative w-full md:w-96"
+              class="relative w-full sm:w-96"
             >
               <div
                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
@@ -235,7 +235,7 @@
             </form>
             <!-- Open the modal using ID.showModal() method -->
             <button
-              class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30"
+              class="btn bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white px-4 sm:px-5 py-2 rounded-lg font-medium transition-colors flex items-center shadow-lg shadow-indigo-500/30 w-full sm:w-auto touch-manipulation"
               onclick="book_add_modal.showModal()"
             >
               <i class="fa-solid fa-plus mr-2"></i> Add New Book
@@ -251,12 +251,20 @@
                   <tr
                     class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold border-b border-slate-200"
                   >
-                    <th class="px-6 py-4">ID</th>
-                    <th class="px-6 py-4">Book Title</th>
-                    <th class="px-6 py-4">Author</th>
-                    <th class="px-6 py-4">Category</th>
-                    <th class="px-6 py-4">Status</th>
-                    <th class="px-6 py-4 text-center">Actions</th>
+                    <th class="px-4 lg:px-6 py-3 lg:py-4">ID</th>
+                    <th class="px-4 lg:px-6 py-3 lg:py-4">Book Title</th>
+                    <th class="px-4 lg:px-6 py-3 lg:py-4 hidden md:table-cell">
+                      Author
+                    </th>
+                    <th class="px-4 lg:px-6 py-3 lg:py-4 hidden lg:table-cell">
+                      Category
+                    </th>
+                    <th class="px-4 lg:px-6 py-3 lg:py-4 hidden md:table-cell">
+                      Status
+                    </th>
+                    <th class="px-4 lg:px-6 py-3 lg:py-4 text-center">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
@@ -264,18 +272,28 @@
                     th:each="book : ${books}"
                     class="hover:bg-slate-50 transition-colors"
                   >
-                    <td class="px-6 py-4" th:text="${book.id}">B-001</td>
+                    <td class="px-4 lg:px-6 py-3 lg:py-4" th:text="${book.id}">
+                      B-001
+                    </td>
                     <td
-                      class="px-6 py-4 font-medium text-slate-800"
+                      class="px-4 lg:px-6 py-3 lg:py-4 font-medium text-slate-800"
                       th:text="${book.title}"
                     >
                       Book Title
                     </td>
-                    <td class="px-6 py-4" th:text="${book.author}">Author</td>
-                    <td class="px-6 py-4" th:text="${book.category}">
+                    <td
+                      class="px-4 lg:px-6 py-3 lg:py-4 hidden md:table-cell"
+                      th:text="${book.author}"
+                    >
+                      Author
+                    </td>
+                    <td
+                      class="px-4 lg:px-6 py-3 lg:py-4 hidden lg:table-cell"
+                      th:text="${book.category}"
+                    >
                       Category
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 lg:px-6 py-3 lg:py-4 hidden md:table-cell">
                       <span
                         th:text="${book.status.name()}"
                         class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700"
@@ -283,10 +301,10 @@
                       >
                     </td>
                     <td
-                      class="px-6 py-4 text-center flex justify-center space-x-3"
+                      class="px-4 lg:px-6 py-3 lg:py-4 text-center flex justify-center space-x-2 lg:space-x-3"
                     >
                       <button
-                        class="text-indigo-600 hover:text-indigo-800"
+                        class="text-indigo-600 hover:text-indigo-800 active:text-indigo-900 transition-colors"
                         title="View"
                         th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-isbn=${book.isbn}, data-category=${book.category}, data-status=${book.status.name()}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-description=${book.description}"
                         onclick="showViewModal(this)"
@@ -294,7 +312,7 @@
                         <i class="fa-solid fa-eye"></i>
                       </button>
                       <button
-                        class="text-amber-500 hover:text-amber-700"
+                        class="text-amber-500 hover:text-amber-700 active:text-amber-800 transition-colors"
                         title="Edit"
                         th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-isbn=${book.isbn}, data-publication=${book.publication.id}, data-vendor=${book.vendor.id}, data-category=${book.category}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-status=${book.status.name()}, data-description=${book.description}"
                         onclick="showEditModal(this)"
@@ -310,7 +328,7 @@
                         <input type="hidden" name="id" th:value="${book.id}" />
                         <button
                           type="submit"
-                          class="text-red-500 hover:text-red-700"
+                          class="text-red-500 hover:text-red-700 active:text-red-800 transition-colors"
                           title="Remove"
                         >
                           <i class="fa-solid fa-trash"></i>
@@ -321,7 +339,7 @@
                   <tr th:if="${books == null || books.isEmpty()}">
                     <td
                       colspan="6"
-                      class="px-6 py-4 text-center text-slate-500"
+                      class="px-4 lg:px-6 py-3 lg:py-4 text-center text-slate-500"
                     >
                       No books found
                     </td>
@@ -484,12 +502,15 @@
           <div class="modal-action">
             <button
               type="button"
-              class="p-3 btn bg-slate-500 text-white"
+              class="p-3 btn bg-slate-500 text-white hover:bg-slate-600 active:bg-slate-700 transition-colors touch-manipulation"
               onclick="book_add_modal.close()"
             >
               Cancel
             </button>
-            <button type="submit" class="p-3 btn bg-indigo-600 text-white">
+            <button
+              type="submit"
+              class="p-3 btn bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800 transition-colors touch-manipulation"
+            >
               Save Book
             </button>
           </div>
@@ -651,12 +672,15 @@
           <div class="modal-action">
             <button
               type="button"
-              class="p-3 btn bg-slate-500 text-white"
+              class="p-3 btn bg-slate-500 text-white hover:bg-slate-600 active:bg-slate-700 transition-colors touch-manipulation"
               onclick="book_edit_modal.close()"
             >
               Cancel
             </button>
-            <button type="submit" class="p-3 btn bg-indigo-600 text-white">
+            <button
+              type="submit"
+              class="p-3 btn bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800 transition-colors touch-manipulation"
+            >
               Update Book
             </button>
           </div>
@@ -728,7 +752,11 @@
         </div>
         <div class="modal-action">
           <form method="dialog">
-            <button class="btn bg-red-500 text-white p-3">Close</button>
+            <button
+              class="btn bg-red-500 text-white p-3 hover:bg-red-600 active:bg-red-700 transition-colors touch-manipulation"
+            >
+              Close
+            </button>
           </form>
         </div>
       </div>

@@ -18,6 +18,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+    @Column(nullable = false, unique = true)
     private String roll;
     private String department;
     private String email;

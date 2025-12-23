@@ -118,7 +118,7 @@
         <div
           class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs mr-2"
         >
-          <span th:text="${user}"></span>
+          <span class="overflow-hidden text-ellipsis" th:text="${user}"></span>
         </div>
       </div>
     </div>
@@ -206,7 +206,7 @@
           <div
             class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
-            <span th:text="${user}"></span>
+            <span class="overflow-hidden text-ellipsis" th:text="${user}"></span>
           </div>
         </header>
 
@@ -300,7 +300,9 @@
           <div
             class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 lg:p-6 text-center text-slate-600"
           >
-            <p class="text-base lg:text-lg font-semibold mb-2">Activity timeline</p>
+            <p class="text-base lg:text-lg font-semibold mb-2">
+              Activity timeline
+            </p>
             <p class="text-xs lg:text-sm">Coming sooon.</p>
           </div>
         </main>
