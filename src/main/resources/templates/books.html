@@ -171,7 +171,7 @@
                       <button
                         class="text-indigo-600 hover:text-indigo-800"
                         title="View"
-                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-category=${book.category}, data-status=${book.status.name()}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-description=${book.description}"
+                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-isbn=${book.isbn}, data-category=${book.category}, data-status=${book.status.name()}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-description=${book.description}"
                         onclick="showViewModal(this)"
                       >
                         <i class="fa-solid fa-eye"></i>
@@ -179,7 +179,7 @@
                       <button
                         class="text-amber-500 hover:text-amber-700"
                         title="Edit"
-                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-publication=${book.publication.id}, data-vendor=${book.vendor.id}, data-category=${book.category}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-status=${book.status.name()}, data-description=${book.description}"
+                        th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}, data-isbn=${book.isbn}, data-publication=${book.publication.id}, data-vendor=${book.vendor.id}, data-category=${book.category}, data-total=${book.totalCopies}, data-available=${book.availableCopies}, data-price=${book.pricePerCopy}, data-status=${book.status.name()}, data-description=${book.description}"
                         onclick="showEditModal(this)"
                       >
                         <i class="fa-solid fa-pen-to-square"></i>
@@ -253,17 +253,31 @@
               />
             </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1"
-              >Category *</label
-            >
-            <input
-              type="text"
-              th:field="*{category}"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              placeholder="Enter category"
-              required
-            />
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >ISBN *</label
+              >
+              <input
+                type="text"
+                th:field="*{isbn}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Enter ISBN (e.g., 978-0-123456-78-9)"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Category *</label
+              >
+              <input
+                type="text"
+                th:field="*{category}"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Enter category"
+                required
+              />
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div>
@@ -320,7 +334,6 @@
                 type="number"
                 id="add_available_copies"
                 th:field="*{availableCopies}"
-                th:attr="max=${bookdto.totalCopies}"
                 class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 placeholder="0"
                 min="0"
@@ -399,17 +412,32 @@
               />
             </div>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1"
-              >Category *</label
-            >
-            <input
-              type="text"
-              id="edit_book_category"
-              name="category"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              required
-            />
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >ISBN *</label
+              >
+              <input
+                type="text"
+                id="edit_book_isbn"
+                name="isbn"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Enter ISBN (e.g., 978-0-123456-78-9)"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1"
+                >Category *</label
+              >
+              <input
+                type="text"
+                id="edit_book_category"
+                name="category"
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                required
+              />
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div>
@@ -459,7 +487,6 @@
                 class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 min="0"
                 required
-                oninput="document.getElementById('edit_book_available').setAttribute('max', this.value || 0);"
               />
             </div>
             <div>
@@ -472,7 +499,6 @@
                 name="availableCopies"
                 class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 min="0"
-                oninput="this.setAttribute('max', document.getElementById('edit_book_total').value || 0); this.setCustomValidity(this.value > this.max ? 'Available copies cannot exceed total copies' : '');"
               />
               <p
                 class="text-red-500 text-xs mt-1"
@@ -537,6 +563,10 @@
             <p class="text-slate-800" id="view_book_title"></p>
           </div>
           <div>
+            <label class="block text-sm font-medium text-slate-700">ISBN</label>
+            <p class="text-slate-800" id="view_book_isbn"></p>
+          </div>
+          <div>
             <label class="block text-sm font-medium text-slate-700"
               >Author</label
             >
@@ -593,6 +623,8 @@
           button.getAttribute("data-id");
         document.getElementById("view_book_title").textContent =
           button.getAttribute("data-title");
+        document.getElementById("view_book_isbn").textContent =
+          button.getAttribute("data-isbn") || "N/A";
         document.getElementById("view_book_author").textContent =
           button.getAttribute("data-author");
         document.getElementById("view_book_category").textContent =
@@ -618,26 +650,24 @@
           button.getAttribute("data-id");
         document.getElementById("edit_book_title").value =
           button.getAttribute("data-title");
+        document.getElementById("edit_book_isbn").value =
+          button.getAttribute("data-isbn");
         document.getElementById("edit_book_author").value =
           button.getAttribute("data-author");
         document.getElementById("edit_book_category").value =
           button.getAttribute("data-category");
         document.getElementById("edit_book_publication").value =
-          button.getAttribute("data-publication") || "";
+          button.getAttribute("data-publication");
         document.getElementById("edit_book_vendor").value =
-          button.getAttribute("data-vendor") || "";
+          button.getAttribute("data-vendor");
         const totalCopies = button.getAttribute("data-total");
         document.getElementById("edit_book_total").value = totalCopies;
         document.getElementById("edit_book_available").value =
           button.getAttribute("data-available");
-
-        document
-          .getElementById("edit_book_available")
-          .setAttribute("max", totalCopies || 0);
         document.getElementById("edit_book_price").value =
           button.getAttribute("data-price");
         document.getElementById("edit_book_description").value =
-          button.getAttribute("data-description") || "";
+          button.getAttribute("data-description");
         book_edit_modal.showModal();
       }
     </script>

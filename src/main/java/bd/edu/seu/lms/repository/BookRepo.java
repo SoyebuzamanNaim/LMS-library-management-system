@@ -15,4 +15,8 @@ public interface BookRepo extends JpaRepository<Book, Integer> {
     List<Book> findByVendor_Id(Integer vendorId);
 
     List<Book> findByPublication_Id(Integer publicationId);
+
+    boolean existsByIsbn(String isbn);
+
+    Book findByIsbn(String isbn);
 }

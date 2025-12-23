@@ -7,6 +7,7 @@ public record BookDto(
         String author,
         Integer publicationId,
         Integer vendorId,
+        String isbn,
         String category,
         int totalCopies,
         int availableCopies,

@@ -38,7 +38,7 @@ public class BookController {
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("publications", publicationService.getAllPublications());
         model.addAttribute("vendors", vendorService.getAllVendors());
-        model.addAttribute("bookdto", new BookDto("", "", null, null, "", 0, 0, 0.0, BookStatus.AVAILABLE, ""));
+        model.addAttribute("bookdto", new BookDto("", "", null, null, "", "", 0, 0, 0.0, BookStatus.AVAILABLE, ""));
         return "books";
     }
 
@@ -61,8 +61,24 @@ public class BookController {
                 redirectAttributes.addFlashAttribute("error", "Vendor is required");
                 return "redirect:/books";
             }
+            if (bookDto.isbn() == null || bookDto.isbn().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "ISBN is required");
+                return "redirect:/books";
+            }
+            if (bookDto.totalCopies() < 0) {
+                redirectAttributes.addFlashAttribute("error", "Total copies cannot be negative");
+                return "redirect:/books";
+            }
+            if (bookDto.availableCopies() < 0) {
+                redirectAttributes.addFlashAttribute("error", "Available copies cannot be negative");
+                return "redirect:/books";
+            }
             if (bookDto.availableCopies() > bookDto.totalCopies()) {
                 redirectAttributes.addFlashAttribute("error", "Available copies cannot be greater than total copies");
+                return "redirect:/books";
+            }
+            if (bookDto.pricePerCopy() != null && bookDto.pricePerCopy() < 0) {
+                redirectAttributes.addFlashAttribute("error", "Price per copy cannot be negative");
                 return "redirect:/books";
             }
 
@@ -82,6 +98,7 @@ public class BookController {
             book.setAuthor(bookDto.author());
             book.setPublication(publication);
             book.setVendor(vendor);
+            book.setIsbn(bookDto.isbn());
             book.setCategory(bookDto.category());
             book.setTotalCopies(bookDto.totalCopies());
             book.setAvailableCopies(bookDto.availableCopies());
@@ -115,8 +132,24 @@ public class BookController {
                 redirectAttributes.addFlashAttribute("error", "Vendor is required");
                 return "redirect:/books";
             }
+            if (bookDto.isbn() == null || bookDto.isbn().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "ISBN is required");
+                return "redirect:/books";
+            }
+            if (bookDto.totalCopies() < 0) {
+                redirectAttributes.addFlashAttribute("error", "Total copies cannot be negative");
+                return "redirect:/books";
+            }
+            if (bookDto.availableCopies() < 0) {
+                redirectAttributes.addFlashAttribute("error", "Available copies cannot be negative");
+                return "redirect:/books";
+            }
             if (bookDto.availableCopies() > bookDto.totalCopies()) {
                 redirectAttributes.addFlashAttribute("error", "Available copies cannot be greater than total copies");
+                return "redirect:/books";
+            }
+            if (bookDto.pricePerCopy() != null && bookDto.pricePerCopy() < 0) {
+                redirectAttributes.addFlashAttribute("error", "Price per copy cannot be negative");
                 return "redirect:/books";
             }
 
@@ -136,6 +169,7 @@ public class BookController {
             book.setAuthor(bookDto.author());
             book.setPublication(publication);
             book.setVendor(vendor);
+            book.setIsbn(bookDto.isbn());
             book.setCategory(bookDto.category());
             book.setTotalCopies(bookDto.totalCopies());
             book.setAvailableCopies(bookDto.availableCopies());

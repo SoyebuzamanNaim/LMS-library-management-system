@@ -24,10 +24,14 @@ public class BookService {
     public Book saveBook(Book book) {
         if (book.getId() != null && bookRepo.existsById(book.getId())) {
             throw new IllegalArgumentException("Book already exists");
-
         }
-        if(book.getAvailableCopies()>book.getTotalCopies()||book.getAvailableCopies()<0||book.getTotalCopies()<0){
-            throw new IllegalArgumentException("Check Available book and Total books ");
+        if (book.getIsbn() != null && bookRepo.existsByIsbn(book.getIsbn())) {
+            throw new IllegalArgumentException("Book with ISBN " + book.getIsbn() + " already exists");
+        }
+        if (book.getAvailableCopies() > book.getTotalCopies() || book.getAvailableCopies() < 0
+                || book.getTotalCopies() < 0) {
+            throw new IllegalArgumentException(
+                    "Available copies cannot exceed total copies and both must be non-negative");
         }
         return bookRepo.save(book);
     }
@@ -36,6 +40,19 @@ public class BookService {
     public Book updateBook(Book book) {
         if (book.getId() == null || !bookRepo.existsById(book.getId())) {
             throw new IllegalArgumentException("Book does not exist");
+        }
+        Book existingBook = bookRepo.findById(book.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Book does not exist"));
+        if (book.getIsbn() != null && !book.getIsbn().equals(existingBook.getIsbn())) {
+            Book bookWithIsbn = bookRepo.findByIsbn(book.getIsbn());
+            if (bookWithIsbn != null && !bookWithIsbn.getId().equals(book.getId())) {
+                throw new IllegalArgumentException("Book with ISBN " + book.getIsbn() + " already exists");
+            }
+        }
+        if (book.getAvailableCopies() > book.getTotalCopies() || book.getAvailableCopies() < 0
+                || book.getTotalCopies() < 0) {
+            throw new IllegalArgumentException(
+                    "Available copies cannot exceed total copies and both must be non-negative");
         }
         return bookRepo.save(book);
     }
@@ -46,15 +63,15 @@ public class BookService {
             throw new IllegalArgumentException("Book does not exist");
         }
 
-        
         List<Allotment> allotments = allotmentRepo.findByBook_Id(id);
 
         if (!allotments.isEmpty()) {
-            String middle="";
-            for(Allotment a:allotments){middle+=(a.getId()+", ");}
-            String s = "Cannot delete book " +
-                    middle
-                    + " allotments of this book still active.";
+            StringBuilder middle = new StringBuilder();
+            for (Allotment a : allotments) {
+                middle.append(a.getId()).append(", ");
+            }
+            String s = "Cannot delete book. Allotments with IDs: " + middle.toString().replaceAll(", $", "")
+                    + " are still active.";
             throw new IllegalArgumentException(s);
         }
 
@@ -71,7 +88,7 @@ public class BookService {
 
     // isfai
     public List<Book> searchBooks(String keyword) {
-        if (keyword == null || keyword.trim().equals("")) {
+        if (keyword == null || keyword.trim().isEmpty()) {
             return getAllBooks();
         }
         List<Book> byTitle = bookRepo.findByTitleContainingIgnoreCase(keyword);
