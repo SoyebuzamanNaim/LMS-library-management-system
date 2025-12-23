@@ -18,9 +18,117 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body class="bg-slate-100 font-sans text-slate-800">
+    <!-- Mobile Navbar -->
+    <div
+      class="navbar bg-slate-900 text-white shadow-lg lg:hidden sticky top-0 z-50"
+    >
+      <div class="navbar-start">
+        <div class="dropdown">
+          <div
+            tabindex="0"
+            role="button"
+            class="btn btn-ghost btn-circle text-white hover:bg-slate-800 active:bg-slate-700 transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content bg-slate-900 rounded-box z-[100] mt-3 w-52 max-w-[85vw] p-2 shadow-lg border border-slate-800"
+          >
+            <li>
+              <a
+                th:href="@{/dashboard}"
+                class="text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700 transition-colors"
+              >
+                <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+              </a>
+            </li>
+            <li>
+              <a
+                th:href="@{/books}"
+                class="text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700 transition-colors"
+              >
+                <i class="fa-solid fa-book w-5"></i> Books
+              </a>
+            </li>
+            <li>
+              <a
+                th:href="@{/students}"
+                class="text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700 transition-colors"
+              >
+                <i class="fa-solid fa-users w-5"></i> Students
+              </a>
+            </li>
+            <li>
+              <a
+                th:href="@{/allotment}"
+                class="text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700 transition-colors"
+              >
+                <i class="fa-solid fa-hand-holding-hand w-5"></i> Allotment
+              </a>
+            </li>
+            <li>
+              <a
+                th:href="@{/vendors}"
+                class="bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800 transition-colors"
+              >
+                <i class="fa-solid fa-shop w-5"></i> Vendors
+              </a>
+            </li>
+            <li>
+              <a
+                th:href="@{/publications}"
+                class="text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700 transition-colors"
+              >
+                <i class="fa-solid fa-newspaper w-5"></i> Publications
+              </a>
+            </li>
+            <li>
+              <a
+                th:href="@{/profile}"
+                class="text-slate-300 hover:text-white hover:bg-slate-800 active:bg-slate-700 transition-colors"
+              >
+                <i class="fa-solid fa-user-gear w-5"></i> Profile
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="navbar-center">
+        <a
+          th:href="@{/dashboard}"
+          class="btn btn-ghost text-xl text-white hover:bg-slate-800 active:bg-slate-700 transition-colors"
+        >
+          <i class="fa-solid fa-book-open text-indigo-500 text-xl mr-2"></i>
+          LibroSystem
+        </a>
+      </div>
+      <div class="navbar-end">
+        <div
+          class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs mr-2"
+        >
+          <span th:text="${user}"></span>
+        </div>
+      </div>
+    </div>
+
     <div class="flex h-screen overflow-hidden">
+      <!-- Desktop Sidebar -->
       <aside
-        class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl flex-shrink-0"
+        class="hidden lg:flex w-64 bg-slate-900 text-white flex-col shadow-2xl flex-shrink-0"
       >
         <a
           th:href="@{/dashboard}"
