@@ -5,6 +5,8 @@ import bd.edu.seu.lms.model.Allotment;
 import bd.edu.seu.lms.model.AllotmentStatus;
 import bd.edu.seu.lms.model.Book;
 import bd.edu.seu.lms.model.BookStatus;
+import bd.edu.seu.lms.model.Student;
+import bd.edu.seu.lms.model.StudentStatus;
 import bd.edu.seu.lms.repository.AllotmentRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +31,14 @@ public class AllotmentService {
         if (allotment.getId() != null && allotmentRepo.existsById(allotment.getId())) {
             throw new IllegalArgumentException("Allotment already exists");
         }
+
         if (allotment.getBook() != null) {
             Book book = allotment.getBook();
-            if (book.getAvailableCopies() == 0) {
-
+            Student student = allotment.getStudent();
+            if (student.getStatus() == StudentStatus.INACTIVE) {
+                throw new IllegalArgumentException("Student is inactive");
+            }
+            if (book.getStatus() == BookStatus.UNAVAILABLE) {
                 throw new IllegalArgumentException("Book is not available");
             }
             book.setAvailableCopies(book.getAvailableCopies() - 1);

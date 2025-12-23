@@ -67,7 +67,7 @@ public class AllotmentController {
         allotment.setStudent(student);
         allotment.setBook(book);
         allotment.setIssueDate(allotmentDto.issueDate());
-        allotment.setStatus(allotmentDto.status());
+        allotment.setStatus(AllotmentStatus.ACTIVE);
         allotment.setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate()));
 
         try {
@@ -98,7 +98,6 @@ public class AllotmentController {
         allotment.setStudent(student);
         allotment.setBook(book);
         allotment.setIssueDate(allotmentDto.issueDate());
-        allotment.setStatus(allotmentDto.status());
 
         allotment.setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate()));
         try {

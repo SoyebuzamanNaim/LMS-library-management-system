@@ -188,12 +188,15 @@
           class="hidden lg:flex h-16 bg-white shadow-sm items-center justify-between px-8 z-10"
         >
           <h1 class="text-xl font-bold text-slate-700">
-            Publications Management
+            Publication Management
           </h1>
           <div
             class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
-            <span class="overflow-hidden text-ellipsis" th:text="${user}"></span>
+            <span
+              class="overflow-hidden text-ellipsis"
+              th:text="${user}"
+            ></span>
           </div>
         </header>
 
@@ -258,7 +261,9 @@
                   >
                     <th class="px-4 lg:px-6 py-3 lg:py-4">ID</th>
                     <th class="px-4 lg:px-6 py-3 lg:py-4">Publication Name</th>
-                    <th class="px-4 lg:px-6 py-3 lg:py-4">Address</th>
+                    <th class="px-4 lg:px-6 py-3 lg:py-4 hidden md:table-cell">
+                      Address
+                    </th>
                     <th class="px-4 lg:px-6 py-3 lg:py-4 text-center">
                       Actions
                     </th>
@@ -282,7 +287,7 @@
                       Publication Name
                     </td>
                     <td
-                      class="px-4 lg:px-6 py-3 lg:py-4"
+                      class="px-4 lg:px-6 py-3 lg:py-4 hidden md:table-cell"
                       th:text="${publication.address}"
                     >
                       Address

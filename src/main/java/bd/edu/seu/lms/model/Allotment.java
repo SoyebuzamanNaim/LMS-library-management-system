@@ -30,7 +30,8 @@ public class Allotment {
     private LocalDate issueDate;
 
     @Enumerated(EnumType.STRING)
-    private AllotmentStatus status;
+    @Column(nullable = false)
+    private AllotmentStatus status = AllotmentStatus.ACTIVE;
     private Double fineAmount;
 
 }
