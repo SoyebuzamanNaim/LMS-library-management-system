@@ -21,10 +21,13 @@
       <aside
         class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl flex-shrink-0"
       >
-        <div class="h-16 flex items-center px-6 border-b border-slate-800">
+        <a
+          th:href="@{/dashboard}"
+          class="h-16 flex items-center px-6 border-b border-slate-800 cursor-pointer hover:bg-slate-800 transition-colors"
+        >
           <i class="fa-solid fa-book-open text-indigo-500 text-2xl mr-3"></i>
           <span class="text-lg font-bold">LibroSystem</span>
-        </div>
+        </a>
         <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           <a
             th:href="@{/dashboard}"
