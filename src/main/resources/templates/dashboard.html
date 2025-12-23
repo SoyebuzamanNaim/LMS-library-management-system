@@ -57,12 +57,6 @@
             <i class="fa-solid fa-newspaper w-8"></i> Publications
           </a>
           <a
-            th:href="@{/subscriptions}"
-            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
-          >
-            <i class="fa-solid fa-ticket w-8"></i> Subscriptions
-          </a>
-          <a
             th:href="@{/profile}"
             class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
           >
@@ -102,7 +96,7 @@
 
         <main class="flex-1 overflow-y-auto p-8">
           <div
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
           >
             <div
               class="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
@@ -161,26 +155,6 @@
                 </div>
                 <div class="p-2 bg-amber-50 text-amber-600 rounded-lg">
                   <i class="fa-solid fa-hand-holding-hand"></i>
-                </div>
-              </div>
-            </div>
-            <div
-              class="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
-            >
-              <div class="flex justify-between items-start">
-                <div>
-                  <p class="text-xs font-medium text-slate-500 uppercase">
-                    Active Subscriptions
-                  </p>
-                  <h3
-                    class="text-2xl font-bold text-slate-800 mt-1"
-                    th:text="${activeSubscriptions}"
-                  >
-                    0
-                  </h3>
-                </div>
-                <div class="p-2 bg-purple-50 text-purple-600 rounded-lg">
-                  <i class="fa-solid fa-ticket"></i>
                 </div>
               </div>
             </div>

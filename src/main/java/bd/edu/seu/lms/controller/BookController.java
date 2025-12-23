@@ -3,6 +3,8 @@ package bd.edu.seu.lms.controller;
 import bd.edu.seu.lms.dto.BookDto;
 import bd.edu.seu.lms.model.Book;
 import bd.edu.seu.lms.model.BookStatus;
+import bd.edu.seu.lms.model.Publication;
+import bd.edu.seu.lms.model.Vendor;
 import bd.edu.seu.lms.service.BookService;
 import bd.edu.seu.lms.service.PublicationService;
 import bd.edu.seu.lms.service.VendorService;
@@ -31,8 +33,8 @@ public class BookController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-            model.addAttribute("search", search);
-            model.addAttribute("books", bookService.searchBooks(search));
+        model.addAttribute("search", search);
+        model.addAttribute("books", bookService.searchBooks(search));
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("publications", publicationService.getAllPublications());
         model.addAttribute("vendors", vendorService.getAllVendors());
@@ -64,13 +66,12 @@ public class BookController {
                 return "redirect:/books";
             }
 
-            // Fetch Publication and Vendor entities
-            var publication = publicationService.getPublicationById(bookDto.publicationId());
+            Publication publication = publicationService.getPublicationById(bookDto.publicationId());
             if (publication == null) {
                 redirectAttributes.addFlashAttribute("error", "Publication not found");
                 return "redirect:/books";
             }
-            var vendor = vendorService.getVendorById(bookDto.vendorId());
+            Vendor vendor = vendorService.getVendorById(bookDto.vendorId());
             if (vendor == null) {
                 redirectAttributes.addFlashAttribute("error", "Vendor not found");
                 return "redirect:/books";
@@ -119,13 +120,12 @@ public class BookController {
                 return "redirect:/books";
             }
 
-            // Fetch Publication and Vendor entities
-            var publication = publicationService.getPublicationById(bookDto.publicationId());
+            Publication publication = publicationService.getPublicationById(bookDto.publicationId());
             if (publication == null) {
                 redirectAttributes.addFlashAttribute("error", "Publication not found");
                 return "redirect:/books";
             }
-            var vendor = vendorService.getVendorById(bookDto.vendorId());
+            Vendor vendor = vendorService.getVendorById(bookDto.vendorId());
             if (vendor == null) {
                 redirectAttributes.addFlashAttribute("error", "Vendor not found");
                 return "redirect:/books";

@@ -17,6 +17,4 @@ public interface StudentRepo extends JpaRepository<Student, Integer> {
     List<Student> findByDepartmentContainingIgnoreCase(String department);
 
     List<Student> findByEmailContainingIgnoreCase(String email);
-
-    Optional<Student> findBySubscriptionId(Integer subscriptionId);
 }

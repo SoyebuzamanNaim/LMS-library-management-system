@@ -58,13 +58,6 @@
             <i class="fa-solid fa-newspaper w-8"></i> Publications
           </a>
           <a
-            th:href="@{/subscriptions}"
-            class="flex items-center px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
-          >
-            <i class="fa-solid fa-ticket w-8"></i> Subscriptions
-          </a>
-
-          <a
             th:href="@{/profile}"
             class="flex items-center px-3 py-2.5 bg-indigo-600 text-white rounded-lg"
           >
@@ -81,9 +74,7 @@
           <div
             class="h-10 w-15 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm"
           >
-            <span
-              th:text="${user}"
-            ></span>
+            <span th:text="${user}"></span>
           </div>
         </header>
 
