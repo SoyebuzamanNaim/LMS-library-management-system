@@ -26,7 +26,7 @@ public class Student {
     private List<String> phones;
     @Enumerated(EnumType.STRING)
     private StudentStatus status;
-    //owning side
+    // owning side
     @OneToOne(fetch = FetchType.EAGER)
 
     private Subscription subscription;
