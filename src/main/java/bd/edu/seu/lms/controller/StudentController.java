@@ -48,7 +48,7 @@ public class StudentController {
             }
             Student student = new Student();
             student.setName(studentDto.name());
-            student.setRoll(studentDto.roll());
+            student.setRoll(studentDto.roll().trim().toUpperCase());
             student.setDepartment(studentDto.department());
             student.setEmail(studentDto.email());
             student.setPhones(studentDto.phones() );
@@ -75,7 +75,7 @@ public class StudentController {
             }
             Student student = studentService.getStudentById(id);
             student.setName(studentDto.name());
-            student.setRoll(studentDto.roll());
+            student.setRoll(studentDto.roll().trim().toUpperCase());
             student.setDepartment(studentDto.department());
             student.setEmail(studentDto.email());
             student.setPhones(studentDto.phones() );

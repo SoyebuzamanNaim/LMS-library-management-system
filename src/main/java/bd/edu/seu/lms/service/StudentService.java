@@ -25,6 +25,9 @@ public class StudentService {
         if (student.getId() != null && studentRepo.existsById(student.getId())) {
             throw new IllegalArgumentException("Student already exists");
         }
+        if (studentRepo.existsByRoll(student.getRoll().trim())) {
+            throw new IllegalArgumentException("Roll already exists");
+        }
         return studentRepo.save(student);
     }
 
