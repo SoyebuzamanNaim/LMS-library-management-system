@@ -63,16 +63,20 @@ public class AllotmentService {
         Allotment allotment = allotmentRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Allotment does not exist"));
 
-        if (allotment.getBook() != null) {
-            Book book = allotment.getBook();
-            if (allotment.getStatus() != AllotmentStatus.RETURNED) {
-                book.setAvailableCopies(book.getAvailableCopies() + 1);
-                bookService.updateBook(book);
-            }
+        if (allotment.getStatus() != AllotmentStatus.RETURNED) {
+            throw new IllegalArgumentException("Cannot delete allotment without returning the book");
         }
-
         try {
+            if (allotment.getBook() != null) {
+                Book book = allotment.getBook();
+                if (allotment.getStatus() != AllotmentStatus.RETURNED) {
+                    book.setAvailableCopies(book.getAvailableCopies() + 1);
+                    bookService.updateBook(book);
+                }
+            }
+
             allotmentRepo.deleteById(id);
+
         } catch (Exception e) {
             throw new IllegalArgumentException("Cannot delete allotment: " + e.getMessage());
         }

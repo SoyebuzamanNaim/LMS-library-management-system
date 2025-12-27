@@ -66,9 +66,9 @@ public class AllotmentController {
         Allotment allotment = new Allotment();
         allotment.setStudent(student);
         allotment.setBook(book);
-        allotment.setIssueDate(allotmentDto.issueDate());
+        allotment.setIssueDate(LocalDate.now());
         allotment.setStatus(AllotmentStatus.ACTIVE);
-        allotment.setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate()));
+        allotment.setFineAmount(0.0);
 
         try {
             allotmentService.saveAllotment(allotment);
@@ -83,13 +83,30 @@ public class AllotmentController {
     public String updateAllotment(@ModelAttribute AllotmentDto allotmentDto, int id,
             RedirectAttributes redirectAttributes) {
 
-        Student student = studentService.getStudentById(allotmentDto.studentId());
-        if (student == null || allotmentDto.studentId() == null) {
+        Integer studentId = allotmentDto.studentId();
+        Integer bookId = allotmentDto.bookId();
+
+        if (studentId == null) {
             redirectAttributes.addFlashAttribute("error", "Student not found");
             return "redirect:/allotment";
         }
-        Book book = bookService.getBookById(allotmentDto.bookId());
-        if (book == null || allotmentDto.bookId() == null) {
+        if (bookId == null) {
+            redirectAttributes.addFlashAttribute("error", "Book not found");
+            return "redirect:/allotment";
+        }
+
+        Student student;
+        Book book;
+        try {
+            student = studentService.getStudentById(studentId);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "Student not found");
+            return "redirect:/allotment";
+        }
+
+        try {
+            book = bookService.getBookById(bookId);
+        } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", "Book not found");
             return "redirect:/allotment";
         }
@@ -97,9 +114,7 @@ public class AllotmentController {
         Allotment allotment = allotmentService.getAllotmentById(id);
         allotment.setStudent(student);
         allotment.setBook(book);
-        allotment.setIssueDate(allotmentDto.issueDate());
 
-        allotment.setFineAmount(allotmentService.calculateFine(allotmentDto.issueDate()));
         try {
             allotmentService.updateAllotment(allotment);
             redirectAttributes.addFlashAttribute("success", "Allotment updated successfully");
